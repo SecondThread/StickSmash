@@ -1,8 +1,11 @@
 package math;
 
+import graphics.SpriteLoader;
+
 public class Rect {
 	
 	Vec bottomLeft, topRight;
+	Vec drawOffset=Vec.zero;
 	
 	public Rect(Vec bottomLeft, Vec topRight) {
 		this.bottomLeft=bottomLeft;
@@ -25,15 +28,45 @@ public class Rect {
 		for (int i=0; i<4; i++) {
 			for (int j=0; j<4; j++) {
 				Seg mySeg=new Seg(myCorners[i], myCorners[(i+1)%4]);
-				Seg oSeg=new Seg(oCorners[i], oCorners[(i+1)%4]);
+				Seg oSeg=new Seg(oCorners[j], oCorners[(j+1)%4]);
 				if (mySeg.intersects(oSeg)) return true;
 			}
 		}
 		return false;
 	}
 	
+	public boolean intersectsSeg(Seg s) {
+		if (contains(s.from)||contains(s.to)) return true;
+		Vec[] myCorners=corners();
+		for (int i=0; i<4; i++) {
+			Seg mySeg=new Seg(myCorners[i], myCorners[(i+1)%4]);
+			if (mySeg.intersects(s)) return true;
+		}
+		return false;
+	}
+	
 	public Vec[] corners() {
 		return new Vec[] {bottomLeft, new Vec(topRight.x(), bottomLeft.y()), topRight, new Vec(bottomLeft.x(), topRight.y())};
+	}
+	
+	public double width() {
+		return Math.abs(topRight.sub(bottomLeft).x());
+	}
+	
+	public double height() {
+		return Math.abs(topRight.sub(bottomLeft).y());
+	}
+	
+	public Vec center() {
+		return topRight.add(bottomLeft).scale(0.5);
+	}
+	
+	public void setDrawOffeset(Vec drawOffset) {
+		this.drawOffset=drawOffset;
+	}
+	
+	public void render() {
+		SpriteLoader.collisionSquare.drawAlphaAndSize(center().add(drawOffset), 0.3, width()/100, height()/100);
 	}
 	
 }

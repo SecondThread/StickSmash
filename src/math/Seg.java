@@ -20,4 +20,8 @@ public class Seg {
 		return Math.signum(dir.cross(toFrom))!=Math.signum(dir.cross(toTo));
 	}
 	
+	public void render() {
+		new Rect(from.add(Vec.down.scale(5)), to.add(Vec.up.scale(5))).render();
+	}
+	
 }

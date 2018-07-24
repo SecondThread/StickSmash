@@ -17,6 +17,8 @@ import graphics.SpriteLoader;
 import input.InputType;
 import input.Keyboard;
 import math.Rect;
+import math.Seg;
+import math.Vec;
 
 public class Game {
 	
@@ -32,6 +34,8 @@ public class Game {
 	private static ArrayList<InputType> inputTypes=new ArrayList<>();
 	private static ArrayList<Entity> entities=new ArrayList<>();
 	private static ArrayList<Rect> universalCollitionBoxes=new ArrayList<>();
+	private static ArrayList<Seg> universalPlatforms=new ArrayList<>();
+	private static ArrayList<Ledge> hangPositions=new ArrayList<>();
 	
 	public static void main(String[] args) {
 		frame=new JFrame();
@@ -72,6 +76,22 @@ public class Game {
 	
 	public static void destroyCollisionBox(Rect toDestroy) {
 		universalCollitionBoxes.remove(toDestroy);
+	}
+	
+	public static void addPlatform(Seg toAdd) {
+		universalPlatforms.add(toAdd);
+	}
+	
+	public static void destroyPlatform(Seg toDestroy) {
+		universalPlatforms.remove(toDestroy);
+	}
+	
+	public static void addHangPos(Ledge toAdd) {
+		hangPositions.add(toAdd);
+	}
+	
+	public static void destroyHangPosition(Ledge toDestroy) {
+		hangPositions.remove(toDestroy);
 	}
 	
 	private static void runGameLoop() {
@@ -141,11 +161,29 @@ public class Game {
 		Collections.sort(toRender, (a, b)->{return Integer.compare(a.getRenderOrder(), b.getRenderOrder());});
 		for (Entity e:toRender)
 			e.render();
+		for (Rect rect:universalCollitionBoxes)
+			rect.render();
+		for (Seg s:universalPlatforms)
+			s.render();
+		for (Ledge v:hangPositions)
+			v.render();
 	}
 	
 	public static ArrayList<Rect> getCollisionBoxes() {
 		ArrayList<Rect> toReturn=new ArrayList<>();
 		toReturn.addAll(universalCollitionBoxes);
+		return toReturn;
+	}
+	
+	public static ArrayList<Seg> getPlatforms() {
+		ArrayList<Seg> toReturn=new ArrayList<>();
+		toReturn.addAll(universalPlatforms);
+		return toReturn;
+	}
+	
+	public static ArrayList<Ledge> getHangPositions() {
+		ArrayList<Ledge> toReturn=new ArrayList<>();
+		toReturn.addAll(hangPositions);
 		return toReturn;
 	}
 

@@ -8,11 +8,10 @@ import javafx.scene.input.KeyCode;
 
 public class Keyboard implements KeyListener, InputType {
 	
-	static int MAX_KEY_VALUE=500, MAX_UPDATES_WITHOUT_CALLBACK=Integer.MAX_VALUE/2;
+	static int MAX_KEY_VALUE=500;
 	
 	static Keyboard instance;
 	static boolean[] pressed=new boolean[MAX_KEY_VALUE];
-	static int[] maxUntilNextCallback=new int[MAX_KEY_VALUE];
 	static boolean[] firstDown=new boolean[MAX_KEY_VALUE];
 	static boolean[] held=new boolean[MAX_KEY_VALUE];
 	static boolean[] released=new boolean[MAX_KEY_VALUE];
@@ -38,31 +37,28 @@ public class Keyboard implements KeyListener, InputType {
 				released[key]=false;
 				held[key]=false;
 			}
-			if (maxUntilNextCallback[key]>0) {
-				maxUntilNextCallback[key]--;
-			}
-			if (maxUntilNextCallback[key]<=0) {
-				held[key]=false;
-			}
 		}
 	}
 
 	public void keyPressed(KeyEvent e) {
-		maxUntilNextCallback[e.getKeyCode()]=MAX_UPDATES_WITHOUT_CALLBACK;
+		if (held[e.getKeyCode()]) 
+			return;
 		pressed[e.getKeyCode()]=true;
 	}
 
 	public void keyReleased(KeyEvent e) {
 		released[e.getKeyCode()]=true;
-		maxUntilNextCallback[e.getKeyCode()]=0;
 	}
 
 	public void keyTyped(KeyEvent e) {
-		maxUntilNextCallback[e.getKeyCode()]=MAX_UPDATES_WITHOUT_CALLBACK;
 	}
 
 	public boolean jumpMovementPressed() {
-		return firstDown[KeyCode.SPACE.getCode()];
+		return firstDown[KeyCode.SPACE.getCode()]||firstDown[KeyCode.W.getCode()];
+	}
+	
+	public boolean jumpMovementHeld() {
+		return held[KeyCode.SPACE.getCode()]||held[KeyCode.W.getCode()];
 	}
 
 	public boolean upMovementHeld() {
@@ -93,8 +89,8 @@ public class Keyboard implements KeyListener, InputType {
 		return held[KeyCode.L.getCode()];
 	}
 
-	public boolean shieldPressed() {
-		return held[KeyCode.SEMICOLON.getCode()];
+	public boolean shieldHeld() {
+		return held[KeyCode.CONTROL.getCode()];
 	}
 
 	public boolean grabPressed() {

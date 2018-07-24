@@ -88,6 +88,9 @@ public class Vec {
 		return "("+df.format(x)+", "+df.format(y)+")";
 	}
 	
+	public void render() {
+		new Rect(add(new Vec(-20, -20)), add(new Vec(20, 20))).render();
+	}
 
 }
 

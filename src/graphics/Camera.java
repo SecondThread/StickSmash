@@ -1,5 +1,6 @@
 package graphics;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -15,7 +16,7 @@ public class Camera extends Entity {
 	
 	private Vec position;
 	private Graphics2D g;
-	private double cameraWorldWidth=2000;
+	private double cameraWorldWidth=3000;
 	
 	public static Camera getInstance() {
 		return instance==null?instance=new Camera():instance;
@@ -40,7 +41,7 @@ public class Camera extends Entity {
 		return image;
 	}
 	
-	public void draw(BufferedImage image, double xScale, double yScale, Vec worldPos) {
+	public void draw(BufferedImage image, double xScale, double yScale, Vec worldPos, double alpha) {
 		double worldToScreenRatio=cameraWorldWidth/Game.SCREEN_WIDTH;
 		Vec screenPos=worldPos.sub(position).scale(1/worldToScreenRatio);
 		screenPos=new Vec(screenPos.x(), -screenPos.y());
@@ -50,9 +51,11 @@ public class Camera extends Entity {
 		
 		screenPos=screenPos.sub(new Vec(width, height).scale(.5));
 		screenPos=screenPos.add(new Vec(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT).scale(.5));
-		
+
+		AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)(alpha));
+		g.setComposite(ac);
 		g.drawImage(image, (int)screenPos.x(), (int)screenPos.y(), (int)width, (int)height,
 				null);
 	}
-
+	
 }

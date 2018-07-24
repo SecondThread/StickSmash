@@ -3,6 +3,7 @@ package input;
 public interface InputType {
 
 	boolean jumpMovementPressed();
+	boolean jumpMovementHeld();
 	
 	boolean upMovementHeld();
 	boolean downMovementHeld();
@@ -12,7 +13,7 @@ public interface InputType {
 	boolean attack1Pressed();
 	boolean attack2Pressed();
 	boolean attackRecoverPressed();
-	boolean shieldPressed();
+	boolean shieldHeld();
 	boolean grabPressed();
 	
 	void onUpate();

@@ -21,7 +21,14 @@ public class Sprite {
 	}
 	
 	public void draw(Vec pos, boolean facingRight) {
-		Camera.instance.draw(image, facingRight?1:-1, 1, pos);
+		Camera.instance.draw(image, facingRight?1:-1, 1, pos, 1);
 	}
 	
+	public void drawAlphaAndSize(Vec pos, double alpha, double xScale, double yScale) {
+		Camera.instance.draw(image, xScale, yScale, pos, alpha);
+	}
+	
+	public void drawAlpha(Vec pos, boolean facingRight, double alpha) {
+		Camera.instance.draw(image, facingRight?1:-1, 1, pos, alpha);
+	}
 }
