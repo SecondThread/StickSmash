@@ -7,6 +7,8 @@ public class Rect {
 	Vec bottomLeft, topRight;
 	Vec drawOffset=Vec.zero;
 	
+	private static final boolean drawRects=false;
+	
 	public Rect(Vec bottomLeft, Vec topRight) {
 		this.bottomLeft=bottomLeft;
 		this.topRight=topRight;
@@ -66,7 +68,8 @@ public class Rect {
 	}
 	
 	public void render() {
-		SpriteLoader.collisionSquare.drawAlphaAndSize(center().add(drawOffset), 0.3, width()/100, height()/100);
+		if (drawRects)
+			SpriteLoader.collisionSquare.drawAlphaAndSize(center().add(drawOffset), 0.3, width()/100, height()/100);
 	}
 	
 }

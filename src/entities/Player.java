@@ -255,7 +255,7 @@ public class Player extends Entity {
 					else
 						velocity=velocity.add(Vec.right.scale(3.5));
 				}
-				else if (inputType.upMovementHeld()) {
+				else if (inputType.jumpMovementPressed()) {
 					//jump up
 					hasDoubleJump=true;
 					setAnimation(PlayerState.AIRBORN);
@@ -296,6 +296,7 @@ public class Player extends Entity {
 					hangingOn=null;
 				}
 				else {
+					//otherwise keep hanging on
 					if (facingRight)
 						position=hangingOn.getPos().sub(hangBoxRight.center());
 					else
