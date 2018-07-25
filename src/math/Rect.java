@@ -3,11 +3,12 @@ package math;
 import graphics.SpriteLoader;
 
 public class Rect {
+
+	private static final boolean drawRects=false;
 	
 	Vec bottomLeft, topRight;
 	Vec drawOffset=Vec.zero;
 	
-	private static final boolean drawRects=false;
 	
 	public Rect(Vec bottomLeft, Vec topRight) {
 		this.bottomLeft=bottomLeft;

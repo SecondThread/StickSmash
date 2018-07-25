@@ -2,6 +2,7 @@ package entities;
 
 import java.util.ArrayList;
 
+import entities.attacks.Attack;
 import entities.particles.Particle;
 import game.Game;
 import game.Ledge;
@@ -24,7 +25,7 @@ public class Player extends Entity {
 	private static final Vec gravity=new Vec(0, -0.2), fastGravity=gravity.scale(2);
 	private static final double moveGroundSpeed=1, moveAirSpeed=0.2;
 	private static final double jumpPower=10, doubleJumpPower=15;
-	private static final double xGroundedFriction=0.8, xAirFriction=0.95, yFriction=0.98;
+	private static final double xGroundedFriction=0.8, xAirFriction=0.95, yFriction=0.98, xAttackingFriction=0.98;
 	private static final double minSpeedToRun=0.1;
 	private static final int numJumpFrames=30;
 	private static final double maxShieldScale=0.8;
@@ -40,6 +41,13 @@ public class Player extends Entity {
 	private static final int hangImmunityLen=50;
 	private static final int framesBetweenHangs=60;
 
+	//Attacks
+	private static Attack groundAttack1;
+	private static Attack groundAttack2;
+	private static Attack airAttack1;
+	private static Attack airAttack2;
+	private static Attack recoveryAttack;
+	
 	//Player states
 	private boolean grounded=false;
 	private boolean facingRight=true;
@@ -51,6 +59,8 @@ public class Player extends Entity {
 	private int stunCounter=0;
 	private int framesUntilNextHang=0;
 	private Ledge hangingOn=null;
+	private Attack currentAttack;
+	
 	
 	
 	public Player(InputType inputType) {
@@ -63,6 +73,34 @@ public class Player extends Entity {
 		hangBoxLeft=new Rect(new Vec(-hangFarX, hangLowY), new Vec(-hangCloseX, hangHighY));
 		position=new Vec(0, 500);
 		this.inputType=inputType;
+		createAttacks();
+	}
+	
+	private void createAttacks() {
+		groundAttack1=new Attack(false);
+		groundAttack1.addPart(20, SpriteLoader.stickFigureKick1);
+		groundAttack1.addPart(20, SpriteLoader.stickFigureKick2);
+		groundAttack1.addPart(20, SpriteLoader.stickFigureKick3);
+		
+		groundAttack2=new Attack(false);
+		groundAttack2.addPart(40, SpriteLoader.stickFigureDab1);
+		groundAttack2.addPart(30, SpriteLoader.stickFigureDab2);
+		
+		airAttack1=new Attack(true);
+		airAttack1.addPart(40, SpriteLoader.stickFigureAirSpike);
+		
+		airAttack2=new Attack(true);
+		airAttack2.addPart(25, SpriteLoader.stickFigureAirSlice1);
+		airAttack2.addPart(25, SpriteLoader.stickFigureAirSlice2);
+		
+		recoveryAttack=new Attack(false);
+		recoveryAttack.addPart(20, SpriteLoader.stickFigureJetpack2);
+		recoveryAttack.addPart(40, SpriteLoader.stickFigureJetpack1);
+		for (int i=20; i<40; i++)
+			recoveryAttack.addVelocityCue(i, new Vec(5, doubleJumpPower));
+		recoveryAttack.addPart(100, SpriteLoader.stickFigureJetpack2);
+		for (int i=40; i<160; i++)
+			recoveryAttack.addGrabCue(i);
 	}
 	
 	public void update() {
@@ -86,7 +124,12 @@ public class Player extends Entity {
 	
 	private void applyFriction() {
 		if (grounded) {
-			velocity=new Vec(velocity.x()*xGroundedFriction, velocity.y()*yFriction);
+			if (state==PlayerState.ATTACKING) {
+				velocity=new Vec(velocity.x()*xAttackingFriction, velocity.y()*yFriction);
+			}
+			else {
+				velocity=new Vec(velocity.x()*xGroundedFriction, velocity.y()*yFriction);
+			}
 		}
 		else {
 			velocity=new Vec(velocity.x()*xAirFriction, velocity.y()*yFriction);
@@ -104,6 +147,7 @@ public class Player extends Entity {
 	
 	private void checkForInputAndMovement() {
 		if (state!=PlayerState.STUNNED&&state!=PlayerState.ROLLING&&state!=PlayerState.SPOT_DODGING&&state!=PlayerState.HANGING&&
+				state!=PlayerState.ATTACKING&&
 				inputType.jumpMovementPressed()&&grounded) {
 			velocity=new Vec(velocity.x(), jumpPower);
 			jumpFramesLeft=numJumpFrames;
@@ -119,14 +163,14 @@ public class Player extends Entity {
 		}
 		
 		//double jump
-		if (state!=PlayerState.AIR_DODGING&&!grounded&&state!=PlayerState.HANGING&&inputType.jumpMovementPressed()&&hasDoubleJump) {
+		if (state!=PlayerState.AIR_DODGING&&!grounded&&state!=PlayerState.HANGING&&state!=PlayerState.AIR_ATTACKING&&inputType.jumpMovementPressed()&&hasDoubleJump) {
 			hasDoubleJump=false;
 			velocity=new Vec(velocity.x(), doubleJumpPower);
 			Particle.createDoubleJumpParticle(position);
 		}
 		
 		//movement
-		if (state!=PlayerState.STUNNED&&state!=PlayerState.SHIELDING&&state!=PlayerState.ROLLING&&state!=PlayerState.HANGING) {
+		if (state!=PlayerState.STUNNED&&state!=PlayerState.SHIELDING&&state!=PlayerState.ROLLING&&state!=PlayerState.HANGING&&state!=PlayerState.ATTACKING) {
 			if (inputType.leftMovementHeld()) {
 				if (grounded) {
 					if (state!=PlayerState.SPOT_DODGING)
@@ -156,9 +200,14 @@ public class Player extends Entity {
 				if (grounded) {
 					onLand();
 				}
-				else if (inputType.shieldHeld()) {
+				else if (inputType.shieldHeld())
 					setAnimation(PlayerState.AIR_DODGING);
-				}
+				else if (inputType.attack1Pressed())
+					startAttack(airAttack1);
+				else if (inputType.attack2Pressed())
+					startAttack(airAttack2);
+				else if (inputType.attackRecoverPressed())
+					startAttack(recoveryAttack);
 				else {
 					if (framesUntilNextHang<=0)
 						tryToHang();
@@ -171,16 +220,27 @@ public class Player extends Entity {
 					setAnimation(PlayerState.RUNNING);
 				else if (inputType.shieldHeld())
 					setAnimation(PlayerState.SHIELDING);
+				else if (inputType.attack1Pressed())
+					startAttack(groundAttack1);
+				else if (inputType.attack2Pressed())
+					startAttack(groundAttack2);
+				else if (inputType.attackRecoverPressed())
+					startAttack(recoveryAttack);
 				break;
 			case RUNNING:
 				if (animationCounter>=runningAnimLen)
 					animationCounter=0;
 				
-				
 				if (Math.abs(velocity.x())<minSpeedToRun)
 					setAnimation(PlayerState.IDLE);
 				else if (!grounded)
 					setAnimation(PlayerState.AIRBORN);
+				else if (inputType.attack1Pressed())
+					startAttack(groundAttack1);
+				else if (inputType.attack2Pressed())
+					startAttack(groundAttack2);
+				else if (inputType.attackRecoverPressed())
+					startAttack(recoveryAttack);
 				else {
 					boolean oldFacingRight=facingRight;
 					facingRight=velocity.x()>0;
@@ -303,6 +363,33 @@ public class Player extends Entity {
 						position=hangingOn.getPos().sub(hangBoxLeft.center());
 				}
 				break;
+			case ATTACKING:
+				currentAttack.update(grounded);
+				if (currentAttack.isOver())
+					setAnimation(PlayerState.IDLE);
+				else {
+					if (!grounded)
+						setAnimation(PlayerState.AIR_ATTACKING);
+					Vec newVel=currentAttack.getVelocity(facingRight);
+					if (newVel!=null) {
+						velocity=newVel;
+					}
+				}
+				break;
+			case AIR_ATTACKING:
+				currentAttack.update(grounded);
+				if (currentAttack.isOver())
+					setAnimation(PlayerState.AIRBORN);
+				if (currentAttack.isOver())
+					setAnimation(PlayerState.IDLE);
+				else {
+					Vec newVel=currentAttack.getVelocity(facingRight);
+					if (newVel!=null)
+						velocity=newVel;
+					if (currentAttack.canGrab() && framesUntilNextHang<=0)
+						tryToHang();
+				}
+				break;
 		}
 	}
 	
@@ -376,6 +463,12 @@ public class Player extends Entity {
 	private void setAnimation(PlayerState newAnimation) {
 		animationCounter=0;
 		state=newAnimation;
+	}
+	
+	private void startAttack(Attack toUse) {
+		toUse.start();
+		currentAttack=toUse;
+		setAnimation(PlayerState.ATTACKING);
 	}
 	
 	private void onLand() {
@@ -461,6 +554,12 @@ public class Player extends Entity {
 			case HANGING:
 				toDraw=SpriteLoader.stickFigureHang;
 				drawAtFullAlpha=animationCounter>=hangImmunityLen;
+				break;
+			case ATTACKING:
+				toDraw=currentAttack.getCurrentSprite();
+				break;
+			case AIR_ATTACKING:
+				toDraw=currentAttack.getCurrentSprite();
 				break;
 			default:
 				throw new Error("invalid render state: "+state);	
