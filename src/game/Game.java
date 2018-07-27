@@ -48,11 +48,11 @@ public class Game {
 		frame.setTitle(GAME_NAME);
 		frame.setVisible(true);
 		
-		Keyboard.getInstance();
 		SpriteLoader.loadSprites();
 		
 		new MainBackground();
-		new Player(Keyboard.getInstance());
+		new Player(Keyboard.getInstance(true), new Vec(-400, 300), 1);
+		new Player(Keyboard.getInstance(false), new Vec(400, 300), 2);
 		
 		runGameLoop();
 	}
@@ -169,6 +169,12 @@ public class Game {
 			v.render();
 	}
 	
+	public static ArrayList<Entity> getEntities() {
+		ArrayList<Entity> toReturn=new ArrayList<>();
+		toReturn.addAll(entities);
+		return toReturn;
+	}
+
 	public static ArrayList<Rect> getCollisionBoxes() {
 		ArrayList<Rect> toReturn=new ArrayList<>();
 		toReturn.addAll(universalCollitionBoxes);
@@ -186,5 +192,6 @@ public class Game {
 		toReturn.addAll(hangPositions);
 		return toReturn;
 	}
+	
 
 }

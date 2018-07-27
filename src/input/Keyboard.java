@@ -8,21 +8,53 @@ import javafx.scene.input.KeyCode;
 
 public class Keyboard implements KeyListener, InputType {
 	
-	static int MAX_KEY_VALUE=500;
+	static int MAX_KEY_VALUE=1000;
 	
-	static Keyboard instance;
-	static boolean[] pressed=new boolean[MAX_KEY_VALUE];
-	static boolean[] firstDown=new boolean[MAX_KEY_VALUE];
-	static boolean[] held=new boolean[MAX_KEY_VALUE];
-	static boolean[] released=new boolean[MAX_KEY_VALUE];
+	static Keyboard instanceP1, instanceP2;
+	boolean[] pressed=new boolean[MAX_KEY_VALUE];
+	boolean[] firstDown=new boolean[MAX_KEY_VALUE];
+	boolean[] held=new boolean[MAX_KEY_VALUE];
+	boolean[] released=new boolean[MAX_KEY_VALUE];
+	
+	int upCode;
+	int downCode;
+	int leftCode;
+	int rightCode;
+	int attack1Code;
+	int attack2Code;
+	int attackRecoverCode;
+	int shieldCode;
 
-	public static Keyboard getInstance() {
-		return instance==null?instance=new Keyboard():instance;
+	public static Keyboard getInstance(boolean player1Controls) {
+		if (player1Controls)
+			return instanceP1==null?instanceP1=new Keyboard(player1Controls):instanceP1;
+		else
+			return instanceP2==null?instanceP2=new Keyboard(player1Controls):instanceP2;
 	}
 	
-	private Keyboard() {
+	private Keyboard(boolean player1Controls) {
 		Game.addKeyboard(this);
 		System.out.println("Keyboard constructed");
+		if (player1Controls) {
+			upCode=KeyCode.W.getCode();
+			leftCode=KeyCode.A.getCode();
+			downCode=KeyCode.S.getCode();
+			rightCode=KeyCode.D.getCode();
+			attack1Code=KeyCode.J.getCode();
+			attack2Code=KeyCode.K.getCode();
+			attackRecoverCode=KeyCode.L.getCode();
+			shieldCode=KeyCode.CONTROL.getCode();
+		}
+		else {
+			upCode=KeyCode.UP.getCode();
+			leftCode=KeyCode.LEFT.getCode();
+			downCode=KeyCode.DOWN.getCode();
+			rightCode=KeyCode.RIGHT.getCode();
+			attack1Code=KeyCode.Z.getCode();
+			attack2Code=KeyCode.X.getCode();
+			attackRecoverCode=KeyCode.C.getCode();
+			shieldCode=KeyCode.NUMPAD0.getCode();
+		}
 	}
 	
 	public void onUpate() {
@@ -54,47 +86,48 @@ public class Keyboard implements KeyListener, InputType {
 	}
 
 	public boolean jumpMovementPressed() {
-		return firstDown[KeyCode.SPACE.getCode()]||firstDown[KeyCode.W.getCode()];
+		return firstDown[upCode];
 	}
 	
 	public boolean jumpMovementHeld() {
-		return held[KeyCode.SPACE.getCode()]||held[KeyCode.W.getCode()];
+		return held[upCode];
 	}
 
 	public boolean upMovementHeld() {
-		return held[KeyCode.W.getCode()];
+		return held[upCode];
 	}
 
 	public boolean downMovementHeld() {
-		return held[KeyCode.S.getCode()];
+		return held[downCode];
 	}
 
 	public boolean leftMovementHeld() {
-		return held[KeyCode.A.getCode()];
+		return held[leftCode];
 	}
 
 	public boolean rightMovementHeld() {
-		return held[KeyCode.D.getCode()];
+		return held[rightCode];
 	}
 
 	public boolean attack1Pressed() {
-		return held[KeyCode.J.getCode()];
+		return held[attack1Code];
 	}
 
 	public boolean attack2Pressed() {
-		return held[KeyCode.K.getCode()];
+		return held[attack2Code];
 	}
 
 	public boolean attackRecoverPressed() {
-		return held[KeyCode.L.getCode()];
+		return held[attackRecoverCode];
 	}
 
 	public boolean shieldHeld() {
-		return held[KeyCode.CONTROL.getCode()];
+		return held[shieldCode];
 	}
 
+
 	public boolean grabPressed() {
-		return held[KeyCode.QUOTE.getCode()];
+		return shieldHeld()&&(attack1Pressed()||attack2Pressed()||attackRecoverPressed());
 	}
 
 }

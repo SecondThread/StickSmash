@@ -14,6 +14,8 @@ public class SpriteLoader {
 	public static Sprite stickFigureRolling1;
 	public static Sprite stickFigureRolling2;
 	public static Sprite stickFigureHang;
+	public static Sprite stickFigureAirHit;
+	public static Sprite stickFigureKnockedDown;
 	
 	public static Sprite stickFigureAirSlice1;
 	public static Sprite stickFigureAirSlice2;
@@ -50,6 +52,8 @@ public class SpriteLoader {
 		stickFigureRolling1=new Sprite("StickSmashArt/Art/StickFigure/pngs/Roll1.png");
 		stickFigureRolling2=new Sprite("StickSmashArt/Art/StickFigure/pngs/Roll2.png");
 		stickFigureHang=new Sprite("StickSmashArt/Art/StickFigure/pngs/Hang.png");
+		stickFigureAirHit=new Sprite("StickSmashArt/Art/StickFigure/pngs/AirHit.png");
+		stickFigureKnockedDown=new Sprite("StickSmashArt/Art/StickFigure/pngs/KnockedDown.png");
 		
 		stickFigureAirSlice1=new Sprite("StickSmashArt/Art/StickFigure/attacks/pngs/AirSlice1.png");
 		stickFigureAirSlice2=new Sprite("StickSmashArt/Art/StickFigure/attacks/pngs/AirSlice2.png");
@@ -64,7 +68,6 @@ public class SpriteLoader {
 		stickFigureKick1=new Sprite("StickSmashArt/Art/StickFigure/attacks/pngs/Kick1.png");
 		stickFigureKick2=new Sprite("StickSmashArt/Art/StickFigure/attacks/pngs/Kick2.png");
 		stickFigureKick3=new Sprite("StickSmashArt/Art/StickFigure/attacks/pngs/Kick3.png");
-		
 		
 		doubleJumpParticleSprite=new Sprite("StickSmashArt/Art/Particles/DoubleJumpParticle.png");
 		stunParticleSprite=new Sprite("StickSmashArt/Art/Particles/StunParticle.png");

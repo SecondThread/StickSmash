@@ -13,8 +13,10 @@ public class Attack {
 	private ArrayList<Integer> partFrameLengths=new ArrayList<>();
 	private ArrayList<Sprite> partSprites=new ArrayList<>();
 	private HashMap<Integer, Vec> velocityAtFrame=new HashMap<>();
+	private HashMap<Integer, Damage> damageAtFrame=new HashMap<>();
 	private HashSet<Integer> canGrabAtFrame=new HashSet<>();
 	private boolean airOnlyAttack;
+	private boolean isRecoveryAttack;
 	
 	public Attack(boolean airOnlyAttack) {
 		this.airOnlyAttack=airOnlyAttack;
@@ -31,8 +33,16 @@ public class Attack {
 		velocityAtFrame.put(frame, velocity);
 	}
 	
+	public void addDamageFrame(int frame, Damage damage) {
+		damageAtFrame.put(frame, damage);
+	}
+	
 	public void addGrabCue(int frame) {
 		canGrabAtFrame.add(frame);
+	}
+	
+	public void markAsRecoveryAttack() {
+		isRecoveryAttack=true;
 	}
 	
 	//------------------------------------------------------------
@@ -41,11 +51,14 @@ public class Attack {
 		frame=0;
 	}
 
-	public void update(boolean isGrounded) {
+	public void update(boolean isGrounded, boolean isFacingRight) {
 		frame++;
 		if (airOnlyAttack&&isGrounded) {
 			frame=countFrames();
 			return;
+		}
+		if (damageAtFrame.containsKey(frame)) {
+			damageAtFrame.get(frame).runScan(isFacingRight);
 		}
 	}
 	
@@ -66,6 +79,10 @@ public class Attack {
 	
 	public boolean isOver() {
 		return frame>=countFrames();
+	}
+	
+	public boolean isRecoveryAttack() {
+		return isRecoveryAttack;
 	}
 	
 	public Sprite getCurrentSprite() {

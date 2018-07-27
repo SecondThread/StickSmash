@@ -1,5 +1,6 @@
 package entities;
 
+import entities.attacks.Damage;
 import game.Game;
 
 public abstract class Entity {
@@ -22,5 +23,9 @@ public abstract class Entity {
 	
 	public final void destroy() {
 		Game.destroyEntity(this);
+	}
+	
+	public void processDamage(Damage damage) {
+		
 	}
 }
