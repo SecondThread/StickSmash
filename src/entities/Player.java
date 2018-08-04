@@ -2,10 +2,9 @@ package entities;
 
 import java.util.ArrayList;
 
-import com.sun.javafx.collections.SetAdapterChange;
-
 import entities.attacks.Attack;
 import entities.attacks.Damage;
+import entities.attacks.GrabHitbox;
 import entities.particles.Particle;
 import game.Game;
 import game.Ledge;
@@ -32,9 +31,12 @@ public class Player extends Entity {
 	private static final double minSpeedToRun=0.1;
 	private static final int numJumpFrames=30;
 	private static final double maxShieldScale=0.8;
-	private static final int maxShield=120*4*3;
+	private static final int maxShield=120*5*3;
 	private static final int stunFrameAfterBrokenShield=240;
 	private static final double rollVelocity=6;
+	private static final int fullGrabLength=120*3;
+	private static final int grabMashSkipFrames=15;
+	
 	
 	//animation constants
 	private static final int runningAnimLen=40;
@@ -43,6 +45,8 @@ public class Player extends Entity {
 	private static final int airDodgeAnimLen=50;
 	private static final int hangImmunityLen=50;
 	private static final int framesBetweenHangs=60;
+	private static final int grabAttackAnimLen=40;
+	private static final int grabDamageFrame=35;
 
 	//Attacks
 	private Attack groundAttack1;
@@ -50,6 +54,8 @@ public class Player extends Entity {
 	private Attack airAttack1;
 	private Attack airAttack2;
 	private Attack recoveryAttack;
+	private Attack grabMissAttack;
+	private Attack grabAttack;
 	
 	//Player states
 	private boolean grounded=false;
@@ -67,6 +73,10 @@ public class Player extends Entity {
 	private int team;
 	private double damagePercent;
 	private int hitLagLeft=0;
+	private int grabAttacksMade=0;
+	private int grabFreeCounter=0;
+	private Entity grabbing;
+	private Entity grabbedBy;
 	
 	
 	public Player(InputType inputType, Vec position, int team) {
@@ -86,22 +96,51 @@ public class Player extends Entity {
 	}
 	
 	private void createAttacks() {
+		Damage damage1, damage2;
+		
+		//GROUND ATTACK 1
 		groundAttack1=new Attack(false);
 		groundAttack1.addPart(20, SpriteLoader.stickFigureKick1);
 		groundAttack1.addPart(20, SpriteLoader.stickFigureKick2);
 		groundAttack1.addPart(20, SpriteLoader.stickFigureKick3);
+		Rect groundAttack1Rect1=new Rect(new Vec(0, -80), new Vec(110, 70));
+		Rect groundAttack1Rect2=new Rect(new Vec(-40, 0), new Vec(70, 100));
+		damage1=new Damage(groundAttack1Rect1, 10, new Vec(15, 10), 40, team);
+		damage2=new Damage(groundAttack1Rect2, 10, new Vec(-5, 10), 40, team);
+		groundAttack1.addDamageFrame(35, damage1);
+		groundAttack1.addDamageFrame(40, damage2);
 		
+		//GROUND ATTACK 2
 		groundAttack2=new Attack(false);
 		groundAttack2.addPart(40, SpriteLoader.stickFigureDab1);
 		groundAttack2.addPart(30, SpriteLoader.stickFigureDab2);
+		Rect groundAttack2Rect1=new Rect(new Vec(30, 0), new Vec(60, 30));
+		Rect groundAttack2Rect2=new Rect(new Vec(-90, -30), new Vec(70, 90));
+		damage1=new Damage(groundAttack2Rect1, 25, new Vec(20, 15), 100, team);
+		damage2=new Damage(groundAttack2Rect2, 4, new Vec(-5, 5), 10, team);
+		groundAttack2.addDamageFrame(54, damage2);
+		groundAttack2.addDamageFrame(55, damage1);
 		
+		//AIR ATTACK 1
 		airAttack1=new Attack(true);
 		airAttack1.addPart(40, SpriteLoader.stickFigureAirSpike);
+		Rect airAttack1Rect=new Rect(new Vec(-20, -100), new Vec(80, 30));
+		damage1=new Damage(airAttack1Rect, 12, new Vec(5, -10), 60, team);
+		airAttack1.addDamageFrame(10, damage1);
+		airAttack1.addDamageFrame(30, damage1);
 		
+		//AIR ATTACK 2
 		airAttack2=new Attack(true);
 		airAttack2.addPart(25, SpriteLoader.stickFigureAirSlice1);
 		airAttack2.addPart(25, SpriteLoader.stickFigureAirSlice2);
+		Rect airAttack2Rect1=new Rect(new Vec(-80, 0), new Vec(80, 100));
+		Rect airAttack2Rect2=new Rect(new Vec(-40, -60), new Vec(100, 60));
+		damage1=new Damage(airAttack2Rect1, 10, new Vec(5, 10), 40, team);
+		damage2=new Damage(airAttack2Rect2, 10, new Vec(10, -5), 40, team);
+		airAttack2.addDamageFrame(25, damage1);
+		airAttack2.addDamageFrame(36, damage2);
 		
+		//RECOVERY ATTACK
 		recoveryAttack=new Attack(false);
 		recoveryAttack.markAsRecoveryAttack();
 		recoveryAttack.addPart(20, SpriteLoader.stickFigureJetpack2);
@@ -111,6 +150,22 @@ public class Player extends Entity {
 		recoveryAttack.addPart(100, SpriteLoader.stickFigureJetpack2);
 		for (int i=40; i<160; i++)
 			recoveryAttack.addGrabCue(i);
+		
+		Rect recoveryDamageBox=new Rect(new Vec(-100, -100), new Vec(40, 60));
+		damage1=new Damage(recoveryDamageBox, 6, new Vec(-10, -4), 40, team);
+		recoveryAttack.addDamageFrame(20, damage1);
+		recoveryAttack.addDamageFrame(40, damage1);
+		recoveryAttack.addDamageFrame(60, damage1);
+		
+		//GRAB MISS ATTACK
+		grabMissAttack=new Attack(false);
+		grabMissAttack.addPart(60, SpriteLoader.stickFigureGrab);
+		
+		//GRAB ATTACK
+		grabAttack=new Attack(false);
+		grabAttack.addPart(grabAttackAnimLen, SpriteLoader.stickFigureGrabRelease);
+		//damage updated when grab is released because it differs depending on
+		//the number of times they hit the grab button
 	}
 	
 	public void update() {
@@ -156,13 +211,15 @@ public class Player extends Entity {
 	}
 	
 	private void checkForInputAndMovement() {
-		if (state!=PlayerState.STUNNED&&state!=PlayerState.ROLLING&&state!=PlayerState.SPOT_DODGING&&state!=PlayerState.HANGING&&
-				state!=PlayerState.ATTACKING&&
+		if (state!=PlayerState.STUNNED&&state!=PlayerState.ROLLING&&state!=PlayerState.SPOT_DODGING&&state!=PlayerState.HANGING&&!(state==PlayerState.AIR_HIT&&hitLagLeft>0)&&
+				state!=PlayerState.ATTACKING&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED&&
 				inputType.jumpMovementPressed()&&grounded) {
 			velocity=new Vec(velocity.x(), jumpPower);
 			jumpFramesLeft=numJumpFrames;
+			setAnimation(PlayerState.AIRBORN);
 		}
-		if (state!=PlayerState.HANGING&&inputType.jumpMovementHeld()) {
+		if (state!=PlayerState.HANGING&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED&&
+				inputType.jumpMovementHeld()) {
 			if (!grounded&&jumpFramesLeft>0) {
 				jumpFramesLeft--;
 				velocity=new Vec(velocity.x(), jumpPower);
@@ -173,15 +230,18 @@ public class Player extends Entity {
 		}
 		
 		//double jump
-		if (state!=PlayerState.AIR_DODGING&&!grounded&&state!=PlayerState.HANGING&&state!=PlayerState.AIR_ATTACKING&&inputType.jumpMovementPressed()&&hasDoubleJump) {
+		if (state!=PlayerState.AIR_DODGING&&!grounded&&state!=PlayerState.HANGING&&state!=PlayerState.AIR_ATTACKING&&inputType.jumpMovementPressed()
+				&&(!(state==PlayerState.AIR_HIT&&hitLagLeft>0))&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED&&
+				hasDoubleJump) {
 			hasDoubleJump=false;
 			velocity=new Vec(velocity.x(), doubleJumpPower);
 			Particle.createDoubleJumpParticle(position);
+			setAnimation(PlayerState.AIRBORN);
 		}
 		
 		//movement
 		if (state!=PlayerState.STUNNED&&state!=PlayerState.SHIELDING&&state!=PlayerState.ROLLING&&state!=PlayerState.HANGING&&state!=PlayerState.ATTACKING
-				&&!(state==PlayerState.AIR_HIT&&stunCounter>0)&&state!=PlayerState.KNOCKED_DOWN) {
+				&&!(state==PlayerState.AIR_HIT&&hitLagLeft>0)&&state!=PlayerState.KNOCKED_DOWN&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED) {
 			if (inputType.leftMovementHeld()) {
 				if (grounded) {
 					if (state!=PlayerState.SPOT_DODGING)
@@ -366,7 +426,7 @@ public class Player extends Entity {
 				}
 				break;
 			case ATTACKING:
-				currentAttack.update(grounded, facingRight);
+				currentAttack.update(grounded, facingRight, position);
 				if (currentAttack.isOver())
 					setAnimation(PlayerState.IDLE);
 				else {
@@ -379,7 +439,7 @@ public class Player extends Entity {
 				}
 				break;
 			case AIR_ATTACKING:
-				currentAttack.update(grounded, facingRight);
+				currentAttack.update(grounded, facingRight, position);
 				if (currentAttack.isRecoveryAttack()) hasRecoveryMove=false;
 				if (currentAttack.isOver())
 					setAnimation(PlayerState.AIRBORN);
@@ -395,11 +455,13 @@ public class Player extends Entity {
 				break;
 			case AIR_HIT:
 				if (hitLagLeft>0) {
+					if (grounded) {
+						onLand();
+						setAnimation(PlayerState.KNOCKED_DOWN);
+					}
 				}
 				else {
-					if (tryToAttack())
-						;
-					else if (grounded) {
+					if (grounded) {
 						onLand();
 						setAnimation(PlayerState.KNOCKED_DOWN);
 					}
@@ -410,7 +472,43 @@ public class Player extends Entity {
 				}
 				break;
 			case KNOCKED_DOWN:
-				
+				if (hitLagLeft>0) {
+					if (!grounded)
+						setAnimation(PlayerState.AIR_HIT);
+				}
+				else {
+					if (inputType.leftMovementHeld()) {
+						facingRight=false;
+						setAnimation(PlayerState.ROLLING);
+					}
+					else if (inputType.rightMovementHeld()) {
+						facingRight=true;
+						setAnimation(PlayerState.ROLLING);
+					}
+					else if (inputType.downMovementHeld()) {
+						setAnimation(PlayerState.IDLE);
+					}
+					else if (tryToAttack()) {
+						
+					}
+					else if (inputType.shieldHeld()) {
+						setAnimation(PlayerState.SHIELDING);
+					}
+				}
+				break;
+			case GRABBING:
+				if (inputType.grabPressed())
+					grabAttacksMade++;
+				break;
+			case BEING_GRABBED:
+				grabFreeCounter++;
+				if (inputType.grabPressed()) {
+					grabFreeCounter+=grabMashSkipFrames;
+				}
+				if (grabFreeCounter>=fullGrabLength||!grounded) {
+					grabbedBy.releaseGrabbedEntityRequest();
+					grabFreeCounter=Integer.MIN_VALUE;
+				}
 				break;
 		}
 	}
@@ -500,7 +598,7 @@ public class Player extends Entity {
 			setAnimation(PlayerState.RUNNING);
 		else
 			setAnimation(PlayerState.IDLE);
-		if (Math.abs(velocity.x())>=minSpeedToRun)
+		if (Math.abs(velocity.x())>=minSpeedToRun&&hitLagLeft<=0)
 			facingRight=velocity.x()>0;
 		createRunTurnParticle();
 		facingRight^=true;
@@ -534,14 +632,39 @@ public class Player extends Entity {
 	
 	private boolean tryToAttack() {
 		if (inputType.attack1Pressed())
-			startAttack(groundAttack1);
+			startAttack(grounded?groundAttack1:airAttack1);
 		else if (inputType.attack2Pressed())
-			startAttack(groundAttack2);
+			startAttack(grounded?groundAttack2:airAttack2);
 		else if (inputType.attackRecoverPressed()&&hasRecoveryMove)
 			startAttack(recoveryAttack);
+		else if (tryToGrab())
+			;
 		else 
 			return false;
 		return true;
+	}
+	
+	private boolean tryToGrab() {
+		if (grounded&&inputType.grabPressed()) {
+			grabAttacksMade=0;
+			Rect hitboxPos=new Rect(new Vec(20, -30), new Vec(120, 30));
+			if (!facingRight)
+				hitboxPos=hitboxPos.flipX();
+			hitboxPos=hitboxPos.offsetBy(position);
+			Vec grabPosition=position.add(facingRight?Vec.right.scale(120):Vec.left.scale(120));
+			GrabHitbox hitbox=new GrabHitbox(this, hitboxPos, team, facingRight, grabPosition);
+			Entity hit=hitbox.runScan();
+			if (hit==null) {
+				startAttack(grabMissAttack);
+			}
+			else {
+				setAnimation(PlayerState.GRABBING);
+				grabbing=hit;
+			}
+			return true;
+			
+		}
+		return false;
 	}
 	
 	public void processDamage(Damage damage) {
@@ -552,13 +675,57 @@ public class Player extends Entity {
 		if (state==PlayerState.AIR_DODGING || state==PlayerState.SPOT_DODGING || state==PlayerState.ROLLING || (state==PlayerState.HANGING&&animationCounter<hangImmunityLen))
 			return;
 		
+		if (state==PlayerState.SHIELDING) {
+			shield-=15*damage.getPercentDamage();
+			return;
+		}
+		
 		if (damage.getHitbox().intersects(collisionBox.offsetBy(position))) {
 			damagePercent+=damage.getPercentDamage();
-			velocity=damage.getHitVelocity();
+			velocity=damage.getHitVelocity().scale(1+damagePercent/100.0);
 			hitLagLeft=damage.getHitLagFrames();
 			setAnimation(PlayerState.AIR_HIT);
 			facingRight=!(velocity.x()>=0);
+			hasRecoveryMove=true;
 		}
+	}
+	
+	public boolean processGrab(GrabHitbox grab) {
+		if (grab.getTeam()==team)
+			return false;
+		
+		//if I am immune, ignore the damage
+		if (state==PlayerState.AIR_DODGING || state==PlayerState.SPOT_DODGING || state==PlayerState.ROLLING || (state==PlayerState.HANGING&&animationCounter<hangImmunityLen)
+				||state==PlayerState.BEING_GRABBED)
+			return false;
+		if (grab.getHitbox().intersects(collisionBox.offsetBy(position))) {
+			grabFreeCounter=0;
+			setAnimation(PlayerState.BEING_GRABBED);
+			grabbedBy=grab.getGrabber();
+			facingRight=grab.getGrabberFacingRight();
+			position=grab.getGrabPosition();
+			return true;
+		}
+		return false;
+	}
+	
+	public void releaseGrabbedEntityRequest() {
+		if (grabAttacksMade==0) {
+			setAnimation(PlayerState.IDLE);
+			grabbing.onReleasedFromGrab();
+		}
+		else {
+			Rect grabAttackRect=new Rect(new Vec(60, -50), new Vec(140, 40));
+			Damage damage1=new Damage(grabAttackRect, 4+grabAttacksMade, new Vec(5+grabAttacksMade*1.75, 1+grabAttacksMade), 80, team);
+			grabAttack.addDamageFrame(grabDamageFrame, damage1);
+			startAttack(grabAttack);
+		}
+	}
+	
+	public void onReleasedFromGrab() {
+		facingRight^=true;
+		velocity=new Vec(facingRight?-5:5, 10);
+		setAnimation(PlayerState.AIRBORN);
 	}
 	
 	public void render() {
@@ -618,6 +785,13 @@ public class Player extends Entity {
 				break;
 			case KNOCKED_DOWN:
 				toDraw=SpriteLoader.stickFigureKnockedDown;
+				break;
+			case GRABBING:
+				toDraw=SpriteLoader.stickFigureGrab;
+				break;
+			case BEING_GRABBED:
+				toDraw=SpriteLoader.stickFigureGrabbed;
+				break;
 			default:
 				throw new Error("invalid render state: "+state);	
 		}

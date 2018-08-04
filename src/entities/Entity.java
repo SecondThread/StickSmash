@@ -1,6 +1,7 @@
 package entities;
 
 import entities.attacks.Damage;
+import entities.attacks.GrabHitbox;
 import game.Game;
 
 public abstract class Entity {
@@ -28,4 +29,18 @@ public abstract class Entity {
 	public void processDamage(Damage damage) {
 		
 	}
+	
+	//returns true if successfully grabbed
+	public boolean processGrab(GrabHitbox grab) {
+		return false;
+	}
+	
+	public void releaseGrabbedEntityRequest() {
+		
+	}
+	
+	public void onReleasedFromGrab() {
+		
+	}
+	
 }

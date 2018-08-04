@@ -24,6 +24,7 @@ public class Keyboard implements KeyListener, InputType {
 	int attack2Code;
 	int attackRecoverCode;
 	int shieldCode;
+	int grabCode;
 
 	public static Keyboard getInstance(boolean player1Controls) {
 		if (player1Controls)
@@ -44,6 +45,7 @@ public class Keyboard implements KeyListener, InputType {
 			attack2Code=KeyCode.K.getCode();
 			attackRecoverCode=KeyCode.L.getCode();
 			shieldCode=KeyCode.CONTROL.getCode();
+			grabCode=KeyCode.SEMICOLON.getCode();
 		}
 		else {
 			upCode=KeyCode.UP.getCode();
@@ -54,6 +56,7 @@ public class Keyboard implements KeyListener, InputType {
 			attack2Code=KeyCode.X.getCode();
 			attackRecoverCode=KeyCode.C.getCode();
 			shieldCode=KeyCode.NUMPAD0.getCode();
+			grabCode=KeyCode.V.getCode();
 		}
 	}
 	
@@ -127,7 +130,7 @@ public class Keyboard implements KeyListener, InputType {
 
 
 	public boolean grabPressed() {
-		return shieldHeld()&&(attack1Pressed()||attack2Pressed()||attackRecoverPressed());
+		return firstDown[grabCode];
 	}
 
 }

@@ -68,6 +68,10 @@ public class Rect {
 		this.drawOffset=drawOffset;
 	}
 	
+	public Rect flipX() {
+		return new Rect(new Vec(-topRight.x(), bottomLeft.y()), new Vec(-bottomLeft.x(), topRight.y()));
+	}
+	
 	public void render() {
 		if (drawRects)
 			SpriteLoader.collisionSquare.drawAlphaAndSize(center().add(drawOffset), 0.3, width()/100, height()/100);

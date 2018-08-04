@@ -51,14 +51,14 @@ public class Attack {
 		frame=0;
 	}
 
-	public void update(boolean isGrounded, boolean isFacingRight) {
+	public void update(boolean isGrounded, boolean isFacingRight, Vec playerPosition) {
 		frame++;
 		if (airOnlyAttack&&isGrounded) {
 			frame=countFrames();
 			return;
 		}
 		if (damageAtFrame.containsKey(frame)) {
-			damageAtFrame.get(frame).runScan(isFacingRight);
+			damageAtFrame.get(frame).runScan(isFacingRight, playerPosition);
 		}
 	}
 	
