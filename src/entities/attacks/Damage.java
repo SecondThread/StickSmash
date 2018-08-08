@@ -56,7 +56,7 @@ public class Damage extends Entity {
 		hitbox=hitbox.offsetBy(offset);
 		toRender=hitbox;
 		
-		ArrayList<Entity> entities=Game.getEntities();
+		ArrayList<Entity> entities=Game.getScene().getEntities();
 		for (Entity e:entities)
 			e.processDamage(this);
 		

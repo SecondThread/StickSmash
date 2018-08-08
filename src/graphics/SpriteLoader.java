@@ -40,6 +40,12 @@ public class SpriteLoader {
 	//UI sprites
 	public static Sprite shieldSprite;
 	public static Sprite collisionSquare;
+	public static Sprite UIBackground;
+	public static Sprite playButton;
+	public static Sprite joinGameButton;
+	public static Sprite tutorialButton;
+	public static Sprite teamsButton;
+	public static Sprite selectedButtonIndicatorSprite;
 	
 	public static void loadSprites() {
 		backgroundSprite=new Sprite("StickSmashArt/Art/Background/TestBackground.png");
@@ -75,6 +81,12 @@ public class SpriteLoader {
 		
 		shieldSprite=new Sprite("StickSmashArt/Art/UI/Shield.png");
 		collisionSquare=new Sprite("StickSmashArt/Art/UI/Collision100x100Square.png");
+		UIBackground=new Sprite("StickSmashArt/Art/UI/UIBackground.png");
+		playButton=new Sprite("StickSmashArt/Art/UI/MenuScreen/PlayButton.png");
+		teamsButton=new Sprite("StickSmashArt/Art/UI/MenuScreen/TeamsButton.png");
+		joinGameButton=new Sprite("StickSmashArt/Art/UI/MenuScreen/JoinGameButton.png");
+		tutorialButton=new Sprite("StickSmashArt/Art/UI/MenuScreen/TutorialButton.png");
+		selectedButtonIndicatorSprite=new Sprite("StickSmashArt/Art/UI/MenuScreen/SelectedButtonIndicator.png");
 		
 	}
 	

@@ -7,7 +7,7 @@ import game.Game;
 public abstract class Entity {
 
 	public Entity() {
-		Game.addEntity(this);
+		Game.getScene().addEntity(this);
 	}
 	
 	public int getRenderOrder() {
@@ -23,7 +23,7 @@ public abstract class Entity {
 	}
 	
 	public final void destroy() {
-		Game.destroyEntity(this);
+		Game.getScene().destroyEntity(this);
 	}
 	
 	public void processDamage(Damage damage) {

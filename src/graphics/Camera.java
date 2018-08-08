@@ -30,6 +30,14 @@ public class Camera extends Entity {
 	public void update() {
 	}
 	
+	public void setPosition(Vec position) {
+		this.position=position;
+	}
+	
+	public void setWorldWidth(double cameraWorldWidth) {
+		this.cameraWorldWidth=cameraWorldWidth;
+	}
+	
 	public void preRender() {
 		g=(Graphics2D) image.getGraphics();
 		g.setColor(Color.black);

@@ -18,12 +18,12 @@ public class MainBackground extends Entity {
 	private static Vec rightHangPos=new Vec(860, -10);
 	
 	public MainBackground() {
-		Game.addCollitionBox(colisionBox);
-		Game.addPlatform(topPlatform);
-		Game.addPlatform(leftPlatform);
-		Game.addPlatform(rightPlatform);
-		Game.addHangPos(new Ledge(leftHangPos));
-		Game.addHangPos(new Ledge(rightHangPos));
+		Game.getScene().addCollitionBox(colisionBox);
+		Game.getScene().addPlatform(topPlatform);
+		Game.getScene().addPlatform(leftPlatform);
+		Game.getScene().addPlatform(rightPlatform);
+		Game.getScene().addHangPos(new Ledge(leftHangPos));
+		Game.getScene().addHangPos(new Ledge(rightHangPos));
 	}
 	
 	public int getRenderOrder() {

@@ -96,16 +96,32 @@ public class Keyboard implements KeyListener, InputType {
 		return held[upCode];
 	}
 
+	public boolean upMovementPressed() {
+		return firstDown[upCode];
+	}
+	
 	public boolean upMovementHeld() {
 		return held[upCode];
 	}
 
+	public boolean downMovementPressed() {
+		return firstDown[downCode];
+	}
+	
 	public boolean downMovementHeld() {
 		return held[downCode];
 	}
 
+	public boolean leftMovementPressed() {
+		return firstDown[leftCode];
+	}
+	
 	public boolean leftMovementHeld() {
 		return held[leftCode];
+	}
+	
+	public boolean rightMovementPressed() {
+		return firstDown[rightCode];
 	}
 
 	public boolean rightMovementHeld() {

@@ -21,18 +21,18 @@ public class Particle extends Entity {
 	
 	public static void createDoubleJumpParticle(Vec position) {
 		Particle toCreate=new Particle(position, Vec.zero, SpriteLoader.doubleJumpParticleSprite, true, 60, .1, 1.5, .5, 0);
-		Game.addEntity(toCreate);
+		Game.getScene().addEntity(toCreate);
 	}
 	
 	public static void createRunTurnSprite(Vec position, boolean nowFacingRight) {
 		Particle toCreate=new Particle(position, (nowFacingRight?Vec.left:Vec.right).scale(1), SpriteLoader.runTurnParticleSprite, !nowFacingRight, 80, .4, .4, .5, 0);
-		Game.addEntity(toCreate);
+		Game.getScene().addEntity(toCreate);
 	}
 	
 	public static void createStunParticle(Vec position) {
 		double scale=Math.random()*.5;
 		Particle toCreate=new Particle(position, Vec.zero, SpriteLoader.stunParticleSprite, true, 60, scale, scale, 1, 1);
-		Game.addEntity(toCreate);
+		Game.getScene().addEntity(toCreate);
 	}
 	
 	private Particle(Vec position, Vec velocity, Sprite mySprite, boolean facingRight, int lifetimeLength, double startScale, double endScale, double startAlpha, double endAlpha) {
@@ -51,7 +51,7 @@ public class Particle extends Entity {
 	public void update() {
 		lifetimeCounter++;
 		if (lifetimeCounter>lifetimeLength) {
-			Game.destroyEntity(this);
+			Game.getScene().destroyEntity(this);
 			return;
 		}
 		position=position.add(velocity);

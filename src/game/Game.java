@@ -4,21 +4,16 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import entities.Entity;
-import entities.Player;
-import entities.backgrounds.MainBackground;
-import graphics.Camera;
+import game.scenes.MainScene;
+import game.scenes.Scene;
+import game.scenes.TitleScene;
 import graphics.SpriteLoader;
 import input.InputType;
 import input.Keyboard;
-import math.Rect;
-import math.Seg;
-import math.Vec;
 
 public class Game {
 	
@@ -32,10 +27,8 @@ public class Game {
 	private static JPanel mainPanel;
 	
 	private static ArrayList<InputType> inputTypes=new ArrayList<>();
-	private static ArrayList<Entity> entities=new ArrayList<>();
-	private static ArrayList<Rect> universalCollitionBoxes=new ArrayList<>();
-	private static ArrayList<Seg> universalPlatforms=new ArrayList<>();
-	private static ArrayList<Ledge> hangPositions=new ArrayList<>();
+	private static Scene scene;
+	
 	
 	public static void main(String[] args) {
 		frame=new JFrame();
@@ -50,48 +43,16 @@ public class Game {
 		
 		SpriteLoader.loadSprites();
 		
-		new MainBackground();
-		new Player(Keyboard.getInstance(true), new Vec(-400, 300), 1);
-		new Player(Keyboard.getInstance(false), new Vec(400, 300), 2);
-		
+		Keyboard keyboard=Keyboard.getInstance(true);
+		scene=new TitleScene(keyboard);
+		scene.init();
+
 		runGameLoop();
 	}
 	
 	public static void addKeyboard(Keyboard toAdd) {
 		inputTypes.add(toAdd);
 		frame.addKeyListener(toAdd);
-	}
-	
-	public static void addEntity(Entity e) {
-		entities.add(e);
-	}
-	
-	public static void destroyEntity(Entity e) {
-		entities.remove(e);
-	}
-	
-	public static void addCollitionBox(Rect toAdd) {
-		universalCollitionBoxes.add(toAdd);
-	}
-	
-	public static void destroyCollisionBox(Rect toDestroy) {
-		universalCollitionBoxes.remove(toDestroy);
-	}
-	
-	public static void addPlatform(Seg toAdd) {
-		universalPlatforms.add(toAdd);
-	}
-	
-	public static void destroyPlatform(Seg toDestroy) {
-		universalPlatforms.remove(toDestroy);
-	}
-	
-	public static void addHangPos(Ledge toAdd) {
-		hangPositions.add(toAdd);
-	}
-	
-	public static void destroyHangPosition(Ledge toDestroy) {
-		hangPositions.remove(toDestroy);
 	}
 	
 	private static void runGameLoop() {
@@ -127,7 +88,11 @@ public class Game {
 	
 	private static void update() {
 		updateListeners();
-		updateEntities();
+		Scene newScene=scene.update();
+		if (newScene!=scene) {
+			scene=newScene;
+			newScene.init();
+		}
 	}
 	
 	private static void updateListeners() {
@@ -135,63 +100,16 @@ public class Game {
 			inputTypes.get(i).onUpate();
 	}
 	
-	private static void updateEntities() {
-		ArrayList<Entity> toUpdate=new ArrayList<>();
-		for (Entity e:entities) 
-			toUpdate.add(e);
-		for (Entity e:toUpdate)
-			e.update();
-	}
-	
 	private static void render() {
-		Camera cam=Camera.getInstance();
-		cam.preRender();
-		renderEntites();
-		BufferedImage result=cam.postRender();
-
+		BufferedImage result=scene.render();
+		
 		Graphics2D g=(Graphics2D) mainPanel.getGraphics();
 		g.drawImage(result, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
 		g.dispose();
 	}
 	
-	private static void renderEntites() {
-		ArrayList<Entity> toRender=new ArrayList<>();
-		for (Entity e:entities) 
-			toRender.add(e);
-		Collections.sort(toRender, (a, b)->{return Integer.compare(a.getRenderOrder(), b.getRenderOrder());});
-		for (Entity e:toRender)
-			e.render();
-		for (Rect rect:universalCollitionBoxes)
-			rect.render();
-		for (Seg s:universalPlatforms)
-			s.render();
-		for (Ledge v:hangPositions)
-			v.render();
+	public static Scene getScene() {
+		return scene;
 	}
 	
-	public static ArrayList<Entity> getEntities() {
-		ArrayList<Entity> toReturn=new ArrayList<>();
-		toReturn.addAll(entities);
-		return toReturn;
-	}
-
-	public static ArrayList<Rect> getCollisionBoxes() {
-		ArrayList<Rect> toReturn=new ArrayList<>();
-		toReturn.addAll(universalCollitionBoxes);
-		return toReturn;
-	}
-	
-	public static ArrayList<Seg> getPlatforms() {
-		ArrayList<Seg> toReturn=new ArrayList<>();
-		toReturn.addAll(universalPlatforms);
-		return toReturn;
-	}
-	
-	public static ArrayList<Ledge> getHangPositions() {
-		ArrayList<Ledge> toReturn=new ArrayList<>();
-		toReturn.addAll(hangPositions);
-		return toReturn;
-	}
-	
-
 }

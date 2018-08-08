@@ -515,7 +515,7 @@ public class Player extends Entity {
 	
 	private boolean wouldBeInGround(Vec newPos) {
 		Rect newCollisionBox=collisionBox.offsetBy(newPos);
-		for (Rect r:Game.getCollisionBoxes()) {
+		for (Rect r:Game.getScene().getCollisionBoxes()) {
 			if (newCollisionBox.intersects(r))
 				return true;
 		}
@@ -525,7 +525,7 @@ public class Player extends Entity {
 	private boolean hittingPlatform(Vec newPos) {
 		if (inputType.downMovementHeld()) return false;
 		Rect newCollusionBox=collisionBox.offsetBy(newPos);
-		for (Seg s:Game.getPlatforms()) {
+		for (Seg s:Game.getScene().getPlatforms()) {
 			if (newCollusionBox.intersectsSeg(s))
 				return true;
 		}
@@ -607,7 +607,7 @@ public class Player extends Entity {
 	}
 	
 	private void tryToHang() {
-		ArrayList<Ledge> hangPositions=Game.getHangPositions();
+		ArrayList<Ledge> hangPositions=Game.getScene().getHangPositions();
 		for (Ledge l:hangPositions) {
 			if (l.occupied) continue;
 			

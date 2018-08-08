@@ -44,7 +44,7 @@ public class GrabHitbox {
 	}
 	
 	public Entity runScan() {
-		ArrayList<Entity> entities=Game.getEntities();
+		ArrayList<Entity> entities=Game.getScene().getEntities();
 		for (Entity e:entities) {
 			if (e.processGrab(this))
 				return e;
