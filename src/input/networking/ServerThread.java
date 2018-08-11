@@ -48,7 +48,7 @@ public class ServerThread {
 			e.printStackTrace();
 		}
 		finally {
-			mainServer.onPlayerLeft();
+			mainServer.onPlayerLeft(this);
 			try {
 				socket.close();
 			} catch (IOException e) {

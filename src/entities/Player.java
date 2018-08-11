@@ -36,6 +36,7 @@ public class Player extends Entity {
 	private static final double rollVelocity=6;
 	private static final int fullGrabLength=120*3;
 	private static final int grabMashSkipFrames=15;
+	private static final int invincibilityAfterDying=300;
 	
 	
 	//animation constants
@@ -75,6 +76,7 @@ public class Player extends Entity {
 	private int hitLagLeft=0;
 	private int grabAttacksMade=0;
 	private int grabFreeCounter=0;
+	private int invincibiltyAfterDyingCounter=0;
 	private Entity grabbing;
 	private Entity grabbedBy;
 	
@@ -267,6 +269,7 @@ public class Player extends Entity {
 		}
 		framesUntilNextHang=Math.max(0, framesUntilNextHang-1);
 		hitLagLeft=Math.max(0, hitLagLeft-1);
+		invincibiltyAfterDyingCounter=Math.max(0, invincibiltyAfterDyingCounter-1);
 		switch(state) {
 			case AIRBORN:
 				if (grounded) {
@@ -672,7 +675,7 @@ public class Player extends Entity {
 			return;
 		
 		//if I am immune, ignore the damage
-		if (state==PlayerState.AIR_DODGING || state==PlayerState.SPOT_DODGING || state==PlayerState.ROLLING || (state==PlayerState.HANGING&&animationCounter<hangImmunityLen))
+		if (isInvincible())
 			return;
 		
 		if (state==PlayerState.SHIELDING) {
@@ -728,9 +731,21 @@ public class Player extends Entity {
 		setAnimation(PlayerState.AIRBORN);
 	}
 	
+	private boolean isInvincible() {
+		if (state==PlayerState.AIR_DODGING || state==PlayerState.SPOT_DODGING || state==PlayerState.ROLLING)
+			return true;
+		if ((state==PlayerState.HANGING&&animationCounter<hangImmunityLen) || invincibiltyAfterDyingCounter>0)
+			return true;
+		return false;
+	}
+
+	public Vec isCameraFocusable() {
+		return position;
+	}
+	
 	public void render() {
 		Sprite toDraw=null;
-		boolean drawAtFullAlpha=true;
+		boolean drawAtFullAlpha=!isInvincible();
 		switch(state) {
 			case AIRBORN:
 				if (velocity.y()>=0)
@@ -760,11 +775,9 @@ public class Player extends Entity {
 					toDraw=SpriteLoader.stickFigureRolling2;
 				break;
 			case SPOT_DODGING:
-				drawAtFullAlpha=false;
 				toDraw=SpriteLoader.stickFigureIdle;
 				break;
 			case AIR_DODGING:
-				drawAtFullAlpha=false;
 				if (velocity.y()>=0)
 					toDraw=SpriteLoader.stickFigureAirUp;
 				else
@@ -772,7 +785,6 @@ public class Player extends Entity {
 				break;
 			case HANGING:
 				toDraw=SpriteLoader.stickFigureHang;
-				drawAtFullAlpha=animationCounter>=hangImmunityLen;
 				break;
 			case ATTACKING:
 				toDraw=currentAttack.getCurrentSprite();
@@ -805,5 +817,6 @@ public class Player extends Entity {
 			SpriteLoader.shieldSprite.drawAlphaAndSize(position, 0.6, shieldScale, shieldScale);
 		}
 	}
+	
 	
 }

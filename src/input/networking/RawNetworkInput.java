@@ -8,15 +8,15 @@ public class RawNetworkInput implements RawInputType {
 	
 	public void setValues(String inputString) {
 		jump=inputString.charAt(0)=='1';
-		up=inputString.charAt(0)=='1';
-		down=inputString.charAt(0)=='1';
-		left=inputString.charAt(0)=='1';
-		right=inputString.charAt(0)=='1';
-		attack1=inputString.charAt(0)=='1';
-		attack2=inputString.charAt(0)=='1';
-		attackRecover=inputString.charAt(0)=='1';
-		shield=inputString.charAt(0)=='1';
-		grab=inputString.charAt(0)=='1';
+		up=inputString.charAt(1)=='1';
+		down=inputString.charAt(2)=='1';
+		left=inputString.charAt(3)=='1';
+		right=inputString.charAt(4)=='1';
+		attack1=inputString.charAt(5)=='1';
+		attack2=inputString.charAt(6)=='1';
+		attackRecover=inputString.charAt(7)=='1';
+		shield=inputString.charAt(8)=='1';
+		grab=inputString.charAt(9)=='1';
 	}
 
 	public boolean jumpMovementDown() {

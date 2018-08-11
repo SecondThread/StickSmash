@@ -3,6 +3,7 @@ package entities;
 import entities.attacks.Damage;
 import entities.attacks.GrabHitbox;
 import game.Game;
+import math.Vec;
 
 public abstract class Entity {
 
@@ -41,6 +42,10 @@ public abstract class Entity {
 	
 	public void onReleasedFromGrab() {
 		
+	}
+	
+	public Vec isCameraFocusable() {
+		return null;
 	}
 	
 }

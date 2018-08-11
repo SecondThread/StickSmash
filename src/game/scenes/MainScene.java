@@ -17,10 +17,26 @@ import math.Vec;
 
 public class MainScene extends Scene {
 
+	private Input[] inputs;
+	private Vec[] spawnPoints;
+	
+	public MainScene(Input[] inputs) {
+		this.inputs=inputs;
+	}
+	
 	public void init() {
 		new MainBackground();
-		new Player(new Input(Keyboard.getInstance(true)), new Vec(-400, 300), 1);
-		new Player(new Input(Keyboard.getInstance(false)), new Vec(400, 300), 2);
+		spawnPoints=new Vec[4];
+		spawnPoints[0]=new Vec(-400, 300);
+		spawnPoints[1]=new Vec(400, 300);
+		spawnPoints[2]=new Vec(0, 500);
+		spawnPoints[3]=new Vec(0, 100);
+		int nextSpawnPoint=0;
+		int team=1;
+		for (Input i:inputs) {
+			if (i==null) continue;
+			new Player(i, spawnPoints[nextSpawnPoint++], team++);
+		}
 		Camera.getInstance().setWorldWidth(3000);
 		Camera.getInstance().setPosition(Vec.zero);
 	}
@@ -57,6 +73,8 @@ public class MainScene extends Scene {
 			v.render();
 	}
 	
-	
+	public Rect getBoundingBox() {
+		return new Rect(new Vec(-1500, -1000), new Vec(1500, 1400));
+	}
 	
 }

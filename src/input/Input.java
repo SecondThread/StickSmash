@@ -21,6 +21,7 @@ public class Input {
 		this.rawInput=rawInput;
 		Game.addInput(this);
 	}
+	
 
 	public void onUpate() {
 		nowJump=rawInput.jumpMovementDown();
@@ -127,4 +128,8 @@ public class Input {
 		return nowGrab;
 	}
 	
+	public boolean hasMatchingRawInput(RawInputType toMatch) {
+		return rawInput==toMatch;
+	}
+
 }

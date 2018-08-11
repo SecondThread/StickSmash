@@ -13,6 +13,7 @@ import graphics.Camera;
 import graphics.Sprite;
 import graphics.SpriteLoader;
 import input.Input;
+import input.networking.RawNetworkInput;
 import input.networking.Server;
 import math.Rect;
 import math.Seg;
@@ -72,27 +73,52 @@ public class ChooseCharacterScene extends Scene {
 			e.update();
 		
 		for (int playerIndex=0; playerIndex<numPlayers; playerIndex++) {
-			if (inputs[playerIndex]==null) { 
-				playerSelectedButton[playerIndex]=-1;
-				continue;
-			}
-
 			Input in=inputs[playerIndex];
+			if (in==null) continue;
 			
-			if (!isReady[playerIndex])
-				handlePlayerButtonMovement(playerIndex, in);
+			int playerControlling;
+			if (isReady[playerIndex])
+				playerControlling=getFirstUnreadyCPU();
+			else
+				playerControlling=playerIndex;
 			
+			if (playerControlling!=-1)	
+				handlePlayerButtonMovement(playerControlling, in);
 			
 			if (in.attack1Pressed()) {
-				isReady[playerIndex]=true;
-			}
-			if (in.attack2Pressed()) {
-				if (isReady[playerIndex]) {
-					isReady[playerIndex]=false;
+				if (playerControlling==-1) {
+					return new MainScene(inputs);
 				}
 				else {
+					isReady[playerControlling]=true;
+				}
+			}
+			if (in.attack2Pressed()) {
+				if (!isReady[playerIndex]) {
 					server.closeServer();
 					return new TitleScene(inputs[0]);
+				}
+				else {
+					//if there are any unselected cpu's, remove and unselect the previous cpu
+					//if there are only selected cpu's, unselect the last cpu
+					//if there are not cpu's, unselect myself
+					boolean areCPUs=false;
+					for (boolean b:isCPU) if (b) areCPUs=true;
+					if (!areCPUs) {
+						isReady[playerIndex]=false;
+					}
+					else {
+						
+						int unreadyCPU=getFirstUnreadyCPU();
+						if (unreadyCPU!=-1) {
+							isCPU[unreadyCPU]=false;
+							playerSelectedButton[unreadyCPU]=-1;
+						}
+						int lastCPU=-1;
+						for (int i=0; i<numPlayers; i++) if (isCPU[i]) lastCPU=i;
+						if (lastCPU!=-1)
+							isReady[lastCPU]=false;
+					}
 				}
 			}
 			if (in.shieldPressed()) {
@@ -100,18 +126,35 @@ public class ChooseCharacterScene extends Scene {
 			}
 			if (in.attackRecoverPressed()) {
 				if (everyoneReady()) {
-					//create CPU
-				}
-				else {
-					//ignore it...
+					for (int i=0; i<numPlayers; i++) {
+						if (playerSelectedButton[i]==-1) {
+							System.out.println("Adding CPU as player "+i);
+							playerSelectedButton[i]=0;
+							isCPU[i]=true;
+							isReady[i]=false;
+							break;
+						}
+					}
 				}
 			}
+			
 		}
 		for (int i=0; i<6; i++) {
 			boolean selected=false;
 			for (int p=0; p<numPlayers; p++)
 				selected|=(playerSelectedButton[p]==i&&!isReady[p]);
 			chooseCharacterButtons[i].setSelected(selected);
+		}
+		RawNetworkInput playerWhoLeft=server.getPlayerWhoLeft();
+		while (playerWhoLeft!=null) {
+			removePlayer(playerWhoLeft);
+			playerWhoLeft=server.getPlayerWhoLeft();
+		}
+		RawNetworkInput playerWhoJoined=server.getPlayerWhoJoined();
+		while (playerWhoJoined!=null) {
+			System.out.println("Someone joined!");
+			addPlayer(playerWhoJoined);
+			playerWhoJoined=server.getPlayerWhoJoined();
 		}
 		return this;
 	}
@@ -182,6 +225,49 @@ public class ChooseCharacterScene extends Scene {
 				return false;
 		}
 		return true;
+	}
+	
+	private int getFirstUnreadyCPU() {
+		for (int i=0; i<numPlayers; i++) {
+			if (!isCPU[i]||isReady[i])
+				continue;
+			return i;
+		}
+		return -1;
+	}
+	
+	private void addPlayer(RawNetworkInput rawInput) {
+		//add to an empty spot, but if there are not, add to a cpu spot
+		int emptySpot=-1;
+		for (int i=0; i<numPlayers; i++) {
+			if (playerSelectedButton[i]==-1) {
+				emptySpot=i;
+				break;
+			}
+		}
+		
+		if (emptySpot==-1) {
+			for (int i=0; i<numPlayers; i++) {
+				if (isCPU[i]) {
+					emptySpot=i;
+					break;
+				}
+			}
+		}
+		
+		playerSelectedButton[emptySpot]=0;
+		isCPU[emptySpot]=false;
+		inputs[emptySpot]=new Input(rawInput);
+	}
+	
+	private void removePlayer(RawNetworkInput input) {
+		for (int i=0; i<numPlayers; i++) {
+			if (inputs[i]!=null&&inputs[i].hasMatchingRawInput(input)) {
+				inputs[i]=null;
+				isCPU[i]=false;
+				playerSelectedButton[i]=-1;
+			}
+		}
 	}
 	
 	private void handlePlayerButtonMovement(int playerIndex, Input in) {

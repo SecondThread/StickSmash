@@ -3,6 +3,7 @@ package input.networking;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Server {
 
@@ -32,6 +33,8 @@ public class Server {
 	
 	//package
 	volatile boolean shouldCloseFlag;
+	private ConcurrentLinkedQueue<ServerThread> newPlayerQueue=new ConcurrentLinkedQueue<>();
+	private ConcurrentLinkedQueue<ServerThread> leftPlayerQueue=new ConcurrentLinkedQueue<>();
 
 	public Server(int maxPlayers) {
 		this.maxPlayers=maxPlayers;
@@ -57,7 +60,8 @@ public class Server {
 					System.out.println("Waiting for client to join...");
 					Socket socket=serverSocket.accept();
 					System.out.println("Someone joined!");
-					new ServerThread(socket, this);
+					ServerThread newThread=new ServerThread(socket, this);
+					newPlayerQueue.add(newThread);
 					curPlayers++;
 				}
 			}
@@ -78,8 +82,20 @@ public class Server {
 		}
 	}
 	
-	public void onPlayerLeft() {
+	public void onPlayerLeft(ServerThread left) {
+		leftPlayerQueue.add(left);
 		curPlayers--;
 	}
 	
+	public RawNetworkInput getPlayerWhoLeft() {
+		if (leftPlayerQueue.isEmpty())
+			return null;
+		return leftPlayerQueue.remove().getRawInput();
+	}
+	
+	public RawNetworkInput getPlayerWhoJoined() {
+		if (newPlayerQueue.isEmpty())
+			return null;
+		return newPlayerQueue.remove().getRawInput();
+	}
 }

@@ -77,4 +77,19 @@ public class Rect {
 			SpriteLoader.collisionSquare.drawAlphaAndSize(center().add(drawOffset), 0.3, width()/100, height()/100);
 	}
 	
+	public double getLeft() {
+		return bottomLeft.x();
+	}
+	
+	public double getRight() {
+		return topRight.x();
+	}
+	
+	public double getBottom() {
+		return bottomLeft.y();
+	}
+	
+	public double getTop() {
+		return topRight.y();
+	}
 }

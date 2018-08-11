@@ -7,6 +7,7 @@ import entities.Entity;
 import game.Ledge;
 import math.Rect;
 import math.Seg;
+import math.Vec;
 
 public abstract class Scene {
 	
@@ -76,5 +77,9 @@ public abstract class Scene {
 		ArrayList<Ledge> toReturn=new ArrayList<>();
 		toReturn.addAll(hangPositions);
 		return toReturn;
+	}
+	
+	public Rect getBoundingBox() {
+		return new Rect(new Vec(-1000, -1000), new Vec(1000, 1000));
 	}
 }
