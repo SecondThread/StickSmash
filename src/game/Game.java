@@ -8,11 +8,10 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import game.scenes.MainScene;
 import game.scenes.Scene;
 import game.scenes.TitleScene;
 import graphics.SpriteLoader;
-import input.InputType;
+import input.Input;
 import input.Keyboard;
 
 public class Game {
@@ -26,7 +25,7 @@ public class Game {
 	private static JFrame frame;
 	private static JPanel mainPanel;
 	
-	private static ArrayList<InputType> inputTypes=new ArrayList<>();
+	private static ArrayList<Input> inputs=new ArrayList<>();
 	private static Scene scene;
 	
 	
@@ -43,16 +42,19 @@ public class Game {
 		
 		SpriteLoader.loadSprites();
 		
-		Keyboard keyboard=Keyboard.getInstance(true);
-		scene=new TitleScene(keyboard);
+		Input player1Input=new Input(Keyboard.getInstance(true));
+		scene=new TitleScene(player1Input);
 		scene.init();
 
 		runGameLoop();
 	}
 	
 	public static void addKeyboard(Keyboard toAdd) {
-		inputTypes.add(toAdd);
 		frame.addKeyListener(toAdd);
+	}
+	
+	public static void addInput(Input input) {
+		inputs.add(input);
 	}
 	
 	private static void runGameLoop() {
@@ -96,8 +98,8 @@ public class Game {
 	}
 	
 	private static void updateListeners() {
-		for (int i=0; i<inputTypes.size(); i++)
-			inputTypes.get(i).onUpate();
+		for (int i=0; i<inputs.size(); i++)
+			inputs.get(i).onUpate();
 	}
 	
 	private static void render() {

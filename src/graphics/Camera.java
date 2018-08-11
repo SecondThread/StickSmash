@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import entities.Entity;
 import game.Game;
@@ -11,8 +12,10 @@ import math.Vec;
 
 public class Camera extends Entity {
 	
-	static Camera instance;
-	static BufferedImage image;
+	private static Camera instance;
+	private BufferedImage image;
+	private ArrayList<DrawLogEntry> currentDrawLog;
+	private ArrayList<DrawLogEntry> lastDrawLog;
 	
 	private Vec position;
 	private Graphics2D g;
@@ -24,7 +27,6 @@ public class Camera extends Entity {
 	
 	private Camera() {
 		position=Vec.zero;
-		image=new BufferedImage(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT, BufferedImage.TYPE_INT_RGB);
 	}
 	
 	public void update() {
@@ -39,17 +41,26 @@ public class Camera extends Entity {
 	}
 	
 	public void preRender() {
+		image=new BufferedImage(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT, BufferedImage.TYPE_INT_RGB);
 		g=(Graphics2D) image.getGraphics();
 		g.setColor(Color.black);
 		g.fillRect(0, 0, Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT);
+		currentDrawLog=new ArrayList<>();
 	}
 	
 	public BufferedImage postRender() {
 		g.dispose();
+		lastDrawLog=currentDrawLog;
 		return image;
 	}
 	
-	public void draw(BufferedImage image, double xScale, double yScale, Vec worldPos, double alpha) {
+	public ArrayList<DrawLogEntry> getLastDrawLog() {
+		return lastDrawLog;
+	}
+	
+	public void draw(BufferedImage image, double xScale, double yScale, Vec worldPos, double alpha, int imageIndex) {
+		currentDrawLog.add(new DrawLogEntry(xScale, yScale, worldPos, alpha, imageIndex, cameraWorldWidth, position));
+		
 		double worldToScreenRatio=cameraWorldWidth/Game.SCREEN_WIDTH;
 		Vec screenPos=worldPos.sub(position).scale(1/worldToScreenRatio);
 		screenPos=new Vec(screenPos.x(), -screenPos.y());
@@ -64,6 +75,13 @@ public class Camera extends Entity {
 		g.setComposite(ac);
 		g.drawImage(image, (int)screenPos.x(), (int)screenPos.y(), (int)width, (int)height,
 				null);
+	}
+	
+	public void draw(DrawLogEntry oldEntry) {
+		BufferedImage image=Sprite.getSpriteFromIndex(oldEntry.getSpriteIndex()).getImage();
+		cameraWorldWidth=oldEntry.getWorldWidth();
+		position=oldEntry.getCameraPos();
+		draw(image, oldEntry.getXScale(), oldEntry.getYScale(), oldEntry.getWorldPos(), oldEntry.getAlpha(), oldEntry.getSpriteIndex());
 	}
 	
 }

@@ -46,6 +46,7 @@ public class SpriteLoader {
 	public static Sprite tutorialButton;
 	public static Sprite teamsButton;
 	public static Sprite selectedButtonIndicatorSprite;
+	public static Sprite stickFigureIconSprite;
 	
 	public static void loadSprites() {
 		backgroundSprite=new Sprite("StickSmashArt/Art/Background/TestBackground.png");
@@ -87,6 +88,7 @@ public class SpriteLoader {
 		joinGameButton=new Sprite("StickSmashArt/Art/UI/MenuScreen/JoinGameButton.png");
 		tutorialButton=new Sprite("StickSmashArt/Art/UI/MenuScreen/TutorialButton.png");
 		selectedButtonIndicatorSprite=new Sprite("StickSmashArt/Art/UI/MenuScreen/SelectedButtonIndicator.png");
+		stickFigureIconSprite=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/StickFigureIcon.png");
 		
 	}
 	

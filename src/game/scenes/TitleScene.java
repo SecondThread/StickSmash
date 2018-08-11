@@ -9,19 +9,19 @@ import entities.backgrounds.UIBackground;
 import game.ui.Button;
 import graphics.Camera;
 import graphics.SpriteLoader;
-import input.InputType;
+import input.Input;
 import math.Vec;
 
 public class TitleScene extends Scene {
 
-	private InputType inputType;
+	private Input input;
 	private Button[] buttons;
 	private int selectedButtonIndex=0;
 	private int selectedButtonCounter=0;
 	private final int maxSelectedButtonCounter=120;
 	
-	public TitleScene(InputType inputType) {
-		this.inputType=inputType;
+	public TitleScene(Input input) {
+		this.input=input;
 	}
 	
 	public void init() {
@@ -40,18 +40,20 @@ public class TitleScene extends Scene {
 		selectedButtonCounter++;
 		if (selectedButtonCounter>=maxSelectedButtonCounter)
 			selectedButtonCounter=0;
-		if (inputType.upMovementPressed())
+		if (input.upMovementPressed())
 			selectedButtonIndex=Math.max(0, selectedButtonIndex-1);
-		if (inputType.downMovementPressed())
+		if (input.downMovementPressed())
 			selectedButtonIndex=Math.min(buttons.length-1, selectedButtonIndex+1);
 		for (int i=0; i<buttons.length; i++)
 			buttons[i].setSelected(selectedButtonIndex==i);
-		if (inputType.attack1Pressed()) {
+		if (input.attack1Pressed()) {
 			switch(selectedButtonIndex) {
 				case 0:
-					return new MainScene();
+					return new ChooseCharacterScene(input);
 				case 1:
+					break;
 				case 2:
+					return new MultiplayerScene();
 				case 3:
 			}
 		}

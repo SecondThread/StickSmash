@@ -10,7 +10,7 @@ import game.Game;
 import game.Ledge;
 import graphics.Sprite;
 import graphics.SpriteLoader;
-import input.InputType;
+import input.Input;
 import math.Rect;
 import math.Seg;
 import math.Vec;
@@ -21,7 +21,7 @@ public class Player extends Entity {
 	private Vec velocity=Vec.zero;
 	private Rect collisionBox;
 	private Rect hangBoxLeft, hangBoxRight;
-	private InputType inputType;
+	private Input input;
 
 	//Constants
 	private static final Vec gravity=new Vec(0, -0.2), fastGravity=gravity.scale(2);
@@ -79,7 +79,7 @@ public class Player extends Entity {
 	private Entity grabbedBy;
 	
 	
-	public Player(InputType inputType, Vec position, int team) {
+	public Player(Input input, Vec position, int team) {
 		this.position=position;
 		facingRight=(position.x()<=0);
 		this.team=team;
@@ -91,7 +91,7 @@ public class Player extends Entity {
 		hangBoxRight=new Rect(new Vec(hangCloseX, hangLowY), new Vec(hangFarX, hangHighY));
 		hangBoxLeft=new Rect(new Vec(-hangFarX, hangLowY), new Vec(-hangCloseX, hangHighY));
 		position=new Vec(0, 500);
-		this.inputType=inputType;
+		this.input=input;
 		createAttacks();
 	}
 	
@@ -203,7 +203,7 @@ public class Player extends Entity {
 	
 	private void applyGravity() {
 		if (!grounded) {
-			if (inputType.downMovementHeld())
+			if (input.downMovementHeld())
 				velocity=velocity.add(fastGravity);
 			else
 				velocity=velocity.add(gravity);
@@ -213,13 +213,13 @@ public class Player extends Entity {
 	private void checkForInputAndMovement() {
 		if (state!=PlayerState.STUNNED&&state!=PlayerState.ROLLING&&state!=PlayerState.SPOT_DODGING&&state!=PlayerState.HANGING&&!(state==PlayerState.AIR_HIT&&hitLagLeft>0)&&
 				state!=PlayerState.ATTACKING&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED&&
-				inputType.jumpMovementPressed()&&grounded) {
+				input.jumpMovementPressed()&&grounded) {
 			velocity=new Vec(velocity.x(), jumpPower);
 			jumpFramesLeft=numJumpFrames;
 			setAnimation(PlayerState.AIRBORN);
 		}
 		if (state!=PlayerState.HANGING&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED&&
-				inputType.jumpMovementHeld()) {
+				input.jumpMovementHeld()) {
 			if (!grounded&&jumpFramesLeft>0) {
 				jumpFramesLeft--;
 				velocity=new Vec(velocity.x(), jumpPower);
@@ -230,7 +230,7 @@ public class Player extends Entity {
 		}
 		
 		//double jump
-		if (state!=PlayerState.AIR_DODGING&&!grounded&&state!=PlayerState.HANGING&&state!=PlayerState.AIR_ATTACKING&&inputType.jumpMovementPressed()
+		if (state!=PlayerState.AIR_DODGING&&!grounded&&state!=PlayerState.HANGING&&state!=PlayerState.AIR_ATTACKING&&input.jumpMovementPressed()
 				&&(!(state==PlayerState.AIR_HIT&&hitLagLeft>0))&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED&&
 				hasDoubleJump) {
 			hasDoubleJump=false;
@@ -242,7 +242,7 @@ public class Player extends Entity {
 		//movement
 		if (state!=PlayerState.STUNNED&&state!=PlayerState.SHIELDING&&state!=PlayerState.ROLLING&&state!=PlayerState.HANGING&&state!=PlayerState.ATTACKING
 				&&!(state==PlayerState.AIR_HIT&&hitLagLeft>0)&&state!=PlayerState.KNOCKED_DOWN&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED) {
-			if (inputType.leftMovementHeld()) {
+			if (input.leftMovementHeld()) {
 				if (grounded) {
 					if (state!=PlayerState.SPOT_DODGING)
 						velocity=velocity.add(Vec.left.scale(moveGroundSpeed));
@@ -250,7 +250,7 @@ public class Player extends Entity {
 				else
 					velocity=velocity.add(Vec.left.scale(moveAirSpeed));
 			}
-			if (inputType.rightMovementHeld()) {
+			if (input.rightMovementHeld()) {
 				if (grounded) {
 					if (state!=PlayerState.SPOT_DODGING)
 						velocity=velocity.add(Vec.right.scale(moveGroundSpeed));
@@ -272,7 +272,7 @@ public class Player extends Entity {
 				if (grounded) {
 					onLand();
 				}
-				else if (inputType.shieldHeld())
+				else if (input.shieldHeld())
 					setAnimation(PlayerState.AIR_DODGING);
 				else if (tryToAttack())
 					;
@@ -286,7 +286,7 @@ public class Player extends Entity {
 					setAnimation(PlayerState.AIRBORN);
 				else if (Math.abs(velocity.x())>=minSpeedToRun)
 					setAnimation(PlayerState.RUNNING);
-				else if (inputType.shieldHeld())
+				else if (input.shieldHeld())
 					setAnimation(PlayerState.SHIELDING);
 				else if (tryToAttack())
 					;
@@ -318,18 +318,18 @@ public class Player extends Entity {
 					setAnimation(PlayerState.STUNNED);
 					stunCounter=stunFrameAfterBrokenShield;
 				}
-				else if (!inputType.shieldHeld()) {
+				else if (!input.shieldHeld()) {
 					setAnimation(PlayerState.IDLE);
 				}
-				else if (inputType.leftMovementHeld()) {
+				else if (input.leftMovementHeld()) {
 					facingRight=false;
 					setAnimation(PlayerState.ROLLING);
 				}
-				else if (inputType.rightMovementHeld()) {
+				else if (input.rightMovementHeld()) {
 					facingRight=true;
 					setAnimation(PlayerState.ROLLING);
 				}
-				else if (inputType.downMovementHeld()) {
+				else if (input.downMovementHeld()) {
 					setAnimation(PlayerState.SPOT_DODGING);
 				}
 				break;
@@ -364,7 +364,7 @@ public class Player extends Entity {
 			case HANGING:
 				velocity=Vec.zero;
 				framesUntilNextHang=framesBetweenHangs;
-				if (inputType.downMovementHeld()||(inputType.leftMovementHeld()&&facingRight)||(inputType.rightMovementHeld()&&!facingRight)) {
+				if (input.downMovementHeld()||(input.leftMovementHeld()&&facingRight)||(input.rightMovementHeld()&&!facingRight)) {
 					//drop from the ledge
 					hasDoubleJump=true;
 					hasRecoveryMove=true;
@@ -376,7 +376,7 @@ public class Player extends Entity {
 					else
 						velocity=velocity.add(Vec.right.scale(3.5));
 				}
-				else if (inputType.jumpMovementPressed()) {
+				else if (input.jumpMovementPressed()) {
 					//jump up
 					hasDoubleJump=true;
 					hasRecoveryMove=true;
@@ -393,7 +393,7 @@ public class Player extends Entity {
 						velocity=velocity.add(Vec.left.scale(6));
 					}
 				}
-				else if (inputType.shieldHeld()) {
+				else if (input.shieldHeld()) {
 					//roll
 					setAnimation(PlayerState.ROLLING);
 					if (facingRight) {
@@ -405,7 +405,7 @@ public class Player extends Entity {
 					hangingOn.occupied=false;
 					hangingOn=null;
 				}
-				else if (animationCounter>=hangImmunityLen&&(inputType.leftMovementHeld()||inputType.rightMovementHeld())) {
+				else if (animationCounter>=hangImmunityLen&&(input.leftMovementHeld()||input.rightMovementHeld())) {
 					//just climb up
 					setAnimation(PlayerState.IDLE);
 					if (facingRight) {
@@ -465,7 +465,7 @@ public class Player extends Entity {
 						onLand();
 						setAnimation(PlayerState.KNOCKED_DOWN);
 					}
-					else if (inputType.shieldHeld())
+					else if (input.shieldHeld())
 						setAnimation(PlayerState.AIR_DODGING);
 					else 
 						tryToHang();
@@ -477,32 +477,32 @@ public class Player extends Entity {
 						setAnimation(PlayerState.AIR_HIT);
 				}
 				else {
-					if (inputType.leftMovementHeld()) {
+					if (input.leftMovementHeld()) {
 						facingRight=false;
 						setAnimation(PlayerState.ROLLING);
 					}
-					else if (inputType.rightMovementHeld()) {
+					else if (input.rightMovementHeld()) {
 						facingRight=true;
 						setAnimation(PlayerState.ROLLING);
 					}
-					else if (inputType.downMovementHeld()) {
+					else if (input.downMovementHeld()) {
 						setAnimation(PlayerState.IDLE);
 					}
 					else if (tryToAttack()) {
 						
 					}
-					else if (inputType.shieldHeld()) {
+					else if (input.shieldHeld()) {
 						setAnimation(PlayerState.SHIELDING);
 					}
 				}
 				break;
 			case GRABBING:
-				if (inputType.grabPressed())
+				if (input.grabPressed())
 					grabAttacksMade++;
 				break;
 			case BEING_GRABBED:
 				grabFreeCounter++;
-				if (inputType.grabPressed()) {
+				if (input.grabPressed()) {
 					grabFreeCounter+=grabMashSkipFrames;
 				}
 				if (grabFreeCounter>=fullGrabLength||!grounded) {
@@ -523,7 +523,7 @@ public class Player extends Entity {
 	}
 	
 	private boolean hittingPlatform(Vec newPos) {
-		if (inputType.downMovementHeld()) return false;
+		if (input.downMovementHeld()) return false;
 		Rect newCollusionBox=collisionBox.offsetBy(newPos);
 		for (Seg s:Game.getScene().getPlatforms()) {
 			if (newCollusionBox.intersectsSeg(s))
@@ -631,11 +631,11 @@ public class Player extends Entity {
 	}
 	
 	private boolean tryToAttack() {
-		if (inputType.attack1Pressed())
+		if (input.attack1Pressed())
 			startAttack(grounded?groundAttack1:airAttack1);
-		else if (inputType.attack2Pressed())
+		else if (input.attack2Pressed())
 			startAttack(grounded?groundAttack2:airAttack2);
-		else if (inputType.attackRecoverPressed()&&hasRecoveryMove)
+		else if (input.attackRecoverPressed()&&hasRecoveryMove)
 			startAttack(recoveryAttack);
 		else if (tryToGrab())
 			;
@@ -645,7 +645,7 @@ public class Player extends Entity {
 	}
 	
 	private boolean tryToGrab() {
-		if (grounded&&inputType.grabPressed()) {
+		if (grounded&&input.grabPressed()) {
 			grabAttacksMade=0;
 			Rect hitboxPos=new Rect(new Vec(20, -30), new Vec(120, 30));
 			if (!facingRight)

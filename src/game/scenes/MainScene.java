@@ -9,6 +9,7 @@ import entities.Player;
 import entities.backgrounds.MainBackground;
 import game.Ledge;
 import graphics.Camera;
+import input.Input;
 import input.Keyboard;
 import math.Rect;
 import math.Seg;
@@ -18,8 +19,8 @@ public class MainScene extends Scene {
 
 	public void init() {
 		new MainBackground();
-		new Player(Keyboard.getInstance(true), new Vec(-400, 300), 1);
-		new Player(Keyboard.getInstance(false), new Vec(400, 300), 2);
+		new Player(new Input(Keyboard.getInstance(true)), new Vec(-400, 300), 1);
+		new Player(new Input(Keyboard.getInstance(false)), new Vec(400, 300), 2);
 		Camera.getInstance().setWorldWidth(3000);
 		Camera.getInstance().setPosition(Vec.zero);
 	}

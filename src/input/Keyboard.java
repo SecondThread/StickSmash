@@ -6,15 +6,12 @@ import java.awt.event.KeyListener;
 import game.Game;
 import javafx.scene.input.KeyCode;
 
-public class Keyboard implements KeyListener, InputType {
+public class Keyboard implements KeyListener, RawInputType {
 	
 	static int MAX_KEY_VALUE=1000;
 	
 	static Keyboard instanceP1, instanceP2;
-	boolean[] pressed=new boolean[MAX_KEY_VALUE];
-	boolean[] firstDown=new boolean[MAX_KEY_VALUE];
-	boolean[] held=new boolean[MAX_KEY_VALUE];
-	boolean[] released=new boolean[MAX_KEY_VALUE];
+	boolean[] down=new boolean[MAX_KEY_VALUE];
 	
 	int upCode;
 	int downCode;
@@ -59,94 +56,56 @@ public class Keyboard implements KeyListener, InputType {
 			grabCode=KeyCode.V.getCode();
 		}
 	}
-	
-	public void onUpate() {
-		for (int key=0; key<MAX_KEY_VALUE; key++) {
-			firstDown[key]=false;
-			if (pressed[key]) {
-				pressed[key]=false;
-				firstDown[key]=true;
-				held[key]=true;
-			}
-			if (released[key]) {
-				released[key]=false;
-				held[key]=false;
-			}
-		}
-	}
 
 	public void keyPressed(KeyEvent e) {
-		if (held[e.getKeyCode()]) 
-			return;
-		pressed[e.getKeyCode()]=true;
+		down[e.getKeyCode()]=true;
 	}
 
 	public void keyReleased(KeyEvent e) {
-		released[e.getKeyCode()]=true;
+		down[e.getKeyCode()]=false;
 	}
 
 	public void keyTyped(KeyEvent e) {
 	}
 
-	public boolean jumpMovementPressed() {
-		return firstDown[upCode];
-	}
-	
-	public boolean jumpMovementHeld() {
-		return held[upCode];
+	public boolean jumpMovementDown() {
+		return down[upCode];
 	}
 
-	public boolean upMovementPressed() {
-		return firstDown[upCode];
-	}
-	
-	public boolean upMovementHeld() {
-		return held[upCode];
+	public boolean upMovementDown() {
+		return down[upCode];
 	}
 
-	public boolean downMovementPressed() {
-		return firstDown[downCode];
-	}
-	
-	public boolean downMovementHeld() {
-		return held[downCode];
+	public boolean downMovementDown() {
+		return down[downCode];
 	}
 
-	public boolean leftMovementPressed() {
-		return firstDown[leftCode];
-	}
-	
-	public boolean leftMovementHeld() {
-		return held[leftCode];
-	}
-	
-	public boolean rightMovementPressed() {
-		return firstDown[rightCode];
+	public boolean leftMovementDown() {
+		return down[leftCode];
 	}
 
-	public boolean rightMovementHeld() {
-		return held[rightCode];
+	public boolean rightMovementDown() {
+		return down[rightCode];
 	}
 
-	public boolean attack1Pressed() {
-		return held[attack1Code];
+	public boolean attack1Down() {
+		return down[attack1Code];
 	}
 
-	public boolean attack2Pressed() {
-		return held[attack2Code];
+	public boolean attack2Down() {
+		return down[attack2Code];
 	}
 
-	public boolean attackRecoverPressed() {
-		return held[attackRecoverCode];
+	public boolean attackRecoverDown() {
+		return down[attackRecoverCode];
 	}
 
-	public boolean shieldHeld() {
-		return held[shieldCode];
+	public boolean shieldDown() {
+		return down[shieldCode];
 	}
 
-
-	public boolean grabPressed() {
-		return firstDown[grabCode];
+	public boolean grabDown() {
+		return down[grabCode];
 	}
 
 }
