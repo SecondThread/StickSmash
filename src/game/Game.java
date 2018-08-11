@@ -37,9 +37,9 @@ public class Game {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
+		frame.setResizable(false);
 		frame.setTitle(GAME_NAME);
 		frame.setVisible(true);
-		
 		SpriteLoader.loadSprites();
 		
 		Input player1Input=new Input(Keyboard.getInstance(true));

@@ -1,30 +1,12 @@
 package input.networking;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
 
 	public static final int portNumber=58285;
-	
-	/*public static void main(String[] args) throws IOException {
-		System.out.println("Starting server on port "+portNumber+"...");
-		ServerSocket serverSocket=new ServerSocket(portNumber);
-		Socket clientSocket=serverSocket.accept();
-		System.out.println("Connected to a client");
-		PrintWriter toClient=new PrintWriter(clientSocket.getOutputStream());
-		BufferedReader fromClient=new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-		System.out.println(fromClient.readLine());
-		toClient.println("Hi from server.");
-		toClient.flush();
-		clientSocket.close();
-		serverSocket.close();
-	}*/
 	
 	/*
 	 * Client Server Interaction:

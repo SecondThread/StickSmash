@@ -47,6 +47,25 @@ public class SpriteLoader {
 	public static Sprite teamsButton;
 	public static Sprite selectedButtonIndicatorSprite;
 	public static Sprite stickFigureIconSprite;
+	public static Sprite emptySelectionIcon;
+	public static Sprite readyIcon;
+	public static Sprite pressJToStart;
+	public static Sprite cueballText;
+	
+	public static Sprite redCharacterBackground;
+	public static Sprite blueCharacterBackground;
+	public static Sprite greenCharacterBackground;
+	public static Sprite yellowCharacterBackground;
+	public static Sprite redSelector;
+	public static Sprite blueSelector;
+	public static Sprite greenSelector;
+	public static Sprite yellowSelector;
+	public static Sprite greySelector;
+	public static Sprite redNameBackground;
+	public static Sprite blueNameBackground;
+	public static Sprite greenNameBackground;
+	public static Sprite yellowNameBackground;
+	public static Sprite greyNameBackground;
 	
 	public static void loadSprites() {
 		backgroundSprite=new Sprite("StickSmashArt/Art/Background/TestBackground.png");
@@ -89,6 +108,25 @@ public class SpriteLoader {
 		tutorialButton=new Sprite("StickSmashArt/Art/UI/MenuScreen/TutorialButton.png");
 		selectedButtonIndicatorSprite=new Sprite("StickSmashArt/Art/UI/MenuScreen/SelectedButtonIndicator.png");
 		stickFigureIconSprite=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/StickFigureIcon.png");
+		emptySelectionIcon=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/EmptySelectionIcon.png");
+		readyIcon=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/ReadyIcon.png");
+		pressJToStart=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/PressJToStart.png");
+		cueballText=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/CueballText.png");
+		
+		redCharacterBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/RedCharacterBackground.png");
+		blueCharacterBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/BlueCharacterBackground.png");
+		greenCharacterBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/GreenCharacterBackground.png");
+		yellowCharacterBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/YellowCharacterBackground.png");
+		redSelector=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/RedSelector.png");
+		blueSelector=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/BlueSelector.png");
+		greenSelector=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/GreenSelector.png");
+		yellowSelector=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/YellowSelector.png");
+		greySelector=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/GreySelector.png");
+		redNameBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/RedNameBackground.png");
+		blueNameBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/BlueNameBackground.png");
+		greenNameBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/GreenNameBackground.png");
+		yellowNameBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/YellowNameBackground.png");
+		greyNameBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/GreyNameBackground.png");
 		
 	}
 	
