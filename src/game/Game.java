@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import game.scenes.Scene;
 import game.scenes.TitleScene;
+import game.scenes.TutorialScene;
 import graphics.SpriteLoader;
 import input.Input;
 import input.Keyboard;

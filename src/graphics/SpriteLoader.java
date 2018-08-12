@@ -36,6 +36,12 @@ public class SpriteLoader {
 	public static Sprite doubleJumpParticleSprite;
 	public static Sprite stunParticleSprite;
 	public static Sprite runTurnParticleSprite;
+	public static Sprite[] airSmokeSprites;
+	public static Sprite explosionRoundedSprite;
+	public static Sprite explosionRoundedVerticalSprite;
+	public static Sprite keyPress1Sprite;
+	public static Sprite keyPress2Sprite;
+	public static Sprite keyPressedIndicatorSprite;
 	
 	//UI sprites
 	public static Sprite shieldSprite;
@@ -66,6 +72,29 @@ public class SpriteLoader {
 	public static Sprite greenNameBackground;
 	public static Sprite yellowNameBackground;
 	public static Sprite greyNameBackground;
+	
+	public static Sprite redDot;
+	public static Sprite blueDot;
+	public static Sprite greenDot;
+	public static Sprite yellowDot;
+	public static Sprite greyDot;
+	public static Sprite blackDot;
+	
+	public static Sprite red0;
+	public static Sprite red1;
+	public static Sprite red2;
+	public static Sprite red3;
+	public static Sprite red4;
+	public static Sprite red5;
+	public static Sprite red6;
+	public static Sprite red7;
+	public static Sprite red8;
+	public static Sprite red9;
+	public static Sprite redPercent;
+	public static Sprite gameOverText;
+	
+	//tutorial
+	public static Sprite tutorialBackgroundSprite;
 	
 	public static void loadSprites() {
 		backgroundSprite=new Sprite("StickSmashArt/Art/Background/TestBackground.png");
@@ -98,6 +127,16 @@ public class SpriteLoader {
 		doubleJumpParticleSprite=new Sprite("StickSmashArt/Art/Particles/DoubleJumpParticle.png");
 		stunParticleSprite=new Sprite("StickSmashArt/Art/Particles/StunParticle.png");
 		runTurnParticleSprite=new Sprite("StickSmashArt/Art/Particles/RunTurnParticle.png");
+		airSmokeSprites=new Sprite[4];
+		airSmokeSprites[0]=new Sprite("StickSmashArt/Art/Particles/AirSmoke1.png");
+		airSmokeSprites[1]=new Sprite("StickSmashArt/Art/Particles/AirSmoke2.png");
+		airSmokeSprites[2]=new Sprite("StickSmashArt/Art/Particles/AirSmoke3.png");
+		airSmokeSprites[3]=new Sprite("StickSmashArt/Art/Particles/AirSmoke4.png");
+		explosionRoundedSprite=new Sprite("StickSmashArt/Art/Particles/ExplosionRounded.png");
+		explosionRoundedVerticalSprite=new Sprite("StickSmashArt/Art/Particles/ExplosionRoundedVertical.png");
+		keyPress1Sprite=new Sprite("StickSmashArt/Art/Particles/Button1Icon.png");
+		keyPress2Sprite=new Sprite("StickSmashArt/Art/Particles/Button2Icon.png");
+		keyPressedIndicatorSprite=new Sprite("StickSmashArt/Art/Particles/KeyPressedParticle.png");
 		
 		shieldSprite=new Sprite("StickSmashArt/Art/UI/Shield.png");
 		collisionSquare=new Sprite("StickSmashArt/Art/UI/Collision100x100Square.png");
@@ -128,6 +167,26 @@ public class SpriteLoader {
 		yellowNameBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/YellowNameBackground.png");
 		greyNameBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/GreyNameBackground.png");
 		
+		redDot=new Sprite("StickSmashArt/Art/UI/GameHUD/RedDot.png");
+		blueDot=new Sprite("StickSmashArt/Art/UI/GameHUD/BlueDot.png");
+		greenDot=new Sprite("StickSmashArt/Art/UI/GameHUD/GreenDot.png");
+		yellowDot=new Sprite("StickSmashArt/Art/UI/GameHUD/YellowDot.png");
+		greyDot=new Sprite("StickSmashArt/Art/UI/GameHUD/GreyDot.png");
+		blackDot=new Sprite("StickSmashArt/Art/UI/GameHUD/BlackDot.png");
+		red0=new Sprite("StickSmashArt/Art/UI/GameHUD/text/red/0.png");
+		red1=new Sprite("StickSmashArt/Art/UI/GameHUD/text/red/1.png");
+		red2=new Sprite("StickSmashArt/Art/UI/GameHUD/text/red/2.png");
+		red3=new Sprite("StickSmashArt/Art/UI/GameHUD/text/red/3.png");
+		red4=new Sprite("StickSmashArt/Art/UI/GameHUD/text/red/4.png");
+		red5=new Sprite("StickSmashArt/Art/UI/GameHUD/text/red/5.png");
+		red6=new Sprite("StickSmashArt/Art/UI/GameHUD/text/red/6.png");
+		red7=new Sprite("StickSmashArt/Art/UI/GameHUD/text/red/7.png");
+		red8=new Sprite("StickSmashArt/Art/UI/GameHUD/text/red/8.png");
+		red9=new Sprite("StickSmashArt/Art/UI/GameHUD/text/red/9.png");
+		redPercent=new Sprite("StickSmashArt/Art/UI/GameHUD/text/red/Percent.png");
+		gameOverText=new Sprite("StickSmashArt/Art/UI/GameHUD/text/GameText.png");
+		
+		tutorialBackgroundSprite=new Sprite("StickSmashArt/Art/Tutorial/TutorialBackground.png");
 	}
 	
 }

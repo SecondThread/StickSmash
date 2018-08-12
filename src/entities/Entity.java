@@ -48,4 +48,12 @@ public abstract class Entity {
 		return null;
 	}
 	
+	public void renderUI() {
+		
+	}
+	
+	public boolean isAlive() {
+		return false;
+	}
+	
 }

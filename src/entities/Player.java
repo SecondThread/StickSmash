@@ -1,6 +1,7 @@
 package entities;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import entities.attacks.Attack;
 import entities.attacks.Damage;
@@ -8,9 +9,11 @@ import entities.attacks.GrabHitbox;
 import entities.particles.Particle;
 import game.Game;
 import game.Ledge;
+import graphics.Camera;
 import graphics.Sprite;
 import graphics.SpriteLoader;
 import input.Input;
+import math.Lerp;
 import math.Rect;
 import math.Seg;
 import math.Vec;
@@ -37,7 +40,9 @@ public class Player extends Entity {
 	private static final int fullGrabLength=120*3;
 	private static final int grabMashSkipFrames=15;
 	private static final int invincibilityAfterDying=300;
-	
+	private static final int framesBetweenGrabIconSwitch=30;
+	private static final int noShieldAfterRollOrDodge=40;
+	private static final Vec grabIconOffset=Vec.up.scale(120);
 	
 	//animation constants
 	private static final int runningAnimLen=40;
@@ -69,6 +74,8 @@ public class Player extends Entity {
 	private int shield=maxShield;
 	private int stunCounter=0;
 	private int framesUntilNextHang=0;
+	private int framesUntilNextAttack=0;
+	private int framesUntilNextShield=0;
 	private Ledge hangingOn=null;
 	private Attack currentAttack;
 	private int team;
@@ -76,13 +83,18 @@ public class Player extends Entity {
 	private int hitLagLeft=0;
 	private int grabAttacksMade=0;
 	private int grabFreeCounter=0;
-	private int invincibiltyAfterDyingCounter=0;
+	private int grabIconCounter=0;
+	private int invincibilityAfterDyingCounter=0;
 	private Entity grabbing;
 	private Entity grabbedBy;
+	int livesLeft=3;
+	private double percentAcrossScreenToRenderUI;
+	private boolean showHighlight;
 	
-	
-	public Player(Input input, Vec position, int team) {
+	//team colors: 0: Grey, 1-4: red, blue, green, yellow
+	public Player(Input input, Vec position, int team, double percentAcrossScreenToRenderUI, boolean showHighlight) {
 		this.position=position;
+		this.percentAcrossScreenToRenderUI=percentAcrossScreenToRenderUI;
 		facingRight=(position.x()<=0);
 		this.team=team;
 		collisionBox=new Rect(new Vec(-40, -70), new Vec(40, 70));
@@ -94,6 +106,7 @@ public class Player extends Entity {
 		hangBoxLeft=new Rect(new Vec(-hangFarX, hangLowY), new Vec(-hangCloseX, hangHighY));
 		position=new Vec(0, 500);
 		this.input=input;
+		this.showHighlight=showHighlight;
 		createAttacks();
 	}
 	
@@ -101,7 +114,7 @@ public class Player extends Entity {
 		Damage damage1, damage2;
 		
 		//GROUND ATTACK 1
-		groundAttack1=new Attack(false);
+		groundAttack1=new Attack(false, 20);
 		groundAttack1.addPart(20, SpriteLoader.stickFigureKick1);
 		groundAttack1.addPart(20, SpriteLoader.stickFigureKick2);
 		groundAttack1.addPart(20, SpriteLoader.stickFigureKick3);
@@ -113,7 +126,7 @@ public class Player extends Entity {
 		groundAttack1.addDamageFrame(40, damage2);
 		
 		//GROUND ATTACK 2
-		groundAttack2=new Attack(false);
+		groundAttack2=new Attack(false, 40);
 		groundAttack2.addPart(40, SpriteLoader.stickFigureDab1);
 		groundAttack2.addPart(30, SpriteLoader.stickFigureDab2);
 		Rect groundAttack2Rect1=new Rect(new Vec(30, 0), new Vec(60, 30));
@@ -124,7 +137,7 @@ public class Player extends Entity {
 		groundAttack2.addDamageFrame(55, damage1);
 		
 		//AIR ATTACK 1
-		airAttack1=new Attack(true);
+		airAttack1=new Attack(true, 25);
 		airAttack1.addPart(40, SpriteLoader.stickFigureAirSpike);
 		Rect airAttack1Rect=new Rect(new Vec(-20, -100), new Vec(80, 30));
 		damage1=new Damage(airAttack1Rect, 12, new Vec(5, -10), 60, team);
@@ -132,7 +145,7 @@ public class Player extends Entity {
 		airAttack1.addDamageFrame(30, damage1);
 		
 		//AIR ATTACK 2
-		airAttack2=new Attack(true);
+		airAttack2=new Attack(true, 25);
 		airAttack2.addPart(25, SpriteLoader.stickFigureAirSlice1);
 		airAttack2.addPart(25, SpriteLoader.stickFigureAirSlice2);
 		Rect airAttack2Rect1=new Rect(new Vec(-80, 0), new Vec(80, 100));
@@ -143,7 +156,7 @@ public class Player extends Entity {
 		airAttack2.addDamageFrame(36, damage2);
 		
 		//RECOVERY ATTACK
-		recoveryAttack=new Attack(false);
+		recoveryAttack=new Attack(false, 0);
 		recoveryAttack.markAsRecoveryAttack();
 		recoveryAttack.addPart(20, SpriteLoader.stickFigureJetpack2);
 		recoveryAttack.addPart(40, SpriteLoader.stickFigureJetpack1);
@@ -160,23 +173,27 @@ public class Player extends Entity {
 		recoveryAttack.addDamageFrame(60, damage1);
 		
 		//GRAB MISS ATTACK
-		grabMissAttack=new Attack(false);
+		grabMissAttack=new Attack(false, 60);
 		grabMissAttack.addPart(60, SpriteLoader.stickFigureGrab);
 		
 		//GRAB ATTACK
-		grabAttack=new Attack(false);
+		grabAttack=new Attack(false, 10);
 		grabAttack.addPart(grabAttackAnimLen, SpriteLoader.stickFigureGrabRelease);
 		//damage updated when grab is released because it differs depending on
 		//the number of times they hit the grab button
 	}
 	
 	public void update() {
+		if (!isAlive())
+			return;
+		
 		applyGravity();
 		applyFriction();
 		checkForInputAndMovement();
 		
 		moveToCollision();
 		updateGrounded();
+		checkIfDead();
 		
 		collisionBox.setDrawOffeset(position);
 		hangBoxLeft.setDrawOffeset(position);
@@ -187,6 +204,8 @@ public class Player extends Entity {
 		grounded=wouldBeInGround(position.add(Vec.down.scale(0.1)));
 		if (!hittingPlatform(position)&&hittingPlatform(position.add(Vec.down.scale(0.1))))
 			grounded=true;
+		if (grounded)
+			hasRecoveryMove=true;
 	}
 	
 	private void applyFriction() {
@@ -269,14 +288,18 @@ public class Player extends Entity {
 		}
 		framesUntilNextHang=Math.max(0, framesUntilNextHang-1);
 		hitLagLeft=Math.max(0, hitLagLeft-1);
-		invincibiltyAfterDyingCounter=Math.max(0, invincibiltyAfterDyingCounter-1);
+		invincibilityAfterDyingCounter=Math.max(0, invincibilityAfterDyingCounter-1);
+		framesUntilNextAttack=Math.max(0, framesUntilNextAttack-1);
+		framesUntilNextShield=Math.max(0, framesUntilNextShield-1);
 		switch(state) {
 			case AIRBORN:
 				if (grounded) {
 					onLand();
 				}
-				else if (input.shieldHeld())
+				else if (input.shieldHeld()&&framesUntilNextShield==0) {
 					setAnimation(PlayerState.AIR_DODGING);
+					framesUntilNextShield=airDodgeAnimLen+noShieldAfterRollOrDodge;
+				}
 				else if (tryToAttack())
 					;
 				else {
@@ -289,7 +312,7 @@ public class Player extends Entity {
 					setAnimation(PlayerState.AIRBORN);
 				else if (Math.abs(velocity.x())>=minSpeedToRun)
 					setAnimation(PlayerState.RUNNING);
-				else if (input.shieldHeld())
+				else if (input.shieldHeld()&&framesUntilNextShield==0)
 					setAnimation(PlayerState.SHIELDING);
 				else if (tryToAttack())
 					;
@@ -327,13 +350,16 @@ public class Player extends Entity {
 				else if (input.leftMovementHeld()) {
 					facingRight=false;
 					setAnimation(PlayerState.ROLLING);
+					framesUntilNextShield=rollingAnimLen+noShieldAfterRollOrDodge;
 				}
 				else if (input.rightMovementHeld()) {
 					facingRight=true;
 					setAnimation(PlayerState.ROLLING);
+					framesUntilNextShield=rollingAnimLen+noShieldAfterRollOrDodge;
 				}
 				else if (input.downMovementHeld()) {
 					setAnimation(PlayerState.SPOT_DODGING);
+					framesUntilNextShield=spotDodgeAnimLen+noShieldAfterRollOrDodge;
 				}
 				break;
 			case STUNNED:
@@ -430,8 +456,10 @@ public class Player extends Entity {
 				break;
 			case ATTACKING:
 				currentAttack.update(grounded, facingRight, position);
-				if (currentAttack.isOver())
+				if (currentAttack.isOver()) {
+					framesUntilNextAttack=currentAttack.getNoAttackAfterLenght();
 					setAnimation(PlayerState.IDLE);
+				}
 				else {
 					if (!grounded)
 						setAnimation(PlayerState.AIR_ATTACKING);
@@ -444,10 +472,10 @@ public class Player extends Entity {
 			case AIR_ATTACKING:
 				currentAttack.update(grounded, facingRight, position);
 				if (currentAttack.isRecoveryAttack()) hasRecoveryMove=false;
-				if (currentAttack.isOver())
+				if (currentAttack.isOver()) {
+					framesUntilNextAttack=currentAttack.getNoAttackAfterLenght();
 					setAnimation(PlayerState.AIRBORN);
-				if (currentAttack.isOver())
-					setAnimation(PlayerState.IDLE);
+				}
 				else {
 					Vec newVel=currentAttack.getVelocity(facingRight);
 					if (newVel!=null)
@@ -461,6 +489,10 @@ public class Player extends Entity {
 					if (grounded) {
 						onLand();
 						setAnimation(PlayerState.KNOCKED_DOWN);
+					}
+					else {
+						if (velocity.mag()>7&&hitLagLeft%5==1)
+							Particle.createSmokeParticle(position);
 					}
 				}
 				else {
@@ -500,13 +532,18 @@ public class Player extends Entity {
 				}
 				break;
 			case GRABBING:
-				if (input.grabPressed())
+				grabIconCounter++;
+				if (input.grabPressed()) {
 					grabAttacksMade++;
+					Particle.createKeyPressedParticle(position.add(grabIconOffset));
+				}
 				break;
 			case BEING_GRABBED:
 				grabFreeCounter++;
+				grabIconCounter++;
 				if (input.grabPressed()) {
 					grabFreeCounter+=grabMashSkipFrames;
+					Particle.createKeyPressedParticle(position.add(grabIconOffset));
 				}
 				if (grabFreeCounter>=fullGrabLength||!grounded) {
 					grabbedBy.releaseGrabbedEntityRequest();
@@ -634,6 +671,9 @@ public class Player extends Entity {
 	}
 	
 	private boolean tryToAttack() {
+		if (framesUntilNextAttack>0)
+			return false;
+		
 		if (input.attack1Pressed())
 			startAttack(grounded?groundAttack1:airAttack1);
 		else if (input.attack2Pressed())
@@ -656,6 +696,7 @@ public class Player extends Entity {
 			hitboxPos=hitboxPos.offsetBy(position);
 			Vec grabPosition=position.add(facingRight?Vec.right.scale(120):Vec.left.scale(120));
 			GrabHitbox hitbox=new GrabHitbox(this, hitboxPos, team, facingRight, grabPosition);
+			grabIconCounter=0;
 			Entity hit=hitbox.runScan();
 			if (hit==null) {
 				startAttack(grabMissAttack);
@@ -669,6 +710,7 @@ public class Player extends Entity {
 		}
 		return false;
 	}
+	
 	
 	public void processDamage(Damage damage) {
 		if (damage.getTeam()==team)
@@ -707,6 +749,7 @@ public class Player extends Entity {
 			grabbedBy=grab.getGrabber();
 			facingRight=grab.getGrabberFacingRight();
 			position=grab.getGrabPosition();
+			grabIconCounter=0;
 			return true;
 		}
 		return false;
@@ -734,16 +777,111 @@ public class Player extends Entity {
 	private boolean isInvincible() {
 		if (state==PlayerState.AIR_DODGING || state==PlayerState.SPOT_DODGING || state==PlayerState.ROLLING)
 			return true;
-		if ((state==PlayerState.HANGING&&animationCounter<hangImmunityLen) || invincibiltyAfterDyingCounter>0)
+		if ((state==PlayerState.HANGING&&animationCounter<hangImmunityLen) || invincibilityAfterDyingCounter>0)
 			return true;
 		return false;
+	}
+
+	private void checkIfDead() {
+		Rect sceneBox=Game.getScene().getBoundingBox();
+		if (!sceneBox.contains(position)) {
+			if (position.x()<=sceneBox.getLeft()) {
+				Particle.createHorizontalExplosionParticle(position, false);
+			}
+			if (position.x()>=sceneBox.getRight()) {
+				Particle.createHorizontalExplosionParticle(position, true);
+			}
+			if (position.y()<=sceneBox.getBottom()) {
+				Particle.createVerticleExplosionParticle(position, false);
+			}
+			if (position.y()>=sceneBox.getTop()) {
+				Particle.createVerticleExplosionParticle(position, true);
+			}
+			livesLeft--;
+				
+			if (isAlive()) {
+				Vec[] spawnPoints=Game.getScene().getSpawnPoints();
+				Random r=new Random();
+				position=spawnPoints[r.nextInt(spawnPoints.length)];
+				velocity=Vec.zero;
+				invincibilityAfterDyingCounter=invincibilityAfterDying;
+				setAnimation(PlayerState.IDLE);
+			}
+		}
 	}
 
 	public Vec isCameraFocusable() {
 		return position;
 	}
 	
+	public boolean isAlive() {
+		return livesLeft>0;
+	}
+	
+	public void setLives(int livesLeft) {
+		this.livesLeft=livesLeft;
+	}
+	
+	public void renderUI() {
+		Camera.getInstance().pushState();
+		Camera.getInstance().setWorldWidth(1000);
+		Camera.getInstance().setPosition(Vec.zero);
+		
+		Sprite characterFace=SpriteLoader.stickFigureIconSprite;
+		Vec centerUIPosition=Lerp.lerp(new Vec(-300, -220), new Vec(300, -220), percentAcrossScreenToRenderUI);
+		centerUIPosition=centerUIPosition.add(new Vec(-50, 0));
+		characterFace.drawAlphaAndSize(centerUIPosition, isAlive()?1:0.25, 0.2, 0.2);
+		
+		Sprite[] textBackground= {SpriteLoader.greyNameBackground, SpriteLoader.redNameBackground, SpriteLoader.blueNameBackground, 
+				SpriteLoader.greenNameBackground, SpriteLoader.yellowNameBackground};
+		Vec nameOffset=new Vec(80, -30);
+		textBackground[team].drawAlphaAndSize(centerUIPosition.add(nameOffset), 1, 0.3, 0.3);
+		SpriteLoader.cueballText.drawAlphaAndSize(centerUIPosition.add(nameOffset.add(Vec.down.scale(10))), 1, 0.2, 0.2);
+		
+		Sprite[] lifeDot= {SpriteLoader.greyDot, SpriteLoader.redDot, SpriteLoader.blueDot, SpriteLoader.greenDot, SpriteLoader.yellowDot};
+		double lifeDotOffset=23;
+		Vec startDrawingDotsPos=centerUIPosition.add(new Vec(-lifeDotOffset, -50));
+		for (int i=0; i<livesLeft; i++) {
+			SpriteLoader.blackDot.drawAlphaAndSize(startDrawingDotsPos, 1, .2, .2);
+			lifeDot[team].drawAlphaAndSize(startDrawingDotsPos, 1, .25, .25);
+			startDrawingDotsPos=startDrawingDotsPos.add(Vec.right.scale(lifeDotOffset));
+		}
+		
+		if (isAlive()) {
+			Vec numbersPosition=centerUIPosition.add(new Vec(60, 10));
+			double textOffset=35;
+			Sprite[] numbers= {
+				SpriteLoader.red0, 
+				SpriteLoader.red1, 
+				SpriteLoader.red2, 
+				SpriteLoader.red3, 
+				SpriteLoader.red4, 
+				SpriteLoader.red5, 
+				SpriteLoader.red6, 
+				SpriteLoader.red7, 
+				SpriteLoader.red8, 
+				SpriteLoader.red9, 
+				};
+			for (char c:(""+((int)damagePercent)).toCharArray()) {
+				Sprite toDraw=numbers[c-'0'];
+				toDraw.drawAlphaAndSize(numbersPosition, 1, 0.2, 0.2);
+				numbersPosition=numbersPosition.add(Vec.right.scale(textOffset));
+			}
+			SpriteLoader.redPercent.drawAlphaAndSize(numbersPosition, 1, 0.2, 0.2);
+		}
+		
+		Camera.getInstance().popState();
+	}
+	
 	public void render() {
+		if (!isAlive()) 
+			return;
+		
+		Sprite[] highlight= {SpriteLoader.redCharacterBackground, SpriteLoader.redCharacterBackground, SpriteLoader.blueCharacterBackground, 
+				SpriteLoader.greenCharacterBackground, SpriteLoader.yellowCharacterBackground};
+		if (showHighlight) {
+			highlight[team].drawAlphaAndSize(position, 0.8, 0.6, 0.6);
+		}
 		Sprite toDraw=null;
 		boolean drawAtFullAlpha=!isInvincible();
 		switch(state) {
@@ -800,9 +938,17 @@ public class Player extends Entity {
 				break;
 			case GRABBING:
 				toDraw=SpriteLoader.stickFigureGrab;
+				if ((grabIconCounter/framesBetweenGrabIconSwitch)%2==0)
+					SpriteLoader.keyPress1Sprite.drawAlphaAndSize(position.add(grabIconOffset), 1, 0.4, 0.4);
+				else
+					SpriteLoader.keyPress2Sprite.drawAlphaAndSize(position.add(grabIconOffset), 1, 0.4, 0.4);
 				break;
 			case BEING_GRABBED:
 				toDraw=SpriteLoader.stickFigureGrabbed;
+				if ((grabIconCounter/framesBetweenGrabIconSwitch)%2==0)
+					SpriteLoader.keyPress1Sprite.drawAlphaAndSize(position.add(grabIconOffset), 1, 0.4, 0.4);
+				else
+					SpriteLoader.keyPress2Sprite.drawAlphaAndSize(position.add(grabIconOffset), 1, 0.4, 0.4);
 				break;
 			default:
 				throw new Error("invalid render state: "+state);	

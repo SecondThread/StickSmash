@@ -6,58 +6,36 @@ import java.util.Collections;
 
 import entities.Entity;
 import entities.Player;
-import entities.backgrounds.MainBackground;
+import entities.backgrounds.TutorialBackground;
 import game.Game;
 import game.Ledge;
 import graphics.Camera;
 import graphics.SpriteLoader;
 import input.Input;
+import input.Keyboard;
 import math.Rect;
 import math.Seg;
 import math.Vec;
 
-public class MainScene extends Scene {
+public class TutorialScene extends Scene {
 
-	private Input[] inputs;
 	private static final int maxGamOverCounter=60;
 
-	private boolean[] showHighlights;
 	private Vec[] spawnPoints;
 	private int gameOverCounter=0;
 	private int oldUpdatesPerSecond;
 	private boolean gameOver=false;
-	private Scene oldChooseCharacterScene;
-	
-	public MainScene(Input[] inputs, boolean[] showHighlights, Scene oldChooseCharacterScene) {
-		this.inputs=inputs;
-		this.showHighlights=showHighlights;
-		this.oldChooseCharacterScene=oldChooseCharacterScene;
-	}
+	private Player player;
 	
 	public void init() {
-		new MainBackground();
-		spawnPoints=new Vec[4];
-		spawnPoints[0]=new Vec(-400, 300);
-		spawnPoints[1]=new Vec(400, 300);
-		spawnPoints[2]=new Vec(0, 500);
-		spawnPoints[3]=new Vec(0, 100);
-		int nextSpawnPoint=0;
-		int team=1;
-		int numPlayers=0;
-		int playerIndex=0;
-		for (Input i:inputs)
-			if (i!=null)
-				numPlayers++;
-		for (Input i:inputs) {
-			if (i==null) continue;
-			double percentAcross=numPlayers==1?0.5:(nextSpawnPoint/(double)(numPlayers-1));
-			new Player(i, spawnPoints[nextSpawnPoint++], team++, percentAcross, showHighlights[playerIndex]);
-			playerIndex++;
-		}
-		Camera.getInstance().setWorldWidth(3000);
-		Camera.getInstance().setPosition(Vec.zero);
+		spawnPoints=new Vec[] {new Vec(-1500, -100)};
+		new TutorialBackground();
+		player=new Player(new Input(Keyboard.getInstance(true)), spawnPoints[0], 1, 0.5, false);
+		Camera.getInstance().setPosition(player.isCameraFocusable());
+		Camera.getInstance().setWorldWidth(1000);
+		player.setLives(1);
 	}
-	
+
 	public Scene update() {
 		updateEntities();
 		int count=0;
@@ -76,7 +54,7 @@ public class MainScene extends Scene {
 			gameOverCounter++;
 			if (gameOverCounter>=maxGamOverCounter) {
 				Game.updatesPerSecond=oldUpdatesPerSecond;
-				return oldChooseCharacterScene;
+				return new TitleScene(new Input(Keyboard.getInstance(true)));
 			}
 		}
 		return this;
@@ -120,12 +98,12 @@ public class MainScene extends Scene {
 			e.renderUI();
 	}
 	
-	public Rect getBoundingBox() {
-		return new Rect(new Vec(-1500, -1000), new Vec(1500, 1400));
-	}
-	
 	public Vec[] getSpawnPoints() {
 		return spawnPoints;
 	}
 	
+	public Rect getBoundingBox() {
+		return new Rect(new Vec(-1800, -700), new Vec(1960, 750));
+	}
+
 }

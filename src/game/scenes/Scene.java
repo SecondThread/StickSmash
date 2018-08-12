@@ -82,4 +82,8 @@ public abstract class Scene {
 	public Rect getBoundingBox() {
 		return new Rect(new Vec(-1000, -1000), new Vec(1000, 1000));
 	}
+	
+	public Vec[] getSpawnPoints() {
+		return new Vec[] {Vec.zero};
+	}
 }

@@ -17,9 +17,11 @@ public class Attack {
 	private HashSet<Integer> canGrabAtFrame=new HashSet<>();
 	private boolean airOnlyAttack;
 	private boolean isRecoveryAttack;
+	private int noAttackAfterLength;
 	
-	public Attack(boolean airOnlyAttack) {
+	public Attack(boolean airOnlyAttack, int noAttackAfterLength) {
 		this.airOnlyAttack=airOnlyAttack;
+		this.noAttackAfterLength=noAttackAfterLength;
 	}
 	
 	//------------------------------------------------------------
@@ -101,6 +103,10 @@ public class Attack {
 		int total=0;
 		for (int i:partFrameLengths) total+=i;
 		return total;
+	}
+	
+	public int getNoAttackAfterLenght() {
+		return noAttackAfterLength;
 	}
 	
 	

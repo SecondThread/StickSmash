@@ -10,6 +10,7 @@ import game.ui.Button;
 import graphics.Camera;
 import graphics.SpriteLoader;
 import input.Input;
+import math.Rect;
 import math.Vec;
 
 public class TitleScene extends Scene {
@@ -55,6 +56,7 @@ public class TitleScene extends Scene {
 				case 2:
 					return new MultiplayerScene();
 				case 3:
+					return new TutorialScene();
 			}
 		}
 		return this;
@@ -79,6 +81,4 @@ public class TitleScene extends Scene {
 		BufferedImage result=cam.postRender();
 		return result;
 	}
-
-	
 }

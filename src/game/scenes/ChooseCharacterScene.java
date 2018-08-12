@@ -30,6 +30,7 @@ public class ChooseCharacterScene extends Scene {
 	private boolean[] isReady;
 	private boolean[] isCPU;
 	private Vec[] characterChoicePositions;
+	private boolean initialized=false;
 	
 	private Server server;
 	
@@ -39,6 +40,16 @@ public class ChooseCharacterScene extends Scene {
 	}
 	
 	public void init() {
+		Camera.getInstance().setPosition(Vec.zero);
+		Camera.getInstance().setWorldWidth(1000);
+		if (initialized) {
+			for (int i=0; i<numPlayers; i++)
+				if (!isCPU[i])
+					isReady[i]=false;
+			return;
+		}
+		initialized=true;
+		
 		playerSelectedButton=new int[numPlayers];
 		Arrays.fill(playerSelectedButton, -1);
 		playerSelectedButton[0]=0;
@@ -87,7 +98,7 @@ public class ChooseCharacterScene extends Scene {
 			
 			if (in.attack1Pressed()) {
 				if (playerControlling==-1) {
-					return new MainScene(inputs);
+					return new MainScene(inputs, showColorBackground, this);
 				}
 				else {
 					isReady[playerControlling]=true;
