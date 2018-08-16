@@ -25,44 +25,9 @@ public class Player extends Entity {
 	private Rect collisionBox;
 	private Rect hangBoxLeft, hangBoxRight;
 	private Input input;
-
-	//Constants
-	private static final Vec gravity=new Vec(0, -0.2), fastGravity=gravity.scale(2);
-	private static final double moveGroundSpeed=1, moveAirSpeed=0.2;
-	private static final double jumpPower=10, doubleJumpPower=15;
-	private static final double xGroundedFriction=0.8, xAirFriction=0.95, yFriction=0.98, xAttackingFriction=0.98;
-	private static final double minSpeedToRun=0.1;
-	private static final int numJumpFrames=30;
-	private static final double maxShieldScale=0.8;
-	private static final int maxShield=120*5*3;
-	private static final int stunFrameAfterBrokenShield=240;
-	private static final double rollVelocity=6;
-	private static final int fullGrabLength=120*3;
-	private static final int grabMashSkipFrames=15;
-	private static final int invincibilityAfterDying=300;
-	private static final int framesBetweenGrabIconSwitch=30;
-	private static final int noShieldAfterRollOrDodge=40;
-	private static final Vec grabIconOffset=Vec.up.scale(120);
 	
-	//animation constants
-	private static final int runningAnimLen=40;
-	private static final int rollingAnimLen=50;
-	private static final int spotDodgeAnimLen=50;
-	private static final int airDodgeAnimLen=50;
-	private static final int hangImmunityLen=50;
-	private static final int framesBetweenHangs=60;
-	private static final int grabAttackAnimLen=40;
-	private static final int grabDamageFrame=35;
+	private PlayerInstance instance;
 
-	//Attacks
-	private Attack groundAttack1;
-	private Attack groundAttack2;
-	private Attack airAttack1;
-	private Attack airAttack2;
-	private Attack recoveryAttack;
-	private Attack grabMissAttack;
-	private Attack grabAttack;
-	
 	//Player states
 	private boolean grounded=false;
 	private boolean facingRight;
@@ -71,7 +36,7 @@ public class Player extends Entity {
 	private PlayerState state=PlayerState.AIRBORN;
 	private int animationCounter=0;
 	private int jumpFramesLeft=0;
-	private int shield=maxShield;
+	private int shield;
 	private int stunCounter=0;
 	private int framesUntilNextHang=0;
 	private int framesUntilNextAttack=0;
@@ -107,81 +72,10 @@ public class Player extends Entity {
 		position=new Vec(0, 500);
 		this.input=input;
 		this.showHighlight=showHighlight;
-		createAttacks();
+		instance=new StickFigureInstance(team);
+		shield=instance.maxShield();
 	}
 	
-	private void createAttacks() {
-		Damage damage1, damage2;
-		
-		//GROUND ATTACK 1
-		groundAttack1=new Attack(false, 20);
-		groundAttack1.addPart(20, SpriteLoader.stickFigureKick1);
-		groundAttack1.addPart(20, SpriteLoader.stickFigureKick2);
-		groundAttack1.addPart(20, SpriteLoader.stickFigureKick3);
-		Rect groundAttack1Rect1=new Rect(new Vec(0, -80), new Vec(110, 70));
-		Rect groundAttack1Rect2=new Rect(new Vec(-40, 0), new Vec(70, 100));
-		damage1=new Damage(groundAttack1Rect1, 10, new Vec(15, 10), 40, team);
-		damage2=new Damage(groundAttack1Rect2, 10, new Vec(-5, 10), 40, team);
-		groundAttack1.addDamageFrame(35, damage1);
-		groundAttack1.addDamageFrame(40, damage2);
-		
-		//GROUND ATTACK 2
-		groundAttack2=new Attack(false, 40);
-		groundAttack2.addPart(40, SpriteLoader.stickFigureDab1);
-		groundAttack2.addPart(30, SpriteLoader.stickFigureDab2);
-		Rect groundAttack2Rect1=new Rect(new Vec(30, 0), new Vec(60, 30));
-		Rect groundAttack2Rect2=new Rect(new Vec(-90, -30), new Vec(70, 90));
-		damage1=new Damage(groundAttack2Rect1, 25, new Vec(20, 15), 100, team);
-		damage2=new Damage(groundAttack2Rect2, 4, new Vec(-5, 5), 10, team);
-		groundAttack2.addDamageFrame(54, damage2);
-		groundAttack2.addDamageFrame(55, damage1);
-		
-		//AIR ATTACK 1
-		airAttack1=new Attack(true, 25);
-		airAttack1.addPart(40, SpriteLoader.stickFigureAirSpike);
-		Rect airAttack1Rect=new Rect(new Vec(-20, -100), new Vec(80, 30));
-		damage1=new Damage(airAttack1Rect, 12, new Vec(5, -10), 60, team);
-		airAttack1.addDamageFrame(10, damage1);
-		airAttack1.addDamageFrame(30, damage1);
-		
-		//AIR ATTACK 2
-		airAttack2=new Attack(true, 25);
-		airAttack2.addPart(25, SpriteLoader.stickFigureAirSlice1);
-		airAttack2.addPart(25, SpriteLoader.stickFigureAirSlice2);
-		Rect airAttack2Rect1=new Rect(new Vec(-80, 0), new Vec(80, 100));
-		Rect airAttack2Rect2=new Rect(new Vec(-40, -60), new Vec(100, 60));
-		damage1=new Damage(airAttack2Rect1, 10, new Vec(5, 10), 40, team);
-		damage2=new Damage(airAttack2Rect2, 10, new Vec(10, -5), 40, team);
-		airAttack2.addDamageFrame(25, damage1);
-		airAttack2.addDamageFrame(36, damage2);
-		
-		//RECOVERY ATTACK
-		recoveryAttack=new Attack(false, 0);
-		recoveryAttack.markAsRecoveryAttack();
-		recoveryAttack.addPart(20, SpriteLoader.stickFigureJetpack2);
-		recoveryAttack.addPart(40, SpriteLoader.stickFigureJetpack1);
-		for (int i=20; i<40; i++)
-			recoveryAttack.addVelocityCue(i, new Vec(5, doubleJumpPower));
-		recoveryAttack.addPart(100, SpriteLoader.stickFigureJetpack2);
-		for (int i=40; i<160; i++)
-			recoveryAttack.addGrabCue(i);
-		
-		Rect recoveryDamageBox=new Rect(new Vec(-100, -100), new Vec(40, 60));
-		damage1=new Damage(recoveryDamageBox, 6, new Vec(-10, -4), 40, team);
-		recoveryAttack.addDamageFrame(20, damage1);
-		recoveryAttack.addDamageFrame(40, damage1);
-		recoveryAttack.addDamageFrame(60, damage1);
-		
-		//GRAB MISS ATTACK
-		grabMissAttack=new Attack(false, 60);
-		grabMissAttack.addPart(60, SpriteLoader.stickFigureGrab);
-		
-		//GRAB ATTACK
-		grabAttack=new Attack(false, 10);
-		grabAttack.addPart(grabAttackAnimLen, SpriteLoader.stickFigureGrabRelease);
-		//damage updated when grab is released because it differs depending on
-		//the number of times they hit the grab button
-	}
 	
 	public void update() {
 		if (!isAlive())
@@ -211,23 +105,23 @@ public class Player extends Entity {
 	private void applyFriction() {
 		if (grounded) {
 			if (state==PlayerState.ATTACKING) {
-				velocity=new Vec(velocity.x()*xAttackingFriction, velocity.y()*yFriction);
+				velocity=new Vec(velocity.x()*instance.xAttackingFriction(), velocity.y()*instance.yFriction());
 			}
 			else {
-				velocity=new Vec(velocity.x()*xGroundedFriction, velocity.y()*yFriction);
+				velocity=new Vec(velocity.x()*instance.xGroundedFriction(), velocity.y()*instance.yFriction());
 			}
 		}
 		else {
-			velocity=new Vec(velocity.x()*xAirFriction, velocity.y()*yFriction);
+			velocity=new Vec(velocity.x()*instance.xAirFriction(), velocity.y()*instance.yFriction());
 		}
 	}
 	
 	private void applyGravity() {
 		if (!grounded) {
 			if (input.downMovementHeld())
-				velocity=velocity.add(fastGravity);
+				velocity=velocity.add(instance.fastGravity());
 			else
-				velocity=velocity.add(gravity);
+				velocity=velocity.add(instance.gravity());
 		}
 	}
 	
@@ -235,15 +129,15 @@ public class Player extends Entity {
 		if (state!=PlayerState.STUNNED&&state!=PlayerState.ROLLING&&state!=PlayerState.SPOT_DODGING&&state!=PlayerState.HANGING&&!(state==PlayerState.AIR_HIT&&hitLagLeft>0)&&
 				state!=PlayerState.ATTACKING&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED&&
 				input.jumpMovementPressed()&&grounded) {
-			velocity=new Vec(velocity.x(), jumpPower);
-			jumpFramesLeft=numJumpFrames;
+			velocity=new Vec(velocity.x(), instance.jumpPower());
+			jumpFramesLeft=instance.numJumpFrames();
 			setAnimation(PlayerState.AIRBORN);
 		}
 		if (state!=PlayerState.HANGING&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED&&
 				input.jumpMovementHeld()) {
 			if (!grounded&&jumpFramesLeft>0) {
 				jumpFramesLeft--;
-				velocity=new Vec(velocity.x(), jumpPower);
+				velocity=new Vec(velocity.x(), instance.jumpPower());
 			}
 		}
 		else {
@@ -255,7 +149,7 @@ public class Player extends Entity {
 				&&(!(state==PlayerState.AIR_HIT&&hitLagLeft>0))&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED&&
 				hasDoubleJump) {
 			hasDoubleJump=false;
-			velocity=new Vec(velocity.x(), doubleJumpPower);
+			velocity=new Vec(velocity.x(), instance.doubleJumpPower());
 			Particle.createDoubleJumpParticle(position);
 			setAnimation(PlayerState.AIRBORN);
 		}
@@ -266,25 +160,25 @@ public class Player extends Entity {
 			if (input.leftMovementHeld()) {
 				if (grounded) {
 					if (state!=PlayerState.SPOT_DODGING)
-						velocity=velocity.add(Vec.left.scale(moveGroundSpeed));
+						velocity=velocity.add(Vec.left.scale(instance.moveGroundSpeed()));
 				}
 				else
-					velocity=velocity.add(Vec.left.scale(moveAirSpeed));
+					velocity=velocity.add(Vec.left.scale(instance.moveAirSpeed()));
 			}
 			if (input.rightMovementHeld()) {
 				if (grounded) {
 					if (state!=PlayerState.SPOT_DODGING)
-						velocity=velocity.add(Vec.right.scale(moveGroundSpeed));
+						velocity=velocity.add(Vec.right.scale(instance.moveGroundSpeed()));
 				}
 				else
-					velocity=velocity.add(Vec.right.scale(moveAirSpeed));
+					velocity=velocity.add(Vec.right.scale(instance.moveAirSpeed()));
 			}
 		}
 
 		animationCounter++;
 		if (state!=PlayerState.SHIELDING) {
 			shield++;
-			shield=Math.min(shield, maxShield);
+			shield=Math.min(shield, instance.maxShield());
 		}
 		framesUntilNextHang=Math.max(0, framesUntilNextHang-1);
 		hitLagLeft=Math.max(0, hitLagLeft-1);
@@ -298,7 +192,7 @@ public class Player extends Entity {
 				}
 				else if (input.shieldHeld()&&framesUntilNextShield==0) {
 					setAnimation(PlayerState.AIR_DODGING);
-					framesUntilNextShield=airDodgeAnimLen+noShieldAfterRollOrDodge;
+					framesUntilNextShield=instance.airDodgeAnimLen()+instance.noShieldAfterRollOrDodge();
 				}
 				else if (tryToAttack())
 					;
@@ -310,7 +204,7 @@ public class Player extends Entity {
 			case IDLE:
 				if (!grounded)
 					setAnimation(PlayerState.AIRBORN);
-				else if (Math.abs(velocity.x())>=minSpeedToRun)
+				else if (Math.abs(velocity.x())>=instance.minSpeedToRun())
 					setAnimation(PlayerState.RUNNING);
 				else if (input.shieldHeld()&&framesUntilNextShield==0)
 					setAnimation(PlayerState.SHIELDING);
@@ -318,10 +212,10 @@ public class Player extends Entity {
 					;
 				break;
 			case RUNNING:
-				if (animationCounter>=runningAnimLen)
+				if (animationCounter>=instance.runningAnimLen())
 					animationCounter=0;
 				
-				if (Math.abs(velocity.x())<minSpeedToRun)
+				if (Math.abs(velocity.x())<instance.minSpeedToRun())
 					setAnimation(PlayerState.IDLE);
 				else if (!grounded)
 					setAnimation(PlayerState.AIRBORN);
@@ -342,7 +236,7 @@ public class Player extends Entity {
 				shield=Math.max(0, shield-3);
 				if (shield==0) {
 					setAnimation(PlayerState.STUNNED);
-					stunCounter=stunFrameAfterBrokenShield;
+					stunCounter=instance.stunFrameAfterBrokenShield();
 				}
 				else if (!input.shieldHeld()) {
 					setAnimation(PlayerState.IDLE);
@@ -350,16 +244,16 @@ public class Player extends Entity {
 				else if (input.leftMovementHeld()) {
 					facingRight=false;
 					setAnimation(PlayerState.ROLLING);
-					framesUntilNextShield=rollingAnimLen+noShieldAfterRollOrDodge;
+					framesUntilNextShield=instance.rollingAnimLen()+instance.noShieldAfterRollOrDodge();
 				}
 				else if (input.rightMovementHeld()) {
 					facingRight=true;
 					setAnimation(PlayerState.ROLLING);
-					framesUntilNextShield=rollingAnimLen+noShieldAfterRollOrDodge;
+					framesUntilNextShield=instance.rollingAnimLen()+instance.noShieldAfterRollOrDodge();
 				}
 				else if (input.downMovementHeld()) {
 					setAnimation(PlayerState.SPOT_DODGING);
-					framesUntilNextShield=spotDodgeAnimLen+noShieldAfterRollOrDodge;
+					framesUntilNextShield=instance.spotDodgeAnimLen()+instance.noShieldAfterRollOrDodge();
 				}
 				break;
 			case STUNNED:
@@ -373,12 +267,12 @@ public class Player extends Entity {
 				}
 				break;
 			case ROLLING:
-				velocity=(facingRight?Vec.right:Vec.left).scale(rollVelocity);
-				if (animationCounter>rollingAnimLen)
+				velocity=(facingRight?Vec.right:Vec.left).scale(instance.rollVelocity());
+				if (animationCounter>instance.rollingAnimLen())
 					state=PlayerState.IDLE;
 				break;
 			case SPOT_DODGING:
-				if (animationCounter>=spotDodgeAnimLen) {
+				if (animationCounter>=instance.spotDodgeAnimLen()) {
 					setAnimation(PlayerState.IDLE);
 				}
 				break;
@@ -386,13 +280,13 @@ public class Player extends Entity {
 				if (grounded) {
 					onLand();
 				}
-				else if (animationCounter>=airDodgeAnimLen) {
+				else if (animationCounter>=instance.airDodgeAnimLen()) {
 					setAnimation(PlayerState.AIRBORN);
 				}
 				break;
 			case HANGING:
 				velocity=Vec.zero;
-				framesUntilNextHang=framesBetweenHangs;
+				framesUntilNextHang=instance.framesBetweenHangs();
 				if (input.downMovementHeld()||(input.leftMovementHeld()&&facingRight)||(input.rightMovementHeld()&&!facingRight)) {
 					//drop from the ledge
 					hasDoubleJump=true;
@@ -412,7 +306,7 @@ public class Player extends Entity {
 					setAnimation(PlayerState.AIRBORN);
 					hangingOn.occupied=false;
 					hangingOn=null;
-					velocity=Vec.up.scale(jumpPower*2);
+					velocity=Vec.up.scale(instance.jumpPower()*2);
 					if (facingRight) {
 						position=position.add(Vec.left.scale(30));
 						velocity=velocity.add(Vec.right.scale(6));
@@ -434,7 +328,7 @@ public class Player extends Entity {
 					hangingOn.occupied=false;
 					hangingOn=null;
 				}
-				else if (animationCounter>=hangImmunityLen&&(input.leftMovementHeld()||input.rightMovementHeld())) {
+				else if (animationCounter>=instance.hangImmunityLen()&&(input.leftMovementHeld()||input.rightMovementHeld())) {
 					//just climb up
 					setAnimation(PlayerState.IDLE);
 					if (facingRight) {
@@ -535,17 +429,17 @@ public class Player extends Entity {
 				grabIconCounter++;
 				if (input.grabPressed()) {
 					grabAttacksMade++;
-					Particle.createKeyPressedParticle(position.add(grabIconOffset));
+					Particle.createKeyPressedParticle(position.add(instance.grabIconOffset()));
 				}
 				break;
 			case BEING_GRABBED:
 				grabFreeCounter++;
 				grabIconCounter++;
 				if (input.grabPressed()) {
-					grabFreeCounter+=grabMashSkipFrames;
-					Particle.createKeyPressedParticle(position.add(grabIconOffset));
+					grabFreeCounter+=instance.grabMashSkipFrames();
+					Particle.createKeyPressedParticle(position.add(instance.grabIconOffset()));
 				}
-				if (grabFreeCounter>=fullGrabLength||!grounded) {
+				if (grabFreeCounter>=instance.fullGrabLength()||!grounded) {
 					grabbedBy.releaseGrabbedEntityRequest();
 					grabFreeCounter=Integer.MIN_VALUE;
 				}
@@ -634,11 +528,11 @@ public class Player extends Entity {
 	private void onLand() {
 		hasDoubleJump=true;
 		hasRecoveryMove=true;
-		if (Math.abs(velocity.x())>=minSpeedToRun)
+		if (Math.abs(velocity.x())>=instance.minSpeedToRun())
 			setAnimation(PlayerState.RUNNING);
 		else
 			setAnimation(PlayerState.IDLE);
-		if (Math.abs(velocity.x())>=minSpeedToRun&&hitLagLeft<=0)
+		if (Math.abs(velocity.x())>=instance.minSpeedToRun()&&hitLagLeft<=0)
 			facingRight=velocity.x()>0;
 		createRunTurnParticle();
 		facingRight^=true;
@@ -675,11 +569,11 @@ public class Player extends Entity {
 			return false;
 		
 		if (input.attack1Pressed())
-			startAttack(grounded?groundAttack1:airAttack1);
+			startAttack(grounded?instance.groundAttack1():instance.airAttack1());
 		else if (input.attack2Pressed())
-			startAttack(grounded?groundAttack2:airAttack2);
+			startAttack(grounded?instance.groundAttack2():instance.airAttack2());
 		else if (input.attackRecoverPressed()&&hasRecoveryMove)
-			startAttack(recoveryAttack);
+			startAttack(instance.recoveryAttack());
 		else if (tryToGrab())
 			;
 		else 
@@ -699,7 +593,7 @@ public class Player extends Entity {
 			grabIconCounter=0;
 			Entity hit=hitbox.runScan();
 			if (hit==null) {
-				startAttack(grabMissAttack);
+				startAttack(instance.grabMissAttack());
 			}
 			else {
 				setAnimation(PlayerState.GRABBING);
@@ -740,7 +634,7 @@ public class Player extends Entity {
 			return false;
 		
 		//if I am immune, ignore the damage
-		if (state==PlayerState.AIR_DODGING || state==PlayerState.SPOT_DODGING || state==PlayerState.ROLLING || (state==PlayerState.HANGING&&animationCounter<hangImmunityLen)
+		if (state==PlayerState.AIR_DODGING || state==PlayerState.SPOT_DODGING || state==PlayerState.ROLLING || (state==PlayerState.HANGING&&animationCounter<instance.hangImmunityLen())
 				||state==PlayerState.BEING_GRABBED)
 			return false;
 		if (grab.getHitbox().intersects(collisionBox.offsetBy(position))) {
@@ -763,8 +657,8 @@ public class Player extends Entity {
 		else {
 			Rect grabAttackRect=new Rect(new Vec(60, -50), new Vec(140, 40));
 			Damage damage1=new Damage(grabAttackRect, 4+grabAttacksMade, new Vec(5+grabAttacksMade*1.75, 1+grabAttacksMade), 80, team);
-			grabAttack.addDamageFrame(grabDamageFrame, damage1);
-			startAttack(grabAttack);
+			instance.grabAttack().addDamageFrame(instance.grabDamageFrame(), damage1);
+			startAttack(instance.grabAttack());
 		}
 	}
 	
@@ -777,7 +671,7 @@ public class Player extends Entity {
 	private boolean isInvincible() {
 		if (state==PlayerState.AIR_DODGING || state==PlayerState.SPOT_DODGING || state==PlayerState.ROLLING)
 			return true;
-		if ((state==PlayerState.HANGING&&animationCounter<hangImmunityLen) || invincibilityAfterDyingCounter>0)
+		if ((state==PlayerState.HANGING&&animationCounter<instance.hangImmunityLen()) || invincibilityAfterDyingCounter>0)
 			return true;
 		return false;
 	}
@@ -804,7 +698,7 @@ public class Player extends Entity {
 				Random r=new Random();
 				position=spawnPoints[r.nextInt(spawnPoints.length)];
 				velocity=Vec.zero;
-				invincibilityAfterDyingCounter=invincibilityAfterDying;
+				invincibilityAfterDyingCounter=instance.invincibilityAfterDying();
 				setAnimation(PlayerState.IDLE);
 			}
 		}
@@ -895,7 +789,7 @@ public class Player extends Entity {
 				toDraw=SpriteLoader.stickFigureIdle;
 				break;
 			case RUNNING:
-				if (animationCounter>=runningAnimLen/2)
+				if (animationCounter>=instance.runningAnimLen()/2)
 					toDraw=SpriteLoader.stickFigureRunning1;
 				else
 					toDraw=SpriteLoader.stickFigureRunning2;
@@ -907,7 +801,7 @@ public class Player extends Entity {
 				toDraw=SpriteLoader.stickFigureIdle;
 				break;
 			case ROLLING:
-				if (animationCounter<rollingAnimLen/2)
+				if (animationCounter<instance.rollingAnimLen()/2)
 					toDraw=SpriteLoader.stickFigureRolling1;
 				else
 					toDraw=SpriteLoader.stickFigureRolling2;
@@ -938,17 +832,17 @@ public class Player extends Entity {
 				break;
 			case GRABBING:
 				toDraw=SpriteLoader.stickFigureGrab;
-				if ((grabIconCounter/framesBetweenGrabIconSwitch)%2==0)
-					SpriteLoader.keyPress1Sprite.drawAlphaAndSize(position.add(grabIconOffset), 1, 0.4, 0.4);
+				if ((grabIconCounter/instance.framesBetweenGrabIconSwitch())%2==0)
+					SpriteLoader.keyPress1Sprite.drawAlphaAndSize(position.add(instance.grabIconOffset()), 1, 0.4, 0.4);
 				else
-					SpriteLoader.keyPress2Sprite.drawAlphaAndSize(position.add(grabIconOffset), 1, 0.4, 0.4);
+					SpriteLoader.keyPress2Sprite.drawAlphaAndSize(position.add(instance.grabIconOffset()), 1, 0.4, 0.4);
 				break;
 			case BEING_GRABBED:
 				toDraw=SpriteLoader.stickFigureGrabbed;
-				if ((grabIconCounter/framesBetweenGrabIconSwitch)%2==0)
-					SpriteLoader.keyPress1Sprite.drawAlphaAndSize(position.add(grabIconOffset), 1, 0.4, 0.4);
+				if ((grabIconCounter/instance.framesBetweenGrabIconSwitch())%2==0)
+					SpriteLoader.keyPress1Sprite.drawAlphaAndSize(position.add(instance.grabIconOffset()), 1, 0.4, 0.4);
 				else
-					SpriteLoader.keyPress2Sprite.drawAlphaAndSize(position.add(grabIconOffset), 1, 0.4, 0.4);
+					SpriteLoader.keyPress2Sprite.drawAlphaAndSize(position.add(instance.grabIconOffset()), 1, 0.4, 0.4);
 				break;
 			default:
 				throw new Error("invalid render state: "+state);	
@@ -959,7 +853,7 @@ public class Player extends Entity {
 		toDraw.drawAlpha(position, facingRight, drawAtFullAlpha?1:0.2);
 		
 		if (state==PlayerState.SHIELDING) {
-			double shieldScale=maxShieldScale*(shield/(double)maxShield);
+			double shieldScale=instance.maxShieldScale()*(shield/(double)instance.maxShield());
 			SpriteLoader.shieldSprite.drawAlphaAndSize(position, 0.6, shieldScale, shieldScale);
 		}
 	}

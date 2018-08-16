@@ -61,11 +61,11 @@ public class ChooseCharacterScene extends Scene {
 		
 		chooseCharacterButtons=new Button[6];
 		chooseCharacterButtons[0]=new Button(SpriteLoader.stickFigureIconSprite, new Vec(-170, 180));
-		chooseCharacterButtons[1]=new Button(SpriteLoader.stickFigureIconSprite, new Vec(0, 180));
-		chooseCharacterButtons[2]=new Button(SpriteLoader.stickFigureIconSprite, new Vec(170, 180));
-		chooseCharacterButtons[3]=new Button(SpriteLoader.stickFigureIconSprite, new Vec(-170, 60));
-		chooseCharacterButtons[4]=new Button(SpriteLoader.stickFigureIconSprite, new Vec(0, 60));
-		chooseCharacterButtons[5]=new Button(SpriteLoader.stickFigureIconSprite, new Vec(170, 60));
+		chooseCharacterButtons[1]=new Button(SpriteLoader.besiusIconSprite, new Vec(0, 180));
+		chooseCharacterButtons[2]=new Button(SpriteLoader.smashIconSprite, new Vec(170, 180));
+		chooseCharacterButtons[3]=new Button(SpriteLoader.carlosIconSprite, new Vec(-170, 60));
+		chooseCharacterButtons[4]=new Button(SpriteLoader.emptySelectionIcon, new Vec(0, 60));
+		chooseCharacterButtons[5]=new Button(SpriteLoader.emptySelectionIcon, new Vec(170, 60));
 		
 		server=new Server(numPlayers-1);
 		showColorBackground=new boolean[numPlayers];
@@ -178,10 +178,10 @@ public class ChooseCharacterScene extends Scene {
 		Sprite[] selectors= {SpriteLoader.redSelector, SpriteLoader.blueSelector, SpriteLoader.greenSelector, SpriteLoader.yellowSelector};
 		Sprite[] nameBackgrounds= {SpriteLoader.redNameBackground, SpriteLoader.blueNameBackground, SpriteLoader.greenCharacterBackground, 
 				SpriteLoader.yellowNameBackground};
-		Sprite[] namesOfCharacters= {SpriteLoader.cueballText, SpriteLoader.cueballText, SpriteLoader.cueballText, SpriteLoader.cueballText, 
+		Sprite[] namesOfCharacters= {SpriteLoader.cueballText, SpriteLoader.besiusText, SpriteLoader.smashText, SpriteLoader.carlosText, 
 				SpriteLoader.cueballText, SpriteLoader.cueballText};
-		Sprite[] characterIcons= {SpriteLoader.stickFigureIconSprite, SpriteLoader.emptySelectionIcon, SpriteLoader.emptySelectionIcon,
-				SpriteLoader.emptySelectionIcon, SpriteLoader.emptySelectionIcon, SpriteLoader.emptySelectionIcon};
+		Sprite[] characterIcons= {SpriteLoader.stickFigureIconSprite, SpriteLoader.besiusIconSprite, SpriteLoader.smashIconSprite,
+				SpriteLoader.carlosIconSprite, SpriteLoader.emptySelectionIcon, SpriteLoader.emptySelectionIcon};
 		Sprite[] coloredBackgrounds= {SpriteLoader.redCharacterBackground, SpriteLoader.blueCharacterBackground, SpriteLoader.greenCharacterBackground,
 				SpriteLoader.yellowCharacterBackground};
 		

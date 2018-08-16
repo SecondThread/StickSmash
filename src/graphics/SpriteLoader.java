@@ -53,10 +53,16 @@ public class SpriteLoader {
 	public static Sprite teamsButton;
 	public static Sprite selectedButtonIndicatorSprite;
 	public static Sprite stickFigureIconSprite;
+	public static Sprite besiusIconSprite;
+	public static Sprite smashIconSprite;
+	public static Sprite carlosIconSprite;
 	public static Sprite emptySelectionIcon;
 	public static Sprite readyIcon;
 	public static Sprite pressJToStart;
 	public static Sprite cueballText;
+	public static Sprite besiusText;
+	public static Sprite smashText;
+	public static Sprite carlosText;
 	
 	public static Sprite redCharacterBackground;
 	public static Sprite blueCharacterBackground;
@@ -147,10 +153,16 @@ public class SpriteLoader {
 		tutorialButton=new Sprite("StickSmashArt/Art/UI/MenuScreen/TutorialButton.png");
 		selectedButtonIndicatorSprite=new Sprite("StickSmashArt/Art/UI/MenuScreen/SelectedButtonIndicator.png");
 		stickFigureIconSprite=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/StickFigureIcon.png");
+		besiusIconSprite=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/BesiusSelectionIcon.png");
+		smashIconSprite=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/SmashSelectionIcon.png");
+		carlosIconSprite=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/CarlosSelectionIcon.png");
 		emptySelectionIcon=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/EmptySelectionIcon.png");
 		readyIcon=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/ReadyIcon.png");
 		pressJToStart=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/PressJToStart.png");
 		cueballText=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/CueballText.png");
+		besiusText=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/BesiusText.png");
+		smashText=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/SmashText.png");
+		carlosText=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/CarlosText.png");
 		
 		redCharacterBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/RedCharacterBackground.png");
 		blueCharacterBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/BlueCharacterBackground.png");
