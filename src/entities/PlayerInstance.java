@@ -61,9 +61,13 @@ public abstract class PlayerInstance {
 	abstract Rect getHitbox();
 	abstract Rect getHang1();
 	abstract Rect getHang2();
+
+	abstract Sprite getFaceSprite();
+	abstract Sprite getNameSprite();
 	
 	public double getHitKnockbackMultiplier() {
 		return 1;
 	}
+	
 	
 }

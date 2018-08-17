@@ -122,11 +122,11 @@ public class SmashInstance extends PlayerInstance {
 		
 		//GRAB MISS ATTACK
 		grabMissAttack=new Attack(false, 60);
-		grabMissAttack.addPart(60, SpriteLoader.stickFigureGrab);
+		grabMissAttack.addPart(60, SpriteLoader.smashGrab);
 		
 		//GRAB ATTACK
 		grabAttack=new Attack(false, 10);
-		grabAttack.addPart(grabAttackAnimLen, SpriteLoader.stickFigureGrabRelease);
+		grabAttack.addPart(grabAttackAnimLen, SpriteLoader.smashGrabRelease);
 		//damage updated when grab is released because it differs depending on
 		//the number of times they hit the grab button
 	}
@@ -337,6 +337,14 @@ public class SmashInstance extends PlayerInstance {
 	
 	public double getHitKnockbackMultiplier() {
 		return 0.7;
+	}
+	
+	Sprite getFaceSprite() {
+		return SpriteLoader.smashIconSprite;
+	}
+	
+	Sprite getNameSprite() {
+		return SpriteLoader.smashText;
 	}
 	
 }

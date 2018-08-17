@@ -28,7 +28,7 @@ public class Game {
 	
 	private static ArrayList<Input> inputs=new ArrayList<>();
 	private static Scene scene;
-	
+	public static boolean force120=true;
 	
 	public static void main(String[] args) {
 		frame=new JFrame();
@@ -77,12 +77,15 @@ public class Game {
 			while (nextUpdateTime<System.nanoTime()) {
 				update();
 				updates++;
-	
+				
 				//lag reduction when computer is shut
 				nextUpdateTime+=nanoSecsPerSec/updatesPerSecond;
 				if (System.nanoTime()-nextUpdateTime>nanoSecsPerSec)
 					nextUpdateTime=nanoSecsPerSec;
+				if (!force120)
+					break;
 			}
+				
 			render();
 			frames++;
 			

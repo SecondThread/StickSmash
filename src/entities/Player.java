@@ -141,6 +141,12 @@ public class Player extends Entity {
 			jumpFramesLeft=0;
 		}
 		
+		if (state!=PlayerState.BEING_GRABBED) {
+			while (wouldBeInGround(position)) {
+				position=position.add(Vec.up.scale(0.1));
+			}
+		}
+		
 		//double jump
 		if (state!=PlayerState.AIR_DODGING&&!grounded&&state!=PlayerState.HANGING&&state!=PlayerState.AIR_ATTACKING&&input.jumpMovementPressed()
 				&&(!(state==PlayerState.AIR_HIT&&hitLagLeft>0))&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED&&
@@ -376,7 +382,6 @@ public class Player extends Entity {
 				}
 				Rect additionalGrab=currentAttack.getAdditionalGrabBox(facingRight);
 				if (additionalGrab!=null) {
-					System.out.println("here");
 					tryToHang(additionalGrab);
 				}
 				break;
@@ -398,7 +403,8 @@ public class Player extends Entity {
 					}
 					else if (input.shieldHeld())
 						setAnimation(PlayerState.AIR_DODGING);
-					else 
+					else if (tryToAttack());
+					else
 						tryToHang();
 				}
 				break;
@@ -441,7 +447,7 @@ public class Player extends Entity {
 					grabFreeCounter+=instance.grabMashSkipFrames();
 					Particle.createKeyPressedParticle(position.add(instance.grabIconOffset()));
 				}
-				if (grabFreeCounter>=instance.fullGrabLength()||!grounded) {
+				if (grabFreeCounter>=instance.fullGrabLength()) {
 					grabbedBy.releaseGrabbedEntityRequest();
 					grabFreeCounter=Integer.MIN_VALUE;
 				}
@@ -572,8 +578,6 @@ public class Player extends Entity {
 			if (l.occupied) continue;
 			
 			if (additionalBox.offsetBy(position).contains(l.getPos())) {
-				System.out.println("Touching unoccupied ledge");
-				//hang to right
 				setAnimation(PlayerState.HANGING);
 				hangingOn=l;
 				l.occupied=true;
@@ -632,6 +636,10 @@ public class Player extends Entity {
 	public void processDamage(Damage damage) {
 		if (damage.getTeam()==team)
 			return;
+		if (hangingOn!=null) {
+			hangingOn.occupied=false;
+			hangingOn=null;
+		}
 		
 		//if I am immune, ignore the damage
 		if (isInvincible())
@@ -715,7 +723,7 @@ public class Player extends Entity {
 				Particle.createVerticleExplosionParticle(position, true);
 			}
 			livesLeft--;
-				
+			damagePercent=0;
 			if (isAlive()) {
 				Vec[] spawnPoints=Game.getScene().getSpawnPoints();
 				Random r=new Random();
@@ -744,16 +752,15 @@ public class Player extends Entity {
 		Camera.getInstance().setWorldWidth(1000);
 		Camera.getInstance().setPosition(Vec.zero);
 		
-		Sprite characterFace=SpriteLoader.stickFigureIconSprite;
 		Vec centerUIPosition=Lerp.lerp(new Vec(-300, -220), new Vec(300, -220), percentAcrossScreenToRenderUI);
 		centerUIPosition=centerUIPosition.add(new Vec(-50, 0));
-		characterFace.drawAlphaAndSize(centerUIPosition, isAlive()?1:0.25, 0.2, 0.2);
+		instance.getFaceSprite().drawAlphaAndSize(centerUIPosition, isAlive()?1:0.25, 0.2, 0.2);
 		
 		Sprite[] textBackground= {SpriteLoader.greyNameBackground, SpriteLoader.redNameBackground, SpriteLoader.blueNameBackground, 
 				SpriteLoader.greenNameBackground, SpriteLoader.yellowNameBackground};
 		Vec nameOffset=new Vec(80, -30);
 		textBackground[team].drawAlphaAndSize(centerUIPosition.add(nameOffset), 1, 0.3, 0.3);
-		SpriteLoader.cueballText.drawAlphaAndSize(centerUIPosition.add(nameOffset.add(Vec.down.scale(10))), 1, 0.2, 0.2);
+		instance.getNameSprite().drawAlphaAndSize(centerUIPosition.add(nameOffset.add(Vec.down.scale(10))), 1, 0.2, 0.2);
 		
 		Sprite[] lifeDot= {SpriteLoader.greyDot, SpriteLoader.redDot, SpriteLoader.blueDot, SpriteLoader.greenDot, SpriteLoader.yellowDot};
 		double lifeDotOffset=23;

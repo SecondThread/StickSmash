@@ -38,6 +38,7 @@ public class MainScene extends Scene {
 		this.showHighlights=showHighlights;
 		this.oldChooseCharacterScene=oldChooseCharacterScene;
 		this.selectedCharacters=selectedCharacters;
+		Game.force120=true;
 	}
 	
 	public void init() {
@@ -75,7 +76,7 @@ public class MainScene extends Scene {
 				count++;
 		}
 		if (!gameOver) {
-			if (count<=0) {
+			if (count<=1) {
 				gameOver=true;
 				oldUpdatesPerSecond=Game.updatesPerSecond;
 				Game.updatesPerSecond=20;

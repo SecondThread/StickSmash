@@ -1,12 +1,13 @@
 package graphics;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import game.Game;
 import math.Vec;
 
 public class Sprite {
@@ -18,10 +19,14 @@ public class Sprite {
 	private int spriteIndex;
 	
 	public Sprite(String path) {
+		path=path.replace("StickSmashArt", "");
 		spriteIndex=globalSpriteIndex++;
 		allSprites.add(this);
 		try {
-			image=ImageIO.read(new File(path));
+			URL resource=Game.class.getResource(path);
+			System.out.println("null? "+resource==null);
+			System.out.println("Path: "+path);
+			image=ImageIO.read(resource);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

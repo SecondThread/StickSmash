@@ -63,18 +63,18 @@ public class CarlosInstance extends PlayerInstance {
 		
 		//GROUND ATTACK 1
 		groundAttack1=new Attack(false, 20);
-		groundAttack1.addPart(30, SpriteLoader.carlosSwordAttack1);
-		groundAttack1.addPart(40, SpriteLoader.carlosSwordAttack2);
+		groundAttack1.addPart(20, SpriteLoader.carlosSwordAttack1);
+		groundAttack1.addPart(30, SpriteLoader.carlosSwordAttack2);
 		groundAttack1.addPart(30, SpriteLoader.carlosSwordAttack3);
 		Rect groundAttack1Rect1=new Rect(new Vec(0, -60), new Vec(170, 80));
 		Rect groundAttack1Rect2=new Rect(new Vec(0, -80), new Vec(160, 60));
-		damage1=new Damage(groundAttack1Rect1, 10, new Vec(5, 10), 40, team);
-		damage2=new Damage(groundAttack1Rect2, 10, new Vec(15, 0), 40, team);
-		groundAttack1.addDamageFrame(45, damage1);
-		groundAttack1.addDamageFrame(75, damage2);
+		damage1=new Damage(groundAttack1Rect1, 10, new Vec(0, 5), 31, team);
+		damage2=new Damage(groundAttack1Rect2, 10, new Vec(15, 5), 40, team);
+		groundAttack1.addDamageFrame(20, damage1);
+		groundAttack1.addDamageFrame(50, damage2);
 		
 		//GROUND ATTACK 2
-		groundAttack2=new Attack(false, 80);
+		groundAttack2=new Attack(false, 40);
 		groundAttack2.addPart(70, SpriteLoader.carlosShooting1);
 		groundAttack2.addPart(40, SpriteLoader.carlosShooting2);
 		groundAttack2.addPart(20, SpriteLoader.carlosShooting1);
@@ -92,14 +92,14 @@ public class CarlosInstance extends PlayerInstance {
 		airAttack1.addDamageFrame(30, damage1);
 		
 		//AIR ATTACK 2
-		airAttack2=new Attack(true, 25);
+		airAttack2=new Attack(false, 25);
 		airAttack2.markAsRecoveryAttack();
 		airAttack2.addPart(20, SpriteLoader.carlosBouncingFish1);
 		airAttack2.addPart(20, SpriteLoader.carlosBouncingFish2);
 		airAttack2.addPart(30, SpriteLoader.carlosBouncingFish3);
 		airAttack2.addPart(20, SpriteLoader.carlosBouncingFish2);
 		airAttack2.addPart(20, SpriteLoader.carlosBouncingFish1);
-		Rect airAttack2Rect1=new Rect(new Vec(0, -130), new Vec(130, -60));
+		Rect airAttack2Rect1=new Rect(new Vec(0, -150), new Vec(130, -60));
 		damage1=new Damage(airAttack2Rect1, 10, new Vec(5, -20), 80, team);
 		airAttack2.addDamageFrame(50, damage2);
 		airAttack2.addVelocityCue(10, new Vec(10, 12));
@@ -118,18 +118,18 @@ public class CarlosInstance extends PlayerInstance {
 			recoveryAttack.addGrabCue(i);
 		
 		Rect recoveryDamageBox=new Rect(new Vec(200, 200), new Vec(300, 300));
-		Rect recoveryGrabBox=new Rect(new Vec(150, 150), new Vec(390, 390));
+		Rect recoveryGrabBox=new Rect(new Vec(100, 150), new Vec(460, 460));
 		damage1=new Damage(recoveryDamageBox, 6, new Vec(0, 5), 40, team);
 		recoveryAttack.addDamageFrame(50, damage1);
 		recoveryAttack.addAdditionalGrab(50, recoveryGrabBox);
 		
 		//GRAB MISS ATTACK
 		grabMissAttack=new Attack(false, 60);
-		grabMissAttack.addPart(60, SpriteLoader.stickFigureGrab);
+		grabMissAttack.addPart(60, SpriteLoader.carlosGrab);
 		
 		//GRAB ATTACK
 		grabAttack=new Attack(false, 10);
-		grabAttack.addPart(grabAttackAnimLen, SpriteLoader.stickFigureGrabRelease);
+		grabAttack.addPart(grabAttackAnimLen, SpriteLoader.carlosGrabRelease);
 		//damage updated when grab is released because it differs depending on
 		//the number of times they hit the grab button
 	}
@@ -351,6 +351,14 @@ public class CarlosInstance extends PlayerInstance {
 	
 	public double getHitKnockbackMultiplier() {
 		return 0.8;
+	}
+	
+	Sprite getFaceSprite() {
+		return SpriteLoader.carlosIconSprite;
+	}
+	
+	Sprite getNameSprite() {
+		return SpriteLoader.carlosText;
 	}
 	
 }

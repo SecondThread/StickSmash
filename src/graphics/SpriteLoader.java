@@ -293,35 +293,6 @@ public class SpriteLoader {
 		carlosSwordAttack3=new Sprite("StickSmashArt/Art/Carlos/Attacks/SwordAttack3.png");
 		carlosBullet=new Sprite("StickSmashArt/Art/Carlos/Attacks/Bullet.png");
 		
-		/*public static Sprite carlosIdle;
-		public static Sprite carlosRunning1;
-		public static Sprite carlosRunning2;
-		public static Sprite carlosAirUp;
-		public static Sprite carlosAirDown;
-		public static Sprite carlosRoll1;
-		public static Sprite carlosRoll2;
-		public static Sprite carlosHang;
-		public static Sprite carlosAirHit;
-		public static Sprite carlosKnockedDown;
-		
-		public static Sprite carlosAirSlick1;
-		public static Sprite carlosAirSlick2;
-		public static Sprite carlosBouncingFish1;
-		public static Sprite carlosBouncingFish2;
-		public static Sprite carlosBouncingFish3;
-		public static Sprite carlosGrab;
-		public static Sprite carlosGrabbed;
-		public static Sprite carlosGrabRelease;
-		public static Sprite carlosRecover1;
-		public static Sprite carlosRecover2;
-		public static Sprite carlosShooting1;
-		public static Sprite carlosShooting2;
-		public static Sprite carlosSwordAttack1;
-		public static Sprite carlosSwordAttack2;
-		public static Sprite carlosSwordAttack3;
-		public static Sprite carlosBullet;*/
-		
-		
 		
 		
 		doubleJumpParticleSprite=new Sprite("StickSmashArt/Art/Particles/DoubleJumpParticle.png");

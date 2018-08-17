@@ -98,8 +98,8 @@ public class BesiusInstance extends PlayerInstance {
 		airAttack2.addPart(40, SpriteLoader.besiusKnee);
 		Rect airAttack2Rect1=new Rect(new Vec(30, -30), new Vec(60, 0));
 		Rect airAttack2Rect2=new Rect(new Vec(-30, -60), new Vec(90, 30));
-		damage1=new Damage(airAttack2Rect1, 10, new Vec(0, 20), 80, team);
-		damage2=new Damage(airAttack2Rect2, 10, new Vec(0, 5), 40, team);
+		damage1=new Damage(airAttack2Rect1, 15, new Vec(20, 0), 80, team);
+		damage2=new Damage(airAttack2Rect2, 10, new Vec(2, 5), 40, team);
 		airAttack2.addDamageFrame(21, damage1);
 		airAttack2.addDamageFrame(20, damage2);
 		
@@ -336,6 +336,14 @@ public class BesiusInstance extends PlayerInstance {
 	
 	public double getHitKnockbackMultiplier() {
 		return 1.3;
+	}
+	
+	Sprite getFaceSprite() {
+		return SpriteLoader.besiusIconSprite;
+	}
+	
+	Sprite getNameSprite() {
+		return SpriteLoader.besiusText;
 	}
 	
 }

@@ -88,7 +88,7 @@ public class StickFigureInstance extends PlayerInstance {
 		airAttack1=new Attack(true, 25);
 		airAttack1.addPart(40, SpriteLoader.stickFigureAirSpike);
 		Rect airAttack1Rect=new Rect(new Vec(-20, -100), new Vec(80, 30));
-		damage1=new Damage(airAttack1Rect, 12, new Vec(5, -10), 60, team);
+		damage1=new Damage(airAttack1Rect, 12, new Vec(5, -10), 40, team);
 		airAttack1.addDamageFrame(10, damage1);
 		airAttack1.addDamageFrame(30, damage1);
 		
@@ -338,4 +338,11 @@ public class StickFigureInstance extends PlayerInstance {
 		return new Rect(new Vec(hangCloseX, hangLowY), new Vec(hangFarX, hangHighY)).flipX();
 	}
 	
+	Sprite getFaceSprite() {
+		return SpriteLoader.stickFigureIconSprite;
+	}
+	
+	Sprite getNameSprite() {
+		return SpriteLoader.cueballText;
+	}
 }

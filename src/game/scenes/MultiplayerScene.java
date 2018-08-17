@@ -3,6 +3,9 @@ package game.scenes;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
+import game.Game;
 import graphics.Camera;
 import graphics.DrawLogEntry;
 import input.Input;
@@ -15,9 +18,11 @@ public class MultiplayerScene extends Scene {
 	private Client client;
 	
 	public void init() {
-		String connectTo="localhost";
+		String response=JOptionPane.showInputDialog("Host IP: ");
+		String connectTo=response;
 		RawInputType myInput=Keyboard.getInstance(true);
 		client=new Client(connectTo, myInput);
+		Game.force120=false;
 	}
 
 	public Scene update() {
