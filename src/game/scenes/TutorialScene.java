@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import entities.Entity;
 import entities.Player;
+import entities.StickFigureInstance;
 import entities.backgrounds.TutorialBackground;
 import game.Game;
 import game.Ledge;
@@ -30,7 +31,7 @@ public class TutorialScene extends Scene {
 	public void init() {
 		spawnPoints=new Vec[] {new Vec(-1500, -100)};
 		new TutorialBackground();
-		player=new Player(new Input(Keyboard.getInstance(true)), spawnPoints[0], 1, 0.5, false);
+		player=new Player(new Input(Keyboard.getInstance(true)), spawnPoints[0], 1, 0.5, false, new StickFigureInstance(1));
 		Camera.getInstance().setPosition(player.isCameraFocusable());
 		Camera.getInstance().setWorldWidth(1000);
 		player.setLives(1);

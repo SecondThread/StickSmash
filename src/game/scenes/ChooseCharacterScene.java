@@ -98,7 +98,7 @@ public class ChooseCharacterScene extends Scene {
 			
 			if (in.attack1Pressed()) {
 				if (playerControlling==-1) {
-					return new MainScene(inputs, showColorBackground, this);
+					return new MainScene(inputs, showColorBackground, this, playerSelectedButton);
 				}
 				else {
 					isReady[playerControlling]=true;

@@ -57,23 +57,20 @@ public class Player extends Entity {
 	private boolean showHighlight;
 	
 	//team colors: 0: Grey, 1-4: red, blue, green, yellow
-	public Player(Input input, Vec position, int team, double percentAcrossScreenToRenderUI, boolean showHighlight) {
+	public Player(Input input, Vec position, int team, double percentAcrossScreenToRenderUI, boolean showHighlight, PlayerInstance instance) {
 		this.position=position;
 		this.percentAcrossScreenToRenderUI=percentAcrossScreenToRenderUI;
 		facingRight=(position.x()<=0);
 		this.team=team;
-		collisionBox=new Rect(new Vec(-40, -70), new Vec(40, 70));
-		double hangCloseX=20;
-		double hangLowY=30;
-		double hangFarX=105;
-		double hangHighY=110;
-		hangBoxRight=new Rect(new Vec(hangCloseX, hangLowY), new Vec(hangFarX, hangHighY));
-		hangBoxLeft=new Rect(new Vec(-hangFarX, hangLowY), new Vec(-hangCloseX, hangHighY));
+		
 		position=new Vec(0, 500);
 		this.input=input;
 		this.showHighlight=showHighlight;
-		instance=new StickFigureInstance(team);
+		this.instance=instance;
 		shield=instance.maxShield();
+		collisionBox=instance.getHitbox();
+		hangBoxRight=instance.getHang1();
+		hangBoxLeft=instance.getHang2();
 	}
 	
 	
@@ -377,6 +374,11 @@ public class Player extends Entity {
 					if (currentAttack.canGrab() && framesUntilNextHang<=0)
 						tryToHang();
 				}
+				Rect additionalGrab=currentAttack.getAdditionalGrabBox(facingRight);
+				if (additionalGrab!=null) {
+					System.out.println("here");
+					tryToHang(additionalGrab);
+				}
 				break;
 			case AIR_HIT:
 				if (hitLagLeft>0) {
@@ -560,6 +562,27 @@ public class Player extends Entity {
 				l.occupied=true;
 				facingRight=false;
 				position=l.getPos().sub(hangBoxLeft.center());
+			}
+		}
+	}
+	
+	private void tryToHang(Rect additionalBox) {
+		ArrayList<Ledge> hangPositions=Game.getScene().getHangPositions();
+		for (Ledge l:hangPositions) {
+			if (l.occupied) continue;
+			
+			if (additionalBox.offsetBy(position).contains(l.getPos())) {
+				System.out.println("Touching unoccupied ledge");
+				//hang to right
+				setAnimation(PlayerState.HANGING);
+				hangingOn=l;
+				l.occupied=true;
+				if (facingRight) {
+					position=l.getPos().sub(hangBoxRight.center());
+				}
+				else {
+					position=l.getPos().sub(hangBoxLeft.center());
+				}
 			}
 		}
 	}
@@ -780,43 +803,31 @@ public class Player extends Entity {
 		boolean drawAtFullAlpha=!isInvincible();
 		switch(state) {
 			case AIRBORN:
-				if (velocity.y()>=0)
-					toDraw=SpriteLoader.stickFigureAirUp;
-				else
-					toDraw=SpriteLoader.stickFigureAirDown;
+				toDraw=instance.getAirbornSprite(velocity);
 				break;
 			case IDLE:
-				toDraw=SpriteLoader.stickFigureIdle;
+				toDraw=instance.getIdleSprite();
 				break;
 			case RUNNING:
-				if (animationCounter>=instance.runningAnimLen()/2)
-					toDraw=SpriteLoader.stickFigureRunning1;
-				else
-					toDraw=SpriteLoader.stickFigureRunning2;
+				toDraw=instance.getRunningSprite(animationCounter);
 				break;
 			case SHIELDING:
-				toDraw=SpriteLoader.stickFigureIdle;
+				toDraw=instance.getIdleSprite();
 				break;
 			case STUNNED:
-				toDraw=SpriteLoader.stickFigureIdle;
+				toDraw=instance.getIdleSprite();
 				break;
 			case ROLLING:
-				if (animationCounter<instance.rollingAnimLen()/2)
-					toDraw=SpriteLoader.stickFigureRolling1;
-				else
-					toDraw=SpriteLoader.stickFigureRolling2;
+				toDraw=instance.getRollingSprite(animationCounter);
 				break;
 			case SPOT_DODGING:
-				toDraw=SpriteLoader.stickFigureIdle;
+				toDraw=instance.getIdleSprite();
 				break;
 			case AIR_DODGING:
-				if (velocity.y()>=0)
-					toDraw=SpriteLoader.stickFigureAirUp;
-				else
-					toDraw=SpriteLoader.stickFigureAirDown;
+				toDraw=instance.getAirbornSprite(velocity);
 				break;
 			case HANGING:
-				toDraw=SpriteLoader.stickFigureHang;
+				toDraw=instance.getHangingSprite();
 				break;
 			case ATTACKING:
 				toDraw=currentAttack.getCurrentSprite();
@@ -825,20 +836,20 @@ public class Player extends Entity {
 				toDraw=currentAttack.getCurrentSprite();
 				break;
 			case AIR_HIT:
-				toDraw=SpriteLoader.stickFigureAirHit;
+				toDraw=instance.getAirHitSprite();
 				break;
 			case KNOCKED_DOWN:
-				toDraw=SpriteLoader.stickFigureKnockedDown;
+				toDraw=instance.getKnockedDownSprite();
 				break;
 			case GRABBING:
-				toDraw=SpriteLoader.stickFigureGrab;
+				toDraw=instance.getGrabbingSprite();
 				if ((grabIconCounter/instance.framesBetweenGrabIconSwitch())%2==0)
 					SpriteLoader.keyPress1Sprite.drawAlphaAndSize(position.add(instance.grabIconOffset()), 1, 0.4, 0.4);
 				else
 					SpriteLoader.keyPress2Sprite.drawAlphaAndSize(position.add(instance.grabIconOffset()), 1, 0.4, 0.4);
 				break;
 			case BEING_GRABBED:
-				toDraw=SpriteLoader.stickFigureGrabbed;
+				toDraw=instance.getBeingGrabbedSprite();
 				if ((grabIconCounter/instance.framesBetweenGrabIconSwitch())%2==0)
 					SpriteLoader.keyPress1Sprite.drawAlphaAndSize(position.add(instance.grabIconOffset()), 1, 0.4, 0.4);
 				else

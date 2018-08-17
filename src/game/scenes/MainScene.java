@@ -4,8 +4,12 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import entities.BesiusInstance;
+import entities.CarlosInstance;
 import entities.Entity;
 import entities.Player;
+import entities.SmashInstance;
+import entities.StickFigureInstance;
 import entities.backgrounds.MainBackground;
 import game.Game;
 import game.Ledge;
@@ -19,6 +23,7 @@ import math.Vec;
 public class MainScene extends Scene {
 
 	private Input[] inputs;
+	private int[] selectedCharacters;
 	private static final int maxGamOverCounter=60;
 
 	private boolean[] showHighlights;
@@ -28,10 +33,11 @@ public class MainScene extends Scene {
 	private boolean gameOver=false;
 	private Scene oldChooseCharacterScene;
 	
-	public MainScene(Input[] inputs, boolean[] showHighlights, Scene oldChooseCharacterScene) {
+	public MainScene(Input[] inputs, boolean[] showHighlights, Scene oldChooseCharacterScene, int[] selectedCharacters) {
 		this.inputs=inputs;
 		this.showHighlights=showHighlights;
 		this.oldChooseCharacterScene=oldChooseCharacterScene;
+		this.selectedCharacters=selectedCharacters;
 	}
 	
 	public void init() {
@@ -41,18 +47,21 @@ public class MainScene extends Scene {
 		spawnPoints[1]=new Vec(400, 300);
 		spawnPoints[2]=new Vec(0, 500);
 		spawnPoints[3]=new Vec(0, 100);
-		int nextSpawnPoint=0;
-		int team=1;
 		int numPlayers=0;
-		int playerIndex=0;
 		for (Input i:inputs)
 			if (i!=null)
 				numPlayers++;
-		for (Input i:inputs) {
-			if (i==null) continue;
-			double percentAcross=numPlayers==1?0.5:(nextSpawnPoint/(double)(numPlayers-1));
-			new Player(i, spawnPoints[nextSpawnPoint++], team++, percentAcross, showHighlights[playerIndex]);
-			playerIndex++;
+		for (int i=0; i<inputs.length; i++) {
+			if (inputs[i]==null) continue;
+			double percentAcross=numPlayers==1?0.5:(i/(double)(numPlayers-1));
+			if (selectedCharacters[i]==0||selectedCharacters[i]==4||selectedCharacters[i]==5)
+				new Player(inputs[i], spawnPoints[i], i+1, percentAcross, showHighlights[i], new StickFigureInstance(i+1));
+			if (selectedCharacters[i]==1)
+				new Player(inputs[i], spawnPoints[i], i+1, percentAcross, showHighlights[i], new BesiusInstance(i+1));
+			if (selectedCharacters[i]==2)
+				new Player(inputs[i], spawnPoints[i], i+1, percentAcross, showHighlights[i], new SmashInstance(i+1));
+			if (selectedCharacters[i]==3)
+				new Player(inputs[i], spawnPoints[i], i+1, percentAcross, showHighlights[i], new CarlosInstance(i+1));
 		}
 		Camera.getInstance().setWorldWidth(3000);
 		Camera.getInstance().setPosition(Vec.zero);

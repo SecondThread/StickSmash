@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import entities.particles.Particle;
 import graphics.Sprite;
+import math.Rect;
 import math.Vec;
 
 public class Attack {
@@ -15,6 +17,8 @@ public class Attack {
 	private HashMap<Integer, Vec> velocityAtFrame=new HashMap<>();
 	private HashMap<Integer, Damage> damageAtFrame=new HashMap<>();
 	private HashSet<Integer> canGrabAtFrame=new HashSet<>();
+	private HashSet<Integer> particleFrame=new HashSet<>();
+	private HashMap<Integer, Rect> additionalGrab=new HashMap<>();
 	private boolean airOnlyAttack;
 	private boolean isRecoveryAttack;
 	private int noAttackAfterLength;
@@ -47,6 +51,10 @@ public class Attack {
 		isRecoveryAttack=true;
 	}
 	
+	public void addAdditionalGrab(int frame, Rect grabBox) {
+		additionalGrab.put(frame, grabBox);
+	}
+	
 	//------------------------------------------------------------
 	//				Use
 	public void start() {
@@ -62,6 +70,9 @@ public class Attack {
 		if (damageAtFrame.containsKey(frame)) {
 			damageAtFrame.get(frame).runScan(isFacingRight, playerPosition);
 		}
+		if (particleFrame.contains(frame)) {
+			Particle.createBulletParticle(playerPosition, isFacingRight);
+		}
 	}
 	
 	public Vec getVelocity(boolean facingRight) {
@@ -73,6 +84,13 @@ public class Attack {
 				return new Vec(-cued.x(), cued.y());
 		}
 		return null;
+	}
+	
+	public Rect getAdditionalGrabBox(boolean facingRight) {
+		Rect box=additionalGrab.getOrDefault(frame, null);
+		if (box==null) return box;
+		if (!facingRight) return box.flipX();
+		else return box;
 	}
 	
 	public boolean canGrab() {
@@ -107,6 +125,10 @@ public class Attack {
 	
 	public int getNoAttackAfterLenght() {
 		return noAttackAfterLength;
+	}
+	
+	public void addBulletParticleFrame(int frame) {
+		particleFrame.add(frame);
 	}
 	
 	

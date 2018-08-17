@@ -7,19 +7,19 @@ import graphics.SpriteLoader;
 import math.Rect;
 import math.Vec;
 
-public class StickFigureInstance extends PlayerInstance {
+public class SmashInstance extends PlayerInstance {
 	
 	//state
 	private int team;
 	double hangCloseX=20;
-	double hangLowY=30;
+	double hangLowY=50;
 	double hangFarX=105;
-	double hangHighY=110;
+	double hangHighY=120;
 
 	// Constants
-	private static final Vec gravity=new Vec(0, -0.2), fastGravity=gravity.scale(2);
-	private static final double moveGroundSpeed=1, moveAirSpeed=0.2;
-	private static final double jumpPower=10, doubleJumpPower=15;
+	private static final Vec gravity=new Vec(0, -0.3), fastGravity=gravity.scale(1.6);
+	private static final double moveGroundSpeed=.9, moveAirSpeed=0.2;
+	private static final double jumpPower=9, doubleJumpPower=13;
 	private static final double xGroundedFriction=0.8, xAirFriction=0.95, yFriction=0.98, xAttackingFriction=0.98;
 	private static final double minSpeedToRun=0.1;
 	private static final int numJumpFrames=30;
@@ -53,7 +53,7 @@ public class StickFigureInstance extends PlayerInstance {
 	private Attack grabMissAttack;
 	private Attack grabAttack;
 	
-	public StickFigureInstance(int team) {
+	public SmashInstance(int team) {
 		this.team=team;
 		createAttacks();
 	}
@@ -281,49 +281,46 @@ public class StickFigureInstance extends PlayerInstance {
 
 	Sprite getAirbornSprite(Vec velocity) {
 		if (velocity.y()>=0) {
-			return SpriteLoader.stickFigureAirUp;
+			return SpriteLoader.smashAirUp;
 		}
 		else {
-			return SpriteLoader.stickFigureAirDown;
+			return SpriteLoader.smashAirDown;
 		}
 	}
 	
 	Sprite getIdleSprite() {
-		return SpriteLoader.stickFigureIdle;
+		return SpriteLoader.smashIdle;
 	}
 	
 	Sprite getRunningSprite(int animationCounter) {
 		if (animationCounter>runningAnimLen()/2)
-			return SpriteLoader.stickFigureRunning1;
+			return SpriteLoader.smashRunning1;
 		else
-			return SpriteLoader.stickFigureRunning2;
+			return SpriteLoader.smashRunning2;
 	}
 	
 	Sprite getRollingSprite(int animationCounter) {
-		if (animationCounter<rollingAnimLen()/2)
-			return SpriteLoader.stickFigureRolling1;
-		else
-			return SpriteLoader.stickFigureRolling2;
+		return SpriteLoader.smashSliding;
 	}
 
 	Sprite getHangingSprite() {
-		return SpriteLoader.stickFigureHang;
+		return SpriteLoader.smashHang;
 	}
 
 	Sprite getAirHitSprite() {
-		return SpriteLoader.stickFigureAirHit;
+		return SpriteLoader.smashAirHit;
 	}
 
 	Sprite getKnockedDownSprite() {
-		return SpriteLoader.stickFigureKnockedDown;
+		return SpriteLoader.smashKnockedDown;
 	}
 
 	Sprite getGrabbingSprite() {
-		return SpriteLoader.stickFigureGrab;
+		return SpriteLoader.smashGrab;
 	}
 
 	Sprite getBeingGrabbedSprite() {
-		return SpriteLoader.stickFigureGrabbed;
+		return SpriteLoader.smashGrabbed;
 	}
 	
 	Rect getHitbox() {
@@ -336,6 +333,10 @@ public class StickFigureInstance extends PlayerInstance {
 	
 	Rect getHang2() {
 		return new Rect(new Vec(hangCloseX, hangLowY), new Vec(hangFarX, hangHighY)).flipX();
+	}
+	
+	public double getHitKnockbackMultiplier() {
+		return 0.7;
 	}
 	
 }

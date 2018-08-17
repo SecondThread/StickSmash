@@ -4,7 +4,7 @@ import graphics.SpriteLoader;
 
 public class Rect {
 
-	private static final boolean drawRects=false;
+	private static final boolean drawRects=true;
 	
 	Vec bottomLeft, topRight;
 	Vec drawOffset=Vec.zero;

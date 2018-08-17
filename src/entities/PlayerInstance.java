@@ -1,6 +1,8 @@
 package entities;
 
 import entities.attacks.Attack;
+import graphics.Sprite;
+import math.Rect;
 import math.Vec;
 
 public abstract class PlayerInstance {
@@ -45,4 +47,23 @@ public abstract class PlayerInstance {
 	abstract int framesBetweenGrabIconSwitch();
 	abstract int noShieldAfterRollOrDodge();
 	abstract Vec grabIconOffset();
+	
+	abstract Sprite getAirbornSprite(Vec velocity);
+	abstract Sprite getIdleSprite();
+	abstract Sprite getRunningSprite(int animationCounter);
+	abstract Sprite getRollingSprite(int animationCounter);
+	abstract Sprite getHangingSprite();
+	abstract Sprite getAirHitSprite();
+	abstract Sprite getKnockedDownSprite();
+	abstract Sprite getGrabbingSprite();
+	abstract Sprite getBeingGrabbedSprite();
+	
+	abstract Rect getHitbox();
+	abstract Rect getHang1();
+	abstract Rect getHang2();
+	
+	public double getHitKnockbackMultiplier() {
+		return 1;
+	}
+	
 }

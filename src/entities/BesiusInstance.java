@@ -7,18 +7,18 @@ import graphics.SpriteLoader;
 import math.Rect;
 import math.Vec;
 
-public class StickFigureInstance extends PlayerInstance {
+public class BesiusInstance extends PlayerInstance {
 	
 	//state
 	private int team;
 	double hangCloseX=20;
-	double hangLowY=30;
+	double hangLowY=10;
 	double hangFarX=105;
-	double hangHighY=110;
+	double hangHighY=90;
 
 	// Constants
-	private static final Vec gravity=new Vec(0, -0.2), fastGravity=gravity.scale(2);
-	private static final double moveGroundSpeed=1, moveAirSpeed=0.2;
+	private static final Vec gravity=new Vec(0, -0.18), fastGravity=gravity.scale(2);
+	private static final double moveGroundSpeed=1.4, moveAirSpeed=0.25;
 	private static final double jumpPower=10, doubleJumpPower=15;
 	private static final double xGroundedFriction=0.8, xAirFriction=0.95, yFriction=0.98, xAttackingFriction=0.98;
 	private static final double minSpeedToRun=0.1;
@@ -53,80 +53,79 @@ public class StickFigureInstance extends PlayerInstance {
 	private Attack grabMissAttack;
 	private Attack grabAttack;
 	
-	public StickFigureInstance(int team) {
+	public BesiusInstance(int team) {
 		this.team=team;
 		createAttacks();
 	}
 	
 	private void createAttacks() {
-		Damage damage1, damage2;
+		Damage damage1, damage2, damage3;
 		
 		//GROUND ATTACK 1
 		groundAttack1=new Attack(false, 20);
-		groundAttack1.addPart(20, SpriteLoader.stickFigureKick1);
-		groundAttack1.addPart(20, SpriteLoader.stickFigureKick2);
-		groundAttack1.addPart(20, SpriteLoader.stickFigureKick3);
-		Rect groundAttack1Rect1=new Rect(new Vec(0, -80), new Vec(110, 70));
-		Rect groundAttack1Rect2=new Rect(new Vec(-40, 0), new Vec(70, 100));
-		damage1=new Damage(groundAttack1Rect1, 10, new Vec(15, 10), 40, team);
-		damage2=new Damage(groundAttack1Rect2, 10, new Vec(-5, 10), 40, team);
-		groundAttack1.addDamageFrame(35, damage1);
-		groundAttack1.addDamageFrame(40, damage2);
+		groundAttack1.addPart(20, SpriteLoader.besiusUppercut1);
+		groundAttack1.addPart(25, SpriteLoader.besiusUppercut2);
+		Rect groundAttack1Rect1=new Rect(new Vec(20, -30), new Vec(90, 35));
+		damage1=new Damage(groundAttack1Rect1, 10, new Vec(5, 10), 40, team);
+		groundAttack1.addDamageFrame(30, damage1);
 		
 		//GROUND ATTACK 2
 		groundAttack2=new Attack(false, 40);
-		groundAttack2.addPart(40, SpriteLoader.stickFigureDab1);
-		groundAttack2.addPart(30, SpriteLoader.stickFigureDab2);
-		Rect groundAttack2Rect1=new Rect(new Vec(30, 0), new Vec(60, 30));
-		Rect groundAttack2Rect2=new Rect(new Vec(-90, -30), new Vec(70, 90));
-		damage1=new Damage(groundAttack2Rect1, 25, new Vec(20, 15), 100, team);
-		damage2=new Damage(groundAttack2Rect2, 4, new Vec(-5, 5), 10, team);
-		groundAttack2.addDamageFrame(54, damage2);
-		groundAttack2.addDamageFrame(55, damage1);
+		groundAttack2.addPart(30, SpriteLoader.besiusFury1);
+		groundAttack2.addPart(30, SpriteLoader.besiusFury2);
+		groundAttack2.addPart(45, SpriteLoader.besiusFury3);
+		Rect groundAttack2Rect1=new Rect(new Vec(0, -20), new Vec(90, 30));
+		Rect groundAttack2Rect2=new Rect(new Vec(0, -20), new Vec(110, 30));
+		Rect groundAttack2Rect3=new Rect(new Vec(0, -60), new Vec(130, 50));
+		damage1=new Damage(groundAttack2Rect1, 8, new Vec(0, 3), 30, team);
+		damage2=new Damage(groundAttack2Rect2, 8, new Vec(5, 2), 30, team);
+		damage3=new Damage(groundAttack2Rect3, 12, new Vec(15, 5), 30, team);
+		groundAttack2.addDamageFrame(10, damage1);
+		groundAttack2.addDamageFrame(30, damage2);
+		groundAttack2.addDamageFrame(50, damage3);
 		
 		//AIR ATTACK 1
 		airAttack1=new Attack(true, 25);
-		airAttack1.addPart(40, SpriteLoader.stickFigureAirSpike);
-		Rect airAttack1Rect=new Rect(new Vec(-20, -100), new Vec(80, 30));
-		damage1=new Damage(airAttack1Rect, 12, new Vec(5, -10), 60, team);
+		airAttack1.addPart(25, SpriteLoader.besiusFlipKick1);
+		airAttack1.addPart(30, SpriteLoader.besiusFlipKick2);
+		Rect airAttack1Rect=new Rect(new Vec(-80, -30), new Vec(120, 100));
+		damage1=new Damage(airAttack1Rect, 12, new Vec(-5, 10), 80, team);
 		airAttack1.addDamageFrame(10, damage1);
 		airAttack1.addDamageFrame(30, damage1);
 		
 		//AIR ATTACK 2
-		airAttack2=new Attack(true, 25);
-		airAttack2.addPart(25, SpriteLoader.stickFigureAirSlice1);
-		airAttack2.addPart(25, SpriteLoader.stickFigureAirSlice2);
-		Rect airAttack2Rect1=new Rect(new Vec(-80, 0), new Vec(80, 100));
-		Rect airAttack2Rect2=new Rect(new Vec(-40, -60), new Vec(100, 60));
-		damage1=new Damage(airAttack2Rect1, 10, new Vec(5, 10), 40, team);
-		damage2=new Damage(airAttack2Rect2, 10, new Vec(10, -5), 40, team);
-		airAttack2.addDamageFrame(25, damage1);
-		airAttack2.addDamageFrame(36, damage2);
+		airAttack2=new Attack(true, 40);
+		airAttack2.addPart(40, SpriteLoader.besiusKnee);
+		Rect airAttack2Rect1=new Rect(new Vec(30, -30), new Vec(60, 0));
+		Rect airAttack2Rect2=new Rect(new Vec(-30, -60), new Vec(90, 30));
+		damage1=new Damage(airAttack2Rect1, 10, new Vec(0, 20), 80, team);
+		damage2=new Damage(airAttack2Rect2, 10, new Vec(0, 5), 40, team);
+		airAttack2.addDamageFrame(21, damage1);
+		airAttack2.addDamageFrame(20, damage2);
 		
 		//RECOVERY ATTACK
 		recoveryAttack=new Attack(false, 0);
 		recoveryAttack.markAsRecoveryAttack();
-		recoveryAttack.addPart(20, SpriteLoader.stickFigureJetpack2);
-		recoveryAttack.addPart(40, SpriteLoader.stickFigureJetpack1);
-		for (int i=20; i<40; i++)
-			recoveryAttack.addVelocityCue(i, new Vec(5, doubleJumpPower));
-		recoveryAttack.addPart(100, SpriteLoader.stickFigureJetpack2);
-		for (int i=40; i<160; i++)
+		recoveryAttack.addPart(20, SpriteLoader.besiusRecover1);
+		recoveryAttack.addPart(60, SpriteLoader.besiusRecover2);
+		for (int i=0; i<30; i++)
+			recoveryAttack.addVelocityCue(i, new Vec(4, 8));
+		for (int i=20; i<80; i++)
 			recoveryAttack.addGrabCue(i);
 		
-		Rect recoveryDamageBox=new Rect(new Vec(-100, -100), new Vec(40, 60));
-		damage1=new Damage(recoveryDamageBox, 6, new Vec(-10, -4), 40, team);
-		recoveryAttack.addDamageFrame(20, damage1);
-		recoveryAttack.addDamageFrame(40, damage1);
-		recoveryAttack.addDamageFrame(60, damage1);
+		Rect recoveryDamageBox=new Rect(new Vec(0, 0), new Vec(130, 110));
+		damage1=new Damage(recoveryDamageBox, 10, new Vec(10, 5), 40, team);
+		recoveryAttack.addDamageFrame(5, damage1);
+		recoveryAttack.addDamageFrame(25, damage1);
+		recoveryAttack.addDamageFrame(45, damage1);
 		
 		//GRAB MISS ATTACK
 		grabMissAttack=new Attack(false, 60);
-		grabMissAttack.addPart(60, SpriteLoader.stickFigureGrab);
+		grabMissAttack.addPart(60, SpriteLoader.besiusGrab);
 		
 		//GRAB ATTACK
 		grabAttack=new Attack(false, 10);
-		grabAttack.addPart(grabAttackAnimLen, SpriteLoader.stickFigureGrabRelease);
+		grabAttack.addPart(grabAttackAnimLen, SpriteLoader.besiusGrabRelease);
 		//damage updated when grab is released because it differs depending on
 		//the number of times they hit the grab button
 	}
@@ -281,53 +280,50 @@ public class StickFigureInstance extends PlayerInstance {
 
 	Sprite getAirbornSprite(Vec velocity) {
 		if (velocity.y()>=0) {
-			return SpriteLoader.stickFigureAirUp;
+			return SpriteLoader.besiusAirUp;
 		}
 		else {
-			return SpriteLoader.stickFigureAirDown;
+			return SpriteLoader.besiusAirDown;
 		}
 	}
 	
 	Sprite getIdleSprite() {
-		return SpriteLoader.stickFigureIdle;
+		return SpriteLoader.besiusIdle;
 	}
 	
 	Sprite getRunningSprite(int animationCounter) {
 		if (animationCounter>runningAnimLen()/2)
-			return SpriteLoader.stickFigureRunning1;
+			return SpriteLoader.besiusRunning1;
 		else
-			return SpriteLoader.stickFigureRunning2;
+			return SpriteLoader.besiusRunning2;
 	}
 	
 	Sprite getRollingSprite(int animationCounter) {
-		if (animationCounter<rollingAnimLen()/2)
-			return SpriteLoader.stickFigureRolling1;
-		else
-			return SpriteLoader.stickFigureRolling2;
+		return SpriteLoader.besiusSliding;
 	}
 
 	Sprite getHangingSprite() {
-		return SpriteLoader.stickFigureHang;
+		return SpriteLoader.besiusHang;
 	}
 
 	Sprite getAirHitSprite() {
-		return SpriteLoader.stickFigureAirHit;
+		return SpriteLoader.besiusAirHit;
 	}
 
 	Sprite getKnockedDownSprite() {
-		return SpriteLoader.stickFigureKnockedDown;
+		return SpriteLoader.besiusKnockedDown;
 	}
 
 	Sprite getGrabbingSprite() {
-		return SpriteLoader.stickFigureGrab;
+		return SpriteLoader.besiusGrab;
 	}
 
 	Sprite getBeingGrabbedSprite() {
-		return SpriteLoader.stickFigureGrabbed;
+		return SpriteLoader.besiusGrabbed;
 	}
 	
 	Rect getHitbox() {
-		return new Rect(new Vec(-40, -70), new Vec(40, 70));
+		return new Rect(new Vec(-35, -60), new Vec(35, 60));
 	}
 	
 	Rect getHang1() {
@@ -336,6 +332,10 @@ public class StickFigureInstance extends PlayerInstance {
 	
 	Rect getHang2() {
 		return new Rect(new Vec(hangCloseX, hangLowY), new Vec(hangFarX, hangHighY)).flipX();
+	}
+	
+	public double getHitKnockbackMultiplier() {
+		return 1.3;
 	}
 	
 }

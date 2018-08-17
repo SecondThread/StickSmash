@@ -43,6 +43,13 @@ public class Particle extends Entity {
 		created.renderOrder=2;
 	}
 	
+	public static void createBulletParticle(Vec position, boolean facingRight) {
+		System.out.println("Creating");
+		Sprite sprite=SpriteLoader.carlosBullet;
+		Vec velocity=(facingRight?Vec.right:Vec.left).scale(50);
+		new Particle(position.add(velocity), velocity, sprite, facingRight, 120, .5, .5, 1, 1);
+	}
+	
 	public static void createKeyPressedParticle(Vec position) {
 		new Particle(position, Vec.zero, SpriteLoader.keyPressedIndicatorSprite, true, 25, 0.4, 0.6, 1, 0);
 	}
