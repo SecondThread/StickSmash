@@ -1,5 +1,6 @@
 package game;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -10,7 +11,6 @@ import javax.swing.JPanel;
 
 import game.scenes.Scene;
 import game.scenes.TitleScene;
-import game.scenes.TutorialScene;
 import graphics.SpriteLoader;
 import input.Input;
 import input.Keyboard;
@@ -41,6 +41,12 @@ public class Game {
 		frame.setResizable(false);
 		frame.setTitle(GAME_NAME);
 		frame.setVisible(true);
+		Graphics2D g=(Graphics2D) mainPanel.getGraphics();
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		SpriteLoader.loadLoadingSprite();
+		g.drawImage(SpriteLoader.loadingSprite.getImage(), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
+		g.dispose();
 		SpriteLoader.loadSprites();
 		
 		Input player1Input=new Input(Keyboard.getInstance(true));

@@ -2,8 +2,9 @@ package graphics;
 
 public class SpriteLoader {
 
-	public static Sprite backgroundSprite;
+	public static Sprite loadingSprite;
 	
+	public static Sprite backgroundSprite;
 	
 	//stick figure sprites
 	public static Sprite stickFigureIdle;
@@ -182,6 +183,10 @@ public class SpriteLoader {
 	
 	//tutorial
 	public static Sprite tutorialBackgroundSprite;
+	
+	public static void loadLoadingSprite() {
+		loadingSprite=new Sprite("StickSmashArt/Art/LoadingScreen/LoadingScreen.png");
+	}
 	
 	public static void loadSprites() {
 		backgroundSprite=new Sprite("StickSmashArt/Art/Background/TestBackground.png");

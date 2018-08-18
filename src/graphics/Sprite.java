@@ -24,8 +24,6 @@ public class Sprite {
 		allSprites.add(this);
 		try {
 			URL resource=Game.class.getResource(path);
-			System.out.println("null? "+resource==null);
-			System.out.println("Path: "+path);
 			image=ImageIO.read(resource);
 		} catch (IOException e) {
 			e.printStackTrace();
