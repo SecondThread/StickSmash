@@ -50,9 +50,9 @@ public class TitleScene extends Scene {
 		if (input.attack1Pressed()) {
 			switch(selectedButtonIndex) {
 				case 0:
-					return new ChooseCharacterScene(input);
+					return new ChooseCharacterScene(input, false);
 				case 1:
-					break;
+					return new ChooseCharacterScene(input, true);
 				case 2:
 					return new MultiplayerScene();
 				case 3:

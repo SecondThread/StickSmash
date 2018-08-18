@@ -31,12 +31,15 @@ public class ChooseCharacterScene extends Scene {
 	private boolean[] isCPU;
 	private Vec[] characterChoicePositions;
 	private boolean initialized=false;
+	private boolean isTeamMode;
+	private int[] playerBackgroundColor;
 	
 	private Server server;
 	
-	public ChooseCharacterScene(Input player1Input) {
+	public ChooseCharacterScene(Input player1Input, boolean isTeamMode) {
 		inputs=new Input[numPlayers];
 		inputs[0]=player1Input;
+		this.isTeamMode=isTeamMode;
 	}
 	
 	public void init() {
@@ -69,6 +72,7 @@ public class ChooseCharacterScene extends Scene {
 		
 		server=new Server(numPlayers-1);
 		showColorBackground=new boolean[numPlayers];
+		Arrays.fill(showColorBackground, true);
 		isReady=new boolean[numPlayers];
 		isCPU=new boolean[numPlayers];
 		characterChoicePositions=new Vec[numPlayers];
@@ -76,6 +80,9 @@ public class ChooseCharacterScene extends Scene {
 		characterChoicePositions[1]=new Vec(-100, -150);
 		characterChoicePositions[2]=new Vec(100, -150);
 		characterChoicePositions[3]=new Vec(300, -150);
+		playerBackgroundColor=new int[numPlayers];
+		for (int i=0; i<numPlayers; i++)
+			playerBackgroundColor[i]=i;
 	}
 	
 	public Scene update() {
@@ -98,7 +105,10 @@ public class ChooseCharacterScene extends Scene {
 			
 			if (in.attack1Pressed()) {
 				if (playerControlling==-1) {
-					return new MainScene(inputs, showColorBackground, this, playerSelectedButton);
+					int[] teams=new int[numPlayers];
+					for (int i=0; i<numPlayers; i++) 
+						teams[i]=playerBackgroundColor[i]+1;
+					return new MainScene(inputs, showColorBackground, this, playerSelectedButton, teams);
 				}
 				else {
 					isReady[playerControlling]=true;
@@ -106,8 +116,11 @@ public class ChooseCharacterScene extends Scene {
 			}
 			if (in.attack2Pressed()) {
 				if (!isReady[playerIndex]) {
-					server.closeServer();
-					return new TitleScene(inputs[0]);
+					//if it isn't the host who tries to close this, then just ignore it
+					if (playerIndex==0) {
+						server.closeServer();
+						return new TitleScene(inputs[0]);
+					}
 				}
 				else {
 					//if there are any unselected cpu's, remove and unselect the previous cpu
@@ -129,11 +142,17 @@ public class ChooseCharacterScene extends Scene {
 						for (int i=0; i<numPlayers; i++) if (isCPU[i]) lastCPU=i;
 						if (lastCPU!=-1)
 							isReady[lastCPU]=false;
+						else
+							isReady[playerIndex]=false;
 					}
 				}
 			}
 			if (in.shieldPressed()) {
-				showColorBackground[playerIndex]^=true;
+				int toChangeColorOf=playerControlling==-1?playerIndex:playerControlling;
+				if (isTeamMode)
+					playerBackgroundColor[toChangeColorOf]=(playerBackgroundColor[toChangeColorOf]+1)%4;
+				else 
+					showColorBackground[toChangeColorOf]^=true;
 			}
 			if (in.attackRecoverPressed()) {
 				if (everyoneReady()) {
@@ -176,7 +195,7 @@ public class ChooseCharacterScene extends Scene {
 		renderEntites();
 
 		Sprite[] selectors= {SpriteLoader.redSelector, SpriteLoader.blueSelector, SpriteLoader.greenSelector, SpriteLoader.yellowSelector};
-		Sprite[] nameBackgrounds= {SpriteLoader.redNameBackground, SpriteLoader.blueNameBackground, SpriteLoader.greenCharacterBackground, 
+		Sprite[] nameBackgrounds= {SpriteLoader.redNameBackground, SpriteLoader.blueNameBackground, SpriteLoader.greenNameBackground, 
 				SpriteLoader.yellowNameBackground};
 		Sprite[] namesOfCharacters= {SpriteLoader.cueballText, SpriteLoader.besiusText, SpriteLoader.smashText, SpriteLoader.carlosText, 
 				SpriteLoader.cueballText, SpriteLoader.cueballText};
@@ -189,8 +208,8 @@ public class ChooseCharacterScene extends Scene {
 			if (playerSelectedButton[i]==-1) 
 				continue;
 
-			if (showColorBackground[i]&&!isCPU[i])
-				coloredBackgrounds[i].drawAlphaAndSize(characterChoicePositions[i], 1, 0.5, 0.5);
+			if (showColorBackground[i])
+				coloredBackgrounds[playerBackgroundColor[i]].drawAlphaAndSize(characterChoicePositions[i], 1, 0.5, 0.5);
 			characterIcons[playerSelectedButton[i]].drawAlphaAndSize(characterChoicePositions[i], 1, 0.3, 0.3);
 			
 			if (isReady[i])
@@ -206,7 +225,7 @@ public class ChooseCharacterScene extends Scene {
 			if (isCPU[i])
 				SpriteLoader.greyNameBackground.drawAlphaAndSize(nameBackgroundPos, 1, 0.4, 0.4);
 			else
-				nameBackgrounds[i].drawAlphaAndSize(nameBackgroundPos, 1, 0.4, 0.4);
+				nameBackgrounds[playerBackgroundColor[i]].drawAlphaAndSize(nameBackgroundPos, 1, 0.4, 0.4);
 			
 			namesOfCharacters[playerSelectedButton[i]].drawAlphaAndSize(nameBackgroundPos.add(Vec.down.scale(10)), 1, 0.3, 0.3);
 		}

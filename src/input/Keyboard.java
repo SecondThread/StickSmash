@@ -1,12 +1,14 @@
 package input;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import game.Game;
 import javafx.scene.input.KeyCode;
 
-public class Keyboard implements KeyListener, RawInputType {
+public class Keyboard implements KeyListener, FocusListener, RawInputType {
 	
 	static int MAX_KEY_VALUE=1000;
 	
@@ -106,6 +108,18 @@ public class Keyboard implements KeyListener, RawInputType {
 
 	public boolean grabDown() {
 		return down[grabCode];
+	}
+
+	public void focusGained(FocusEvent arg0) {
+		System.out.println("Event called");
+		for (int i=0; i<MAX_KEY_VALUE; i++)
+			down[i]=false;
+	}
+
+	public void focusLost(FocusEvent arg0) {
+		System.out.println("Event called");
+		for (int i=0; i<MAX_KEY_VALUE; i++)
+			down[i]=false;
 	}
 
 }

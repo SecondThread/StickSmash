@@ -76,7 +76,8 @@ public class Server {
 		shouldCloseFlag=true;
 		try {
 			Thread.sleep(500);
-			serverSocket.close();
+			if (serverSocket!=null)
+				serverSocket.close();
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}

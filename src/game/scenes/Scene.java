@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import entities.Entity;
 import game.Ledge;
+import graphics.Camera;
 import math.Rect;
 import math.Seg;
 import math.Vec;
@@ -16,8 +17,18 @@ public abstract class Scene {
 	private ArrayList<Seg> universalPlatforms=new ArrayList<>();
 	private ArrayList<Ledge> hangPositions=new ArrayList<>();
 	
+	public Scene() {
+	}
+	
+	public final void callInit() {
+		
+		if (!entities.contains(Camera.getInstance()))
+			addEntity(Camera.getInstance());
+		init();
+	}
+	
 	//called once this is set to the active scene in Game. Do all construction of entities here
-	public abstract void init();
+	protected abstract void init();
 	
 	public abstract Scene update();
 	

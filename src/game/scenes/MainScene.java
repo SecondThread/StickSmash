@@ -3,6 +3,7 @@ package game.scenes;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 
 import entities.BesiusInstance;
 import entities.CarlosInstance;
@@ -27,6 +28,7 @@ public class MainScene extends Scene {
 	private static final int maxGamOverCounter=60;
 
 	private boolean[] showHighlights;
+	private int[] teams;
 	private Vec[] spawnPoints;
 	private int gameOverCounter=0;
 	private int oldUpdatesPerSecond;
@@ -34,11 +36,13 @@ public class MainScene extends Scene {
 	private Scene oldChooseCharacterScene;
 	private int minPlayersAliveToEnd;
 	
-	public MainScene(Input[] inputs, boolean[] showHighlights, Scene oldChooseCharacterScene, int[] selectedCharacters) {
+	public MainScene(Input[] inputs, boolean[] showHighlights, Scene oldChooseCharacterScene, int[] selectedCharacters, int[] teams) {
 		this.inputs=inputs;
 		this.showHighlights=showHighlights;
 		this.oldChooseCharacterScene=oldChooseCharacterScene;
 		this.selectedCharacters=selectedCharacters;
+		this.teams=teams;
+		
 		Game.force120=true;
 	}
 	
@@ -58,13 +62,13 @@ public class MainScene extends Scene {
 			if (inputs[i]==null) continue;
 			double percentAcross=numPlayers==1?0.5:(playerNum/(double)(numPlayers-1));
 			if (selectedCharacters[i]==0||selectedCharacters[i]==4||selectedCharacters[i]==5)
-				new Player(inputs[i], spawnPoints[i], i+1, percentAcross, showHighlights[i], new StickFigureInstance(i+1));
+				new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new StickFigureInstance(teams[i]));
 			if (selectedCharacters[i]==1)
-				new Player(inputs[i], spawnPoints[i], i+1, percentAcross, showHighlights[i], new BesiusInstance(i+1));
+				new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new BesiusInstance(teams[i]));
 			if (selectedCharacters[i]==2)
-				new Player(inputs[i], spawnPoints[i], i+1, percentAcross, showHighlights[i], new SmashInstance(i+1));
+				new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new SmashInstance(teams[i]));
 			if (selectedCharacters[i]==3)
-				new Player(inputs[i], spawnPoints[i], i+1, percentAcross, showHighlights[i], new CarlosInstance(i+1));
+				new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new CarlosInstance(teams[i]));
 			playerNum++;
 		}
 		Camera.getInstance().setWorldWidth(3000);
@@ -74,13 +78,13 @@ public class MainScene extends Scene {
 	
 	public Scene update() {
 		updateEntities();
-		int count=0;
+		HashSet<Integer> aliveTeams=new HashSet<>();
 		for (Entity e:getEntities()) {
 			if (e.isAlive())
-				count++;
+				aliveTeams.add(e.getTeam());
 		}
 		if (!gameOver) {
-			if (count<=minPlayersAliveToEnd) {
+			if (aliveTeams.size()<=minPlayersAliveToEnd) {
 				gameOver=true;
 				oldUpdatesPerSecond=Game.updatesPerSecond;
 				Game.updatesPerSecond=20;

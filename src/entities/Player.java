@@ -636,21 +636,21 @@ public class Player extends Entity {
 	public void processDamage(Damage damage) {
 		if (damage.getTeam()==team)
 			return;
-		if (hangingOn!=null) {
-			hangingOn.occupied=false;
-			hangingOn=null;
-		}
 		
 		//if I am immune, ignore the damage
 		if (isInvincible())
 			return;
 		
-		if (state==PlayerState.SHIELDING) {
-			shield-=15*damage.getPercentDamage();
-			return;
-		}
 		
 		if (damage.getHitbox().intersects(collisionBox.offsetBy(position))) {
+			if (state==PlayerState.SHIELDING) {
+				shield-=15*damage.getPercentDamage();
+				return;
+			}
+			if (hangingOn!=null) {
+				hangingOn.occupied=false;
+				hangingOn=null;
+			}
 			damagePercent+=damage.getPercentDamage();
 			velocity=damage.getHitVelocity().scale(1+damagePercent/100.0);
 			hitLagLeft=damage.getHitLagFrames();
@@ -741,6 +741,10 @@ public class Player extends Entity {
 	
 	public boolean isAlive() {
 		return livesLeft>0;
+	}
+	
+	public int getTeam() {
+		return team;
 	}
 	
 	public void setLives(int livesLeft) {

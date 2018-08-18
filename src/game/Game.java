@@ -51,13 +51,14 @@ public class Game {
 		
 		Input player1Input=new Input(Keyboard.getInstance(true));
 		scene=new TitleScene(player1Input);
-		scene.init();
+		scene.callInit();
 
 		runGameLoop();
 	}
 	
 	public static void addKeyboard(Keyboard toAdd) {
 		frame.addKeyListener(toAdd);
+		frame.addFocusListener(toAdd);
 	}
 	
 	public static void addInput(Input input) {
@@ -87,7 +88,7 @@ public class Game {
 				//lag reduction when computer is shut
 				nextUpdateTime+=nanoSecsPerSec/updatesPerSecond;
 				if (System.nanoTime()-nextUpdateTime>nanoSecsPerSec)
-					nextUpdateTime=nanoSecsPerSec;
+					nextUpdateTime=System.nanoTime()+nanoSecsPerSec;
 				if (!force120)
 					break;
 			}
@@ -103,7 +104,7 @@ public class Game {
 		Scene newScene=scene.update();
 		if (newScene!=scene) {
 			scene=newScene;
-			newScene.init();
+			newScene.callInit();
 		}
 	}
 	

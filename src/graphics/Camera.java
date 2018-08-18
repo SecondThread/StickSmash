@@ -39,6 +39,7 @@ public class Camera extends Entity {
 	}
 	
 	public void update() {
+		tryToMoveCamera();
 	}
 	
 	public void pushState() {
@@ -70,7 +71,6 @@ public class Camera extends Entity {
 	public BufferedImage postRender() {
 		g.dispose();
 		lastDrawLog=currentDrawLog;
-		tryToMoveCamera();
 		return image;
 	}
 	

@@ -56,4 +56,8 @@ public abstract class Entity {
 		return false;
 	}
 	
+	public int getTeam() {
+		return -1;
+	}
+	
 }
