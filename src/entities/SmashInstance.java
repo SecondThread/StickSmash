@@ -63,15 +63,14 @@ public class SmashInstance extends PlayerInstance {
 		
 		//GROUND ATTACK 1
 		groundAttack1=new Attack(false, 20);
-		groundAttack1.addPart(20, SpriteLoader.stickFigureKick1);
-		groundAttack1.addPart(20, SpriteLoader.stickFigureKick2);
-		groundAttack1.addPart(20, SpriteLoader.stickFigureKick3);
-		Rect groundAttack1Rect1=new Rect(new Vec(0, -80), new Vec(110, 70));
-		Rect groundAttack1Rect2=new Rect(new Vec(-40, 0), new Vec(70, 100));
+		groundAttack1.addPart(30, SpriteLoader.smashDownSwing1);
+		groundAttack1.addPart(30, SpriteLoader.smashDownSwing2);
+		Rect groundAttack1Rect1=new Rect(new Vec(-40, 0), new Vec(70, 100));
+		Rect groundAttack1Rect2=new Rect(new Vec(0, -80), new Vec(160, 70));
 		damage1=new Damage(groundAttack1Rect1, 10, new Vec(15, 10), 40, team);
 		damage2=new Damage(groundAttack1Rect2, 10, new Vec(-5, 10), 40, team);
-		groundAttack1.addDamageFrame(35, damage1);
-		groundAttack1.addDamageFrame(40, damage2);
+		groundAttack1.addDamageFrame(30, damage1);
+		groundAttack1.addDamageFrame(45, damage2);
 		
 		//GROUND ATTACK 2
 		groundAttack2=new Attack(false, 40);

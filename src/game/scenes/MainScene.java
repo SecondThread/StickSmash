@@ -32,6 +32,7 @@ public class MainScene extends Scene {
 	private int oldUpdatesPerSecond;
 	private boolean gameOver=false;
 	private Scene oldChooseCharacterScene;
+	private int minPlayersAliveToEnd;
 	
 	public MainScene(Input[] inputs, boolean[] showHighlights, Scene oldChooseCharacterScene, int[] selectedCharacters) {
 		this.inputs=inputs;
@@ -52,9 +53,10 @@ public class MainScene extends Scene {
 		for (Input i:inputs)
 			if (i!=null)
 				numPlayers++;
+		int playerNum=0;
 		for (int i=0; i<inputs.length; i++) {
 			if (inputs[i]==null) continue;
-			double percentAcross=numPlayers==1?0.5:(i/(double)(numPlayers-1));
+			double percentAcross=numPlayers==1?0.5:(playerNum/(double)(numPlayers-1));
 			if (selectedCharacters[i]==0||selectedCharacters[i]==4||selectedCharacters[i]==5)
 				new Player(inputs[i], spawnPoints[i], i+1, percentAcross, showHighlights[i], new StickFigureInstance(i+1));
 			if (selectedCharacters[i]==1)
@@ -63,9 +65,11 @@ public class MainScene extends Scene {
 				new Player(inputs[i], spawnPoints[i], i+1, percentAcross, showHighlights[i], new SmashInstance(i+1));
 			if (selectedCharacters[i]==3)
 				new Player(inputs[i], spawnPoints[i], i+1, percentAcross, showHighlights[i], new CarlosInstance(i+1));
+			playerNum++;
 		}
 		Camera.getInstance().setWorldWidth(3000);
 		Camera.getInstance().setPosition(Vec.zero);
+		minPlayersAliveToEnd=playerNum==1?0:1;
 	}
 	
 	public Scene update() {
@@ -76,7 +80,7 @@ public class MainScene extends Scene {
 				count++;
 		}
 		if (!gameOver) {
-			if (count<=1) {
+			if (count<=minPlayersAliveToEnd) {
 				gameOver=true;
 				oldUpdatesPerSecond=Game.updatesPerSecond;
 				Game.updatesPerSecond=20;
