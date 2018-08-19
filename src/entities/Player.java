@@ -56,6 +56,8 @@ public class Player extends Entity {
 	private double percentAcrossScreenToRenderUI;
 	private boolean showHighlight;
 	
+	private static final Rect grabHitbox=new Rect(new Vec(20, -30), new Vec(120, 30));
+	
 	//team colors: 0: Grey, 1-4: red, blue, green, yellow
 	public Player(Input input, Vec position, int team, double percentAcrossScreenToRenderUI, boolean showHighlight, PlayerInstance instance) {
 		this.position=position;
@@ -179,6 +181,10 @@ public class Player extends Entity {
 			}
 		}
 
+		if (grounded||state==PlayerState.HANGING) {
+			hasDoubleJump=hasRecoveryMove=true;
+		}
+		
 		animationCounter++;
 		if (state!=PlayerState.SHIELDING) {
 			shield++;
@@ -291,10 +297,8 @@ public class Player extends Entity {
 			case HANGING:
 				velocity=Vec.zero;
 				framesUntilNextHang=instance.framesBetweenHangs();
-				if (input.downMovementHeld()||(input.leftMovementHeld()&&facingRight)||(input.rightMovementHeld()&&!facingRight)) {
+				if (animationCounter>=instance.hangImmunityLen()&&(input.downMovementHeld()||(input.leftMovementHeld()&&facingRight)||(input.rightMovementHeld()&&!facingRight))) {
 					//drop from the ledge
-					hasDoubleJump=true;
-					hasRecoveryMove=true;
 					setAnimation(PlayerState.AIRBORN);
 					hangingOn.occupied=false;
 					hangingOn=null;
@@ -305,8 +309,6 @@ public class Player extends Entity {
 				}
 				else if (input.jumpMovementPressed()) {
 					//jump up
-					hasDoubleJump=true;
-					hasRecoveryMove=true;
 					setAnimation(PlayerState.AIRBORN);
 					hangingOn.occupied=false;
 					hangingOn=null;
@@ -440,6 +442,12 @@ public class Player extends Entity {
 					grabAttacksMade++;
 					Particle.createKeyPressedParticle(position.add(instance.grabIconOffset()));
 				}
+				if (grabbing instanceof Player) {
+					Player other=(Player) grabbing;
+					if (other.getState()!=PlayerState.BEING_GRABBED) {
+						setAnimation(PlayerState.IDLE);
+					}
+				}
 				break;
 			case BEING_GRABBED:
 				grabFreeCounter++;
@@ -451,6 +459,12 @@ public class Player extends Entity {
 				if (grabFreeCounter>=instance.fullGrabLength()) {
 					grabbedBy.releaseGrabbedEntityRequest();
 					grabFreeCounter=Integer.MIN_VALUE;
+				}
+				if (grabbedBy instanceof Player) {
+					Player other=(Player) grabbedBy;
+					if (other.getState()!=PlayerState.GRABBING&&other.getState()!=PlayerState.ATTACKING) {
+						setAnimation(PlayerState.IDLE);
+					}
 				}
 				break;
 		}
@@ -466,7 +480,7 @@ public class Player extends Entity {
 	}
 	
 	private boolean hittingPlatform(Vec newPos) {
-		if (input.downMovementHeld()) return false;
+		if (input.downMovementHeld()&&state!=PlayerState.BEING_GRABBED&&state!=PlayerState.GRABBING) return false;
 		Rect newCollusionBox=collisionBox.offsetBy(newPos);
 		for (Seg s:Game.getScene().getPlatforms()) {
 			if (newCollusionBox.intersectsSeg(s))
@@ -612,7 +626,7 @@ public class Player extends Entity {
 	private boolean tryToGrab() {
 		if (grounded&&input.grabPressed()) {
 			grabAttacksMade=0;
-			Rect hitboxPos=new Rect(new Vec(20, -30), new Vec(120, 30));
+			Rect hitboxPos=grabHitbox.clone();
 			if (!facingRight)
 				hitboxPos=hitboxPos.flipX();
 			hitboxPos=hitboxPos.offsetBy(position);
@@ -652,8 +666,8 @@ public class Player extends Entity {
 				hangingOn.occupied=false;
 				hangingOn=null;
 			}
+			velocity=damage.getHitVelocity().scale(1+(damagePercent*1.75)/100.0);
 			damagePercent+=damage.getPercentDamage();
-			velocity=damage.getHitVelocity().scale(1+damagePercent/100.0);
 			hitLagLeft=damage.getHitLagFrames();
 			setAnimation(PlayerState.AIR_HIT);
 			facingRight=!(velocity.x()>=0);
@@ -673,7 +687,7 @@ public class Player extends Entity {
 			grabFreeCounter=0;
 			setAnimation(PlayerState.BEING_GRABBED);
 			grabbedBy=grab.getGrabber();
-			facingRight=grab.getGrabberFacingRight();
+			facingRight=!grab.getGrabberFacingRight()^instance.flipFacingWhenGrabbedRight();
 			position=grab.getGrabPosition();
 			grabIconCounter=0;
 			return true;
@@ -881,5 +895,58 @@ public class Player extends Entity {
 		}
 	}
 	
+	//used by the computer to see what is going on
+	public PlayerState getState() {
+		return state;
+	}
+		
+	public boolean getHasDoubleJump() {
+		return hasDoubleJump;
+	}
+		
+	public boolean hasRecovery() {
+		return hasRecoveryMove;
+	}
+		
+	public Vec getVelocity() {
+		return velocity;
+	}
+	
+	public double getHangYOffset() {
+		return hangBoxRight.center().y();
+	}
+	
+	public double getHangXOffset() {
+		return hangBoxRight.center().x();
+	}
+	
+	public Attack getAttack1() {
+		return grounded?instance.groundAttack1():instance.airAttack1();
+	}
+	
+	public Attack getAttack2() {
+		return grounded?instance.groundAttack2():instance.airAttack2();
+	}
+	
+	public Vec getGrabCenter() {
+		return grabHitbox.center();
+	}
+	
+	public boolean getFacingRight() {
+		return facingRight;
+	}
+	
+	public double getJumpPower() {
+		return instance.jumpPower();
+	}
+	
+	public boolean getGrounded() {
+		return grounded;
+	}
+	
+	public double getMinSpeedToRun() {
+		return instance.minSpeedToRun();
+	}
+	//end used by computer
 	
 }

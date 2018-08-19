@@ -68,6 +68,9 @@ public abstract class PlayerInstance {
 	public double getHitKnockbackMultiplier() {
 		return 1;
 	}
+	public boolean flipFacingWhenGrabbedRight() {
+		return false;
+	}
 	
 	
 }

@@ -75,6 +75,10 @@ public class Attack {
 		additionalGrab.put(frame, grabBox);
 	}
 	
+	public void addBulletParticleFrame(int frame) {
+		particleFrame.add(frame);
+	}
+
 	//------------------------------------------------------------
 	//				Use
 	public void start() {
@@ -184,9 +188,16 @@ public class Attack {
 		return noAttackAfterLength;
 	}
 	
-	public void addBulletParticleFrame(int frame) {
-		particleFrame.add(frame);
+	public Vec getCenterOfAttack() {
+		Damage strongestDamage=null;
+		for (Damage d:damageAtFrame.values()) {
+			if (strongestDamage==null||d.getPercentDamage()>strongestDamage.getPercentDamage())
+				strongestDamage=d;
+		}
+		if (strongestDamage==null) {
+			return Vec.zero;
+		}
+		return strongestDamage.getHitbox().center();
 	}
-	
 	
 }

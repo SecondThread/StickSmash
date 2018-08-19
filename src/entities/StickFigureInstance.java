@@ -345,4 +345,8 @@ public class StickFigureInstance extends PlayerInstance {
 	Sprite getNameSprite() {
 		return SpriteLoader.cueballText;
 	}
+	
+	public boolean flipFacingWhenGrabbedRight() {
+		return true;
+	}
 }

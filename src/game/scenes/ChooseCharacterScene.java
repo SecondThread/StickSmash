@@ -108,7 +108,7 @@ public class ChooseCharacterScene extends Scene {
 					int[] teams=new int[numPlayers];
 					for (int i=0; i<numPlayers; i++) 
 						teams[i]=playerBackgroundColor[i]+1;
-					return new MainScene(inputs, showColorBackground, this, playerSelectedButton, teams);
+					return new MainScene(inputs, showColorBackground, this, playerSelectedButton, isCPU, teams);
 				}
 				else {
 					isReady[playerControlling]=true;

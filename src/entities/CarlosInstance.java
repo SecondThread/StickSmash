@@ -79,7 +79,7 @@ public class CarlosInstance extends PlayerInstance {
 		groundAttack2.addPart(40, SpriteLoader.carlosShooting2);
 		groundAttack2.addPart(20, SpriteLoader.carlosShooting1);
 		groundAttack2.addBulletParticleFrame(100);
-		Rect groundAttack2Rect1=new Rect(new Vec(30, 0), new Vec(1000, 10));
+		Rect groundAttack2Rect1=new Rect(new Vec(30, 0), new Vec(2000, 10));
 		damage1=new Damage(groundAttack2Rect1, 1, new Vec(1, 5), 60, team);
 		groundAttack2.addDamageFrame(100, damage1);
 		

@@ -17,6 +17,7 @@ import game.Ledge;
 import graphics.Camera;
 import graphics.SpriteLoader;
 import input.Input;
+import input.ai.ComputerInput;
 import math.Rect;
 import math.Seg;
 import math.Vec;
@@ -35,12 +36,14 @@ public class MainScene extends Scene {
 	private boolean gameOver=false;
 	private Scene oldChooseCharacterScene;
 	private int minPlayersAliveToEnd;
+	private boolean[] isCPU;
 	
-	public MainScene(Input[] inputs, boolean[] showHighlights, Scene oldChooseCharacterScene, int[] selectedCharacters, int[] teams) {
-		this.inputs=inputs;
+	public MainScene(Input[] inputs, boolean[] showHighlights, Scene oldChooseCharacterScene, int[] selectedCharacters, boolean[] isCPU, int[] teams) {
+		this.inputs=inputs.clone();
 		this.showHighlights=showHighlights;
 		this.oldChooseCharacterScene=oldChooseCharacterScene;
 		this.selectedCharacters=selectedCharacters;
+		this.isCPU=isCPU;
 		this.teams=teams;
 		
 		Game.force120=true;
@@ -54,21 +57,32 @@ public class MainScene extends Scene {
 		spawnPoints[2]=new Vec(0, 500);
 		spawnPoints[3]=new Vec(0, 100);
 		int numPlayers=0;
-		for (Input i:inputs)
-			if (i!=null)
+		for (int i:selectedCharacters)
+			if (i!=-1)
 				numPlayers++;
 		int playerNum=0;
 		for (int i=0; i<inputs.length; i++) {
-			if (inputs[i]==null) continue;
+			if (selectedCharacters[i]==-1) continue;
+			
+			ComputerInput cpuInput=null;
+			if (isCPU[i]) {
+				cpuInput=new ComputerInput();
+				inputs[i]=new Input(cpuInput);
+			}
+			Player created=null;
 			double percentAcross=numPlayers==1?0.5:(playerNum/(double)(numPlayers-1));
 			if (selectedCharacters[i]==0||selectedCharacters[i]==4||selectedCharacters[i]==5)
-				new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new StickFigureInstance(teams[i]));
+				created=new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new StickFigureInstance(teams[i]));
 			if (selectedCharacters[i]==1)
-				new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new BesiusInstance(teams[i]));
+				created=new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new BesiusInstance(teams[i]));
 			if (selectedCharacters[i]==2)
-				new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new SmashInstance(teams[i]));
+				created=new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new SmashInstance(teams[i]));
 			if (selectedCharacters[i]==3)
-				new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new CarlosInstance(teams[i]));
+				created=new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new CarlosInstance(teams[i]));
+			
+			if (cpuInput!=null)
+				cpuInput.setPlayer(created);
+			
 			playerNum++;
 		}
 		Camera.getInstance().setWorldWidth(3000);
