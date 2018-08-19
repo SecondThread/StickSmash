@@ -159,7 +159,8 @@ public class Player extends Entity {
 		
 		//movement
 		if (state!=PlayerState.STUNNED&&state!=PlayerState.SHIELDING&&state!=PlayerState.ROLLING&&state!=PlayerState.HANGING&&state!=PlayerState.ATTACKING
-				&&!(state==PlayerState.AIR_HIT&&hitLagLeft>0)&&state!=PlayerState.KNOCKED_DOWN&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED) {
+				&&!(state==PlayerState.AIR_HIT&&hitLagLeft>0)&&state!=PlayerState.KNOCKED_DOWN&&state!=PlayerState.GRABBING&&state!=PlayerState.BEING_GRABBED
+				&&!(state==PlayerState.AIR_ATTACKING&&grounded)) {
 			if (input.leftMovementHeld()) {
 				if (grounded) {
 					if (state!=PlayerState.SPOT_DODGING)
@@ -354,13 +355,13 @@ public class Player extends Entity {
 			case ATTACKING:
 				currentAttack.update(grounded, facingRight, position);
 				if (currentAttack.isOver()) {
-					framesUntilNextAttack=currentAttack.getNoAttackAfterLenght();
+					framesUntilNextAttack=currentAttack.getNoAttackAfterLength();
 					setAnimation(PlayerState.IDLE);
 				}
 				else {
 					if (!grounded)
 						setAnimation(PlayerState.AIR_ATTACKING);
-					Vec newVel=currentAttack.getVelocity(facingRight);
+					Vec newVel=currentAttack.getVelocity(facingRight, velocity);
 					if (newVel!=null) {
 						velocity=newVel;
 					}
@@ -370,11 +371,11 @@ public class Player extends Entity {
 				currentAttack.update(grounded, facingRight, position);
 				if (currentAttack.isRecoveryAttack()) hasRecoveryMove=false;
 				if (currentAttack.isOver()) {
-					framesUntilNextAttack=currentAttack.getNoAttackAfterLenght();
+					framesUntilNextAttack=currentAttack.getNoAttackAfterLength();
 					setAnimation(PlayerState.AIRBORN);
 				}
 				else {
-					Vec newVel=currentAttack.getVelocity(facingRight);
+					Vec newVel=currentAttack.getVelocity(facingRight, velocity);
 					if (newVel!=null)
 						velocity=newVel;
 					if (currentAttack.canGrab() && framesUntilNextHang<=0)

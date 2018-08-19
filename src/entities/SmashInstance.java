@@ -65,59 +65,68 @@ public class SmashInstance extends PlayerInstance {
 		groundAttack1=new Attack(false, 20);
 		groundAttack1.addPart(30, SpriteLoader.smashDownSwing1);
 		groundAttack1.addPart(30, SpriteLoader.smashDownSwing2);
-		Rect groundAttack1Rect1=new Rect(new Vec(-40, 0), new Vec(70, 100));
-		Rect groundAttack1Rect2=new Rect(new Vec(0, -80), new Vec(160, 70));
-		damage1=new Damage(groundAttack1Rect1, 10, new Vec(15, 10), 40, team);
-		damage2=new Damage(groundAttack1Rect2, 10, new Vec(-5, 10), 40, team);
+		Rect groundAttack1Rect1=new Rect(new Vec(-50, 0), new Vec(160, 130));
+		Rect groundAttack1Rect2=new Rect(new Vec(0, -120), new Vec(150, 0));
+		damage1=new Damage(groundAttack1Rect1, 14, new Vec(15, 5), 40, team);
+		damage2=new Damage(groundAttack1Rect2, 11, new Vec(5, -9), 40, team);
 		groundAttack1.addDamageFrame(30, damage1);
 		groundAttack1.addDamageFrame(45, damage2);
 		
 		//GROUND ATTACK 2
 		groundAttack2=new Attack(false, 40);
-		groundAttack2.addPart(40, SpriteLoader.stickFigureDab1);
-		groundAttack2.addPart(30, SpriteLoader.stickFigureDab2);
-		Rect groundAttack2Rect1=new Rect(new Vec(30, 0), new Vec(60, 30));
-		Rect groundAttack2Rect2=new Rect(new Vec(-90, -30), new Vec(70, 90));
-		damage1=new Damage(groundAttack2Rect1, 25, new Vec(20, 15), 100, team);
-		damage2=new Damage(groundAttack2Rect2, 4, new Vec(-5, 5), 10, team);
-		groundAttack2.addDamageFrame(54, damage2);
-		groundAttack2.addDamageFrame(55, damage1);
+		groundAttack2.addPart(40, SpriteLoader.smashKick1);
+		groundAttack2.addPart(40, SpriteLoader.smashKick2);
+		Rect groundAttack2Rect1=new Rect(new Vec(0, -100), new Vec(140, 30));
+		Rect groundAttack2Rect2=new Rect(new Vec(-140, -100), new Vec(0, 30));
+		damage1=new Damage(groundAttack2Rect1, 8, new Vec(8, 7), 100, team);
+		damage2=new Damage(groundAttack2Rect2, 22, new Vec(-15, 12), 100, team);
+		groundAttack2.addDamageFrame(10, damage1);
+		groundAttack2.addDamageFrame(55, damage2);
 		
 		//AIR ATTACK 1
 		airAttack1=new Attack(true, 25);
-		airAttack1.addPart(40, SpriteLoader.stickFigureAirSpike);
-		Rect airAttack1Rect=new Rect(new Vec(-20, -100), new Vec(80, 30));
-		damage1=new Damage(airAttack1Rect, 12, new Vec(5, -10), 60, team);
-		airAttack1.addDamageFrame(10, damage1);
-		airAttack1.addDamageFrame(30, damage1);
+		airAttack1.addPart(20, SpriteLoader.smashAirSwing1);
+		airAttack1.addPart(35, SpriteLoader.smashAirSwing2);
+		Rect airAttack1Rect1=new Rect(new Vec(-20, -100), new Vec(160, 100));
+		Rect airAttack1Rect2=new Rect(new Vec(-70, 0), new Vec(70, 135));
+		damage1=new Damage(airAttack1Rect1, 10, new Vec(5, 10), 40, team);
+		damage2=new Damage(airAttack1Rect2, 18, new Vec(-15, 3), 60, team);
+		airAttack1.addDamageFrame(25, damage1);
+		airAttack1.addDamageFrame(35, damage2);
 		
 		//AIR ATTACK 2
-		airAttack2=new Attack(true, 25);
-		airAttack2.addPart(25, SpriteLoader.stickFigureAirSlice1);
-		airAttack2.addPart(25, SpriteLoader.stickFigureAirSlice2);
-		Rect airAttack2Rect1=new Rect(new Vec(-80, 0), new Vec(80, 100));
-		Rect airAttack2Rect2=new Rect(new Vec(-40, -60), new Vec(100, 60));
-		damage1=new Damage(airAttack2Rect1, 10, new Vec(5, 10), 40, team);
-		damage2=new Damage(airAttack2Rect2, 10, new Vec(10, -5), 40, team);
+		airAttack2=new Attack(true, 5);
+		airAttack2.addPart(20, SpriteLoader.smashStomp1);
+		airAttack2.addPart(25, SpriteLoader.smashStomp2);
+		Rect airAttack2Rect1=new Rect(new Vec(-80, -185), new Vec(80, -20));
+		damage1=new Damage(airAttack2Rect1, 14, new Vec(0, -10), 50, team);
+		airAttack2.addVelocityCue(35, Vec.up.scale(3));
 		airAttack2.addDamageFrame(25, damage1);
-		airAttack2.addDamageFrame(36, damage2);
+		airAttack2.addDamageFrame(40, damage1);
 		
 		//RECOVERY ATTACK
-		recoveryAttack=new Attack(false, 0);
+		recoveryAttack=new Attack(false, 50);
 		recoveryAttack.markAsRecoveryAttack();
-		recoveryAttack.addPart(20, SpriteLoader.stickFigureJetpack2);
-		recoveryAttack.addPart(40, SpriteLoader.stickFigureJetpack1);
-		for (int i=20; i<40; i++)
-			recoveryAttack.addVelocityCue(i, new Vec(5, doubleJumpPower));
-		recoveryAttack.addPart(100, SpriteLoader.stickFigureJetpack2);
-		for (int i=40; i<160; i++)
+		int jumpUpLength=90;
+		int jumpUpPowerLength=45;
+		Vec upwardsVelocity=new Vec(Attack.velocityValueToIgnore, 12);
+		recoveryAttack.addPart(jumpUpLength, SpriteLoader.smashRecover1);
+		for (int i=0; i<jumpUpPowerLength; i++)
+			recoveryAttack.addVelocityCue(i, upwardsVelocity);
+		for (int i=0; i<jumpUpLength+Attack.partUntilGroundedMaxLength; i++)
 			recoveryAttack.addGrabCue(i);
 		
-		Rect recoveryDamageBox=new Rect(new Vec(-100, -100), new Vec(40, 60));
-		damage1=new Damage(recoveryDamageBox, 6, new Vec(-10, -4), 40, team);
-		recoveryAttack.addDamageFrame(20, damage1);
-		recoveryAttack.addDamageFrame(40, damage1);
-		recoveryAttack.addDamageFrame(60, damage1);
+		Rect recoveryDamageBox=new Rect(new Vec(-80, -90), new Vec(80, 130));
+		Damage recoveryDamageWhileFalling=new Damage(recoveryDamageBox, 0, Vec.down.scale(5), 40, team);
+		recoveryAttack.addPartUntilGrounded(SpriteLoader.smashRecover2, null, recoveryDamageWhileFalling);
+
+		recoveryAttack.addPart(80, SpriteLoader.smashRecover3);
+		Rect finalDamageBoxLeft=new Rect(new Vec(-100, -120), new Vec(-10, 50));
+		Rect finalDamageBoxRight=new Rect(new Vec(20, -120), new Vec(170, 50));
+		damage1=new Damage(finalDamageBoxLeft, 10, new Vec(-5, 9), 40, team);
+		damage2=new Damage(finalDamageBoxRight, 18, new Vec(7, 15), 65, team);
+		recoveryAttack.addDamageFrame(jumpUpLength+Attack.partUntilGroundedMaxLength+10, damage1);
+		recoveryAttack.addDamageFrame(jumpUpLength+Attack.partUntilGroundedMaxLength+11, damage2);
 		
 		//GRAB MISS ATTACK
 		grabMissAttack=new Attack(false, 60);
