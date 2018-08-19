@@ -163,7 +163,7 @@ public class ComputerInput implements RawInputType {
 				attack1Center=new Vec(-attack1Center.x(), attack1Center.y());
 			targetPosition=playerTargetting.isCameraFocusable().sub(attack1Center);
 			moveToTargetPosition(false, false);
-			if (random.nextInt(1+(int)(targetPosition.sub(player.isCameraFocusable()).mag()))<30) {
+			if (random.nextInt(1+(int)(targetPosition.sub(player.isCameraFocusable()).mag()))<70) {
 				newAttack1=true;
 			}
 			break;
@@ -173,7 +173,7 @@ public class ComputerInput implements RawInputType {
 				attack2Center=new Vec(-attack2Center.x(), attack2Center.y());
 			targetPosition=playerTargetting.isCameraFocusable().sub(attack2Center);
 			moveToTargetPosition(false, false);
-			if (random.nextInt(1+(int)(targetPosition.sub(player.isCameraFocusable()).mag()))<30) {
+			if (random.nextInt(1+(int)(targetPosition.sub(player.isCameraFocusable()).mag()))<70) {
 				newAttack1=true;
 			}
 			break;
