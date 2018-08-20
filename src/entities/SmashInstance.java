@@ -117,14 +117,14 @@ public class SmashInstance extends PlayerInstance {
 			recoveryAttack.addGrabCue(i);
 		
 		Rect recoveryDamageBox=new Rect(new Vec(-80, -90), new Vec(80, 130));
-		Damage recoveryDamageWhileFalling=new Damage(recoveryDamageBox, 0, Vec.down.scale(5), 40, team);
+		Damage recoveryDamageWhileFalling=new Damage(recoveryDamageBox, 0, new Vec(0,0), 0, team);
 		recoveryAttack.addPartUntilGrounded(SpriteLoader.smashRecover2, null, recoveryDamageWhileFalling);
 
 		recoveryAttack.addPart(80, SpriteLoader.smashRecover3);
 		Rect finalDamageBoxLeft=new Rect(new Vec(-100, -120), new Vec(-10, 50));
 		Rect finalDamageBoxRight=new Rect(new Vec(20, -120), new Vec(170, 50));
-		damage1=new Damage(finalDamageBoxLeft, 10, new Vec(-5, 9), 40, team);
-		damage2=new Damage(finalDamageBoxRight, 18, new Vec(7, 15), 65, team);
+		damage1=new Damage(finalDamageBoxLeft, 10, new Vec(-6, 9), 40, team);
+		damage2=new Damage(finalDamageBoxRight, 9, new Vec(7, 10), 65, team);
 		recoveryAttack.addDamageFrame(jumpUpLength+Attack.partUntilGroundedMaxLength+10, damage1);
 		recoveryAttack.addDamageFrame(jumpUpLength+Attack.partUntilGroundedMaxLength+11, damage2);
 		
