@@ -75,21 +75,24 @@ public class CarlosInstance extends PlayerInstance {
 		
 		//GROUND ATTACK 2
 		groundAttack2=new Attack(false, 40);
-		groundAttack2.addPart(70, SpriteLoader.carlosShooting1);
+		groundAttack2.addPart(40, SpriteLoader.carlosShooting1);
 		groundAttack2.addPart(40, SpriteLoader.carlosShooting2);
 		groundAttack2.addPart(20, SpriteLoader.carlosShooting1);
 		groundAttack2.addBulletParticleFrame(100);
 		Rect groundAttack2Rect1=new Rect(new Vec(30, 0), new Vec(2000, 10));
-		damage1=new Damage(groundAttack2Rect1, 1, new Vec(1, 5), 60, team);
-		groundAttack2.addDamageFrame(100, damage1);
+		damage1=new Damage(groundAttack2Rect1, 1, new Vec(1, 5), 100, team);
+		groundAttack2.addDamageFrame(70, damage1);
 		
 		//AIR ATTACK 1
 		airAttack1=new Attack(true, 20);
 		airAttack1.addPart(30, SpriteLoader.carlosAirSlice1);
 		airAttack1.addPart(30, SpriteLoader.carlosAirSlice2);
-		Rect airAttack1Rect=new Rect(new Vec(0, -100), new Vec(160, 120));
-		damage1=new Damage(airAttack1Rect, 12, new Vec(10, 5), 50, team);
+		Rect airAttack1Rect1=new Rect(new Vec(0, -100), new Vec(160, 120));
+		Rect airAttack1Rect2=new Rect(new Vec(-100,-150), new Vec(100, -60));
+		damage1=new Damage(airAttack1Rect1, 12, new Vec(10, 5), 50, team);
+		damage2=new Damage(airAttack1Rect2, 12, new Vec(10, -5), 50, team);
 		airAttack1.addDamageFrame(30, damage1);
+		airAttack1.addDamageFrame(35, damage2);
 		
 		//AIR ATTACK 2
 		airAttack2=new Attack(false, 25);
