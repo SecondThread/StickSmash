@@ -18,7 +18,7 @@ public class WaddlesInstance extends PlayerInstance {
 
 	// Constants
 	private static final Vec gravity=new Vec(0, -0.18), fastGravity=gravity.scale(2);
-	private static final double moveGroundSpeed=1.4, moveAirSpeed=0.25;
+	private static final double moveGroundSpeed=1.2, moveAirSpeed=0.25;
 	private static final double jumpPower=10, doubleJumpPower=15;
 	private static final double xGroundedFriction=0.8, xAirFriction=0.95, yFriction=0.98, xAttackingFriction=0.98;
 	private static final double minSpeedToRun=0.1;
@@ -65,7 +65,7 @@ public class WaddlesInstance extends PlayerInstance {
 		groundAttack1=new Attack(false, 10);
 		groundAttack1.addPart(15, SpriteLoader.waddlesPeck);
 		Rect groundAttack1Rect1=new Rect(new Vec(20, -10), new Vec(120, 55));
-		damage1=new Damage(groundAttack1Rect1, 8, new Vec(5, 10), 20, team);
+		damage1=new Damage(groundAttack1Rect1, 8, new Vec(5, 3), 20, team);
 		groundAttack1.addDamageFrame(5, damage1);
 		
 		//GROUND ATTACK 2
@@ -85,25 +85,29 @@ public class WaddlesInstance extends PlayerInstance {
 		
 		//AIR ATTACK 1
 		airAttack1=new Attack(true, 25);
-		airAttack1.addPart(25, SpriteLoader.waddlesBackflip1);
-		airAttack1.addPart(30, SpriteLoader.waddlesBackflip2);
+		airAttack1.addPart(20, SpriteLoader.waddlesBackflip1);
+		airAttack1.addPart(15, SpriteLoader.waddlesBackflip2);
 		Rect airAttack1Rect=new Rect(new Vec(-80, -30), new Vec(120, 100));
-		damage1=new Damage(airAttack1Rect, 12, new Vec(-5, 10), 80, team);
+		damage1=new Damage(airAttack1Rect, 12, new Vec(0, 2), 20, team);
+		damage2=new Damage(airAttack1Rect, 12, new Vec(-10, 5), 40, team);
 		airAttack1.addDamageFrame(10, damage1);
-		airAttack1.addDamageFrame(30, damage1);
+		airAttack1.addDamageFrame(25, damage2);
 		
 		//AIR ATTACK 2
-		airAttack2=new Attack(true, 40);
-		airAttack2.addPart(40, SpriteLoader.waddlesSpin1);
-		airAttack2.addPart(40, SpriteLoader.waddlesSpin2);
-		airAttack2.addPart(40, SpriteLoader.waddlesSpin3);
-		airAttack2.addPart(40, SpriteLoader.waddlesSpin4);
-		Rect airAttack2Rect1=new Rect(new Vec(30, -30), new Vec(60, 0));
-		Rect airAttack2Rect2=new Rect(new Vec(-30, -60), new Vec(90, 30));
-		damage1=new Damage(airAttack2Rect1, 15, new Vec(20, 0), 80, team);
-		damage2=new Damage(airAttack2Rect2, 10, new Vec(2, 5), 40, team);
-		airAttack2.addDamageFrame(21, damage1);
-		airAttack2.addDamageFrame(20, damage2);
+		airAttack2=new Attack(true, 80);
+		airAttack2.addPart(15, SpriteLoader.waddlesSpin1);
+		airAttack2.addPart(15, SpriteLoader.waddlesSpin2);
+		airAttack2.addPart(15, SpriteLoader.waddlesSpin3);
+		airAttack2.addPart(15, SpriteLoader.waddlesSpin4);
+		for(int i = 0; i < 60; i++)
+			airAttack2.addVelocityCue(i, new Vec(10,0));
+		Rect airAttack2Rect1=new Rect(new Vec(-20, -60), new Vec(130, 60));
+		damage1=new Damage(airAttack2Rect1, 5, new Vec(5, 1), 14, team);
+		damage2=new Damage(airAttack2Rect1, 20, new Vec(10, 0), 40, team);
+		airAttack2.addDamageFrame(10, damage1);
+		airAttack2.addDamageFrame(25, damage1);
+		airAttack2.addDamageFrame(40, damage1);
+		airAttack2.addDamageFrame(55, damage2);
 		
 		//RECOVERY ATTACK
 		recoveryAttack=new Attack(false, 0);
