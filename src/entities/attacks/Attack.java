@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import entities.particles.Particle;
+import entities.particles.ProjectileType;
 import graphics.Sprite;
 import math.Rect;
 import math.Vec;
@@ -21,7 +22,7 @@ public class Attack {
 	private HashMap<Integer, Vec> velocityAtFrame=new HashMap<>();
 	private HashMap<Integer, Damage> damageAtFrame=new HashMap<>();
 	private HashSet<Integer> canGrabAtFrame=new HashSet<>();
-	private HashSet<Integer> particleFrame=new HashSet<>();
+	private HashMap<Integer,ProjectileType> particleFrame=new HashMap<>();
 	private HashMap<Integer, Rect> additionalGrab=new HashMap<>();
 	private ArrayList<Boolean> stayInPartUntilGrounded=new ArrayList<>();
 	private ArrayList<Vec> velocityInPartUntilGrouneded=new ArrayList<>();
@@ -75,8 +76,8 @@ public class Attack {
 		additionalGrab.put(frame, grabBox);
 	}
 	
-	public void addBulletParticleFrame(int frame) {
-		particleFrame.add(frame);
+	public void addProjectileParticleFrame(int frame,ProjectileType type) {
+		particleFrame.put(frame, type);
 	}
 
 	//------------------------------------------------------------
@@ -94,8 +95,8 @@ public class Attack {
 		if (damageAtFrame.containsKey(frame)) {
 			damageAtFrame.get(frame).runScan(isFacingRight, playerPosition);
 		}
-		if (particleFrame.contains(frame)) {
-			Particle.createBulletParticle(playerPosition, isFacingRight);
+		if (particleFrame.containsKey(frame)) {
+			Particle.createProjectileParticle(playerPosition, isFacingRight, particleFrame.get(frame));
 		}
 		
 		int part=getPart();

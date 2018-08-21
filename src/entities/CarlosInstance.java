@@ -2,6 +2,7 @@ package entities;
 
 import entities.attacks.Attack;
 import entities.attacks.Damage;
+import entities.particles.ProjectileType;
 import graphics.Sprite;
 import graphics.SpriteLoader;
 import math.Rect;
@@ -78,7 +79,7 @@ public class CarlosInstance extends PlayerInstance {
 		groundAttack2.addPart(40, SpriteLoader.carlosShooting1);
 		groundAttack2.addPart(40, SpriteLoader.carlosShooting2);
 		groundAttack2.addPart(20, SpriteLoader.carlosShooting1);
-		groundAttack2.addBulletParticleFrame(100);
+		groundAttack2.addProjectileParticleFrame(100,ProjectileType.CarlosBullet);
 		Rect groundAttack2Rect1=new Rect(new Vec(30, 0), new Vec(2000, 10));
 		damage1=new Damage(groundAttack2Rect1, 1, new Vec(1, 5), 100, team);
 		groundAttack2.addDamageFrame(70, damage1);
