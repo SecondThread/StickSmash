@@ -67,7 +67,7 @@ public class ChooseCharacterScene extends Scene {
 		chooseCharacterButtons[1]=new Button(SpriteLoader.besiusIconSprite, new Vec(0, 180));
 		chooseCharacterButtons[2]=new Button(SpriteLoader.smashIconSprite, new Vec(170, 180));
 		chooseCharacterButtons[3]=new Button(SpriteLoader.carlosIconSprite, new Vec(-170, 60));
-		chooseCharacterButtons[4]=new Button(SpriteLoader.emptySelectionIcon, new Vec(0, 60));
+		chooseCharacterButtons[4]=new Button(SpriteLoader.waddlesIdle, new Vec(0, 60));
 		chooseCharacterButtons[5]=new Button(SpriteLoader.emptySelectionIcon, new Vec(170, 60));
 		
 		server=new Server(numPlayers-1);

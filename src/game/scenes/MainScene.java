@@ -11,6 +11,7 @@ import entities.Entity;
 import entities.Player;
 import entities.SmashInstance;
 import entities.StickFigureInstance;
+import entities.WaddlesInstance;
 import entities.backgrounds.MainBackground;
 import game.Game;
 import game.Ledge;
@@ -71,7 +72,7 @@ public class MainScene extends Scene {
 			}
 			Player created=null;
 			double percentAcross=numPlayers==1?0.5:(playerNum/(double)(numPlayers-1));
-			if (selectedCharacters[i]==0||selectedCharacters[i]==4||selectedCharacters[i]==5)
+			if (selectedCharacters[i]==0||selectedCharacters[i]==5)
 				created=new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new StickFigureInstance(teams[i]));
 			if (selectedCharacters[i]==1)
 				created=new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new BesiusInstance(teams[i]));
@@ -79,6 +80,8 @@ public class MainScene extends Scene {
 				created=new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new SmashInstance(teams[i]));
 			if (selectedCharacters[i]==3)
 				created=new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new CarlosInstance(teams[i]));
+			if (selectedCharacters[i]==4)
+				created=new Player(inputs[i], spawnPoints[i], teams[i], percentAcross, showHighlights[i], new WaddlesInstance(teams[i]));
 			
 			if (cpuInput!=null)
 				cpuInput.setPlayer(created);
