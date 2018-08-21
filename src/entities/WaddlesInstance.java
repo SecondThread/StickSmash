@@ -70,18 +70,10 @@ public class WaddlesInstance extends PlayerInstance {
 		
 		//GROUND ATTACK 2
 		groundAttack2=new Attack(false, 40);
-		groundAttack2.addPart(30, SpriteLoader.waddlesIce1);
-		groundAttack2.addPart(30, SpriteLoader.waddlesIce2);
-		groundAttack2.addPart(45, SpriteLoader.waddlesIce3);
-		Rect groundAttack2Rect1=new Rect(new Vec(-50, -20), new Vec(50, 30));
-		Rect groundAttack2Rect2=new Rect(new Vec(-50, -20), new Vec(50, 30));
-		Rect groundAttack2Rect3=new Rect(new Vec(-20, -60), new Vec(20, 50));
-		damage1=new Damage(groundAttack2Rect1, 8, new Vec(0, 2), 30, team);
-		damage2=new Damage(groundAttack2Rect2, 8, new Vec(0, 2), 30, team);
-		damage3=new Damage(groundAttack2Rect3, 12, new Vec(0, 15), 30, team);
-		groundAttack2.addDamageFrame(10, damage1);
-		groundAttack2.addDamageFrame(30, damage2);
-		groundAttack2.addDamageFrame(50, damage3);
+		groundAttack2.addPart(20, SpriteLoader.waddlesSnowThrow);
+		Rect groundAttack2Rect1=new Rect(new Vec(65, -20), new Vec(110, 30));
+		damage1=new Damage(groundAttack2Rect1, 8, new Vec(5, 1), 30, team);
+		groundAttack2.addDamageFrame(15, damage1);
 		
 		//AIR ATTACK 1
 		airAttack1=new Attack(true, 25);
@@ -112,26 +104,28 @@ public class WaddlesInstance extends PlayerInstance {
 		//RECOVERY ATTACK
 		recoveryAttack=new Attack(false, 0);
 		recoveryAttack.markAsRecoveryAttack();
-		recoveryAttack.addPart(20, SpriteLoader.besiusRecover1);
-		recoveryAttack.addPart(60, SpriteLoader.besiusRecover2);
-		for (int i=0; i<30; i++)
-			recoveryAttack.addVelocityCue(i, new Vec(4, 8));
+		recoveryAttack.addPart(30, SpriteLoader.waddlesIce1);
+		recoveryAttack.addPart(30, SpriteLoader.waddlesIce2);
+		recoveryAttack.addPart(30, SpriteLoader.waddlesIce3);
+		for (int i=0; i<50; i++)
+			recoveryAttack.addVelocityCue(i, new Vec(2, 5));
+		recoveryAttack.addVelocityCue(60, new Vec(2, 15));
 		for (int i=20; i<80; i++)
 			recoveryAttack.addGrabCue(i);
 		
-		Rect recoveryDamageBox=new Rect(new Vec(0, 0), new Vec(130, 110));
-		damage1=new Damage(recoveryDamageBox, 10, new Vec(10, 5), 40, team);
-		recoveryAttack.addDamageFrame(5, damage1);
-		recoveryAttack.addDamageFrame(25, damage1);
+		Rect recoveryDamageBox=new Rect(new Vec(-80, 80), new Vec(80, 250));
+		damage1=new Damage(recoveryDamageBox, 10, new Vec(0, 3), 40, team);
+		recoveryAttack.addDamageFrame(15, damage1);
 		recoveryAttack.addDamageFrame(45, damage1);
+		recoveryAttack.addDamageFrame(75, damage1);
 		
 		//GRAB MISS ATTACK
 		grabMissAttack=new Attack(false, 60);
-		grabMissAttack.addPart(60, SpriteLoader.besiusGrab);
+		grabMissAttack.addPart(60, SpriteLoader.waddlesGrab);
 		
 		//GRAB ATTACK
 		grabAttack=new Attack(false, 10);
-		grabAttack.addPart(grabAttackAnimLen, SpriteLoader.besiusGrabRelease);
+		grabAttack.addPart(grabAttackAnimLen, SpriteLoader.waddlesGrabAttack);
 		//damage updated when grab is released because it differs depending on
 		//the number of times they hit the grab button
 	}
@@ -324,11 +318,11 @@ public class WaddlesInstance extends PlayerInstance {
 	}
 
 	Sprite getGrabbingSprite() {
-		return SpriteLoader.besiusGrab;
+		return SpriteLoader.waddlesGrab;
 	}
 
 	Sprite getBeingGrabbedSprite() {
-		return SpriteLoader.besiusGrabbed;
+		return SpriteLoader.waddlesGrabbed;
 	}
 	
 	Rect getHitbox() {
