@@ -135,7 +135,11 @@ public class SpriteLoader {
 	public static Sprite waddlesSpin2;
 	public static Sprite waddlesSpin3;
 	public static Sprite waddlesSpin4;
-	
+	public static Sprite waddlesSnowThrow;
+	public static Sprite waddlesSnowball;
+	public static Sprite waddlesGrab;
+	public static Sprite waddlesGrabbed;
+	public static Sprite waddlesGrabAttack;
 	//particle sprites
 	public static Sprite doubleJumpParticleSprite;
 	public static Sprite stunParticleSprite;
@@ -342,6 +346,11 @@ public class SpriteLoader {
 		waddlesSpin2=new Sprite("StickSmashArt/Art/Waddles/Attacks/Spin2.png");
 		waddlesSpin3=new Sprite("StickSmashArt/Art/Waddles/Attacks/Spin3.png");
 		waddlesSpin4=new Sprite("StickSmashArt/Art/Waddles/Attacks/Spin4.png");
+		waddlesSnowThrow=new Sprite("StickSmashArt/Art/Waddles/Attacks/SnowThrow.png");
+		waddlesSnowball=new Sprite("StickSmashArt/Art/Waddles/Attacks/Snowball.png");
+		waddlesGrab=new Sprite("StickSmashArt/Art/Waddles/Attacks/Grab.png");
+		waddlesGrabbed=new Sprite("StickSmashArt/Art/Waddles/AirHit.png");
+		waddlesGrabAttack=new Sprite("StickSmashArt/Art/Waddles/Attacks/SnowThrow.png");
 		
 		
 		doubleJumpParticleSprite=new Sprite("StickSmashArt/Art/Particles/DoubleJumpParticle.png");
