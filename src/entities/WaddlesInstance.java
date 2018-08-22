@@ -365,11 +365,11 @@ public class WaddlesInstance extends PlayerInstance {
 	}
 	
 	Sprite getFaceSprite() {
-		return SpriteLoader.besiusIconSprite;
+		return SpriteLoader.waddlesIconSprite;
 	}
 	
 	Sprite getNameSprite() {
-		return SpriteLoader.besiusText;
+		return SpriteLoader.waddlesText;
 	}
 	
 }
