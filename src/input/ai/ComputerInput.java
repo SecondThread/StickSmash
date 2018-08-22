@@ -174,7 +174,7 @@ public class ComputerInput implements RawInputType {
 			targetPosition=playerTargetting.isCameraFocusable().sub(attack2Center);
 			moveToTargetPosition(false, false);
 			if (random.nextInt(1+(int)(targetPosition.sub(player.isCameraFocusable()).mag()))<70) {
-				newAttack1=true;
+				newAttack2=true;
 			}
 			break;
 		default:
