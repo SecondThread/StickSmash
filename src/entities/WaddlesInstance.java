@@ -2,6 +2,7 @@ package entities;
 
 import entities.attacks.Attack;
 import entities.attacks.Damage;
+import entities.particles.ProjectileType;
 import graphics.Sprite;
 import graphics.SpriteLoader;
 import math.Rect;
@@ -69,11 +70,32 @@ public class WaddlesInstance extends PlayerInstance {
 		groundAttack1.addDamageFrame(5, damage1);
 		
 		//GROUND ATTACK 2
-		groundAttack2=new Attack(false, 40);
-		groundAttack2.addPart(20, SpriteLoader.waddlesSnowThrow);
+		groundAttack2=new Attack(false, 20);
+		groundAttack2.addPart(60, SpriteLoader.waddlesSnowThrow);
+		groundAttack2.addProjectileParticleFrame(5, ProjectileType.WaddlesSnowball);
 		Rect groundAttack2Rect1=new Rect(new Vec(65, -20), new Vec(110, 30));
+		Rect[] snowballRects=new Rect[40];
+		int snowballBaseHeight = 60;
+		int snowballDistanceIncrement = 40;
+		for(int i = snowballRects.length-1; i >= 0; i--) {
+			int currentRadius = (int) Math.round((snowballBaseHeight/2)*(i/(double)snowballRects.length));
+			int currentDistance = snowballDistanceIncrement*(snowballRects.length-i);
+			//System.out.println("dist: " + currentDistance + " Rad: " + currentRadius);
+			snowballRects[(snowballRects.length-1)-i] = new Rect(new Vec(currentDistance, -currentRadius), new Vec(currentDistance+currentRadius,currentRadius));
+		}
+		Damage[] snowballDamage = new Damage[snowballRects.length];
+		int snowballBaseDamage = 4;
+		for(int i = 0; i < snowballDamage.length; i++) {
+			snowballDamage[i] = new Damage(snowballRects[i], Math.round(snowballBaseDamage*(1-(i/(double)snowballDamage.length))), new Vec(0,0), 0, team);
+		}
 		damage1=new Damage(groundAttack2Rect1, 8, new Vec(5, 1), 30, team);
-		groundAttack2.addDamageFrame(15, damage1);
+		int meleeDamageFrame = 15;
+		groundAttack2.addDamageFrame(meleeDamageFrame, damage1);
+		for(int i = 0; i < snowballDamage.length; i++) {
+			if(i!=meleeDamageFrame) {
+				groundAttack2.addDamageFrame(i, snowballDamage[i]);				
+			}
+		}
 		
 		//AIR ATTACK 1
 		airAttack1=new Attack(true, 25);
@@ -108,16 +130,17 @@ public class WaddlesInstance extends PlayerInstance {
 		recoveryAttack.addPart(30, SpriteLoader.waddlesIce2);
 		recoveryAttack.addPart(30, SpriteLoader.waddlesIce3);
 		for (int i=0; i<50; i++)
-			recoveryAttack.addVelocityCue(i, new Vec(2, 5));
-		recoveryAttack.addVelocityCue(60, new Vec(2, 15));
+			recoveryAttack.addVelocityCue(i, new Vec(Attack.velocityValueToIgnore, 5));
+		recoveryAttack.addVelocityCue(60, new Vec(Attack.velocityValueToIgnore, 15));
 		for (int i=20; i<80; i++)
 			recoveryAttack.addGrabCue(i);
 		
 		Rect recoveryDamageBox=new Rect(new Vec(-80, 80), new Vec(80, 250));
 		damage1=new Damage(recoveryDamageBox, 10, new Vec(0, 3), 40, team);
+		damage2=new Damage(recoveryDamageBox, 20, new Vec(0, 10), 40, team);
 		recoveryAttack.addDamageFrame(15, damage1);
 		recoveryAttack.addDamageFrame(45, damage1);
-		recoveryAttack.addDamageFrame(75, damage1);
+		recoveryAttack.addDamageFrame(75, damage2);
 		
 		//GRAB MISS ATTACK
 		grabMissAttack=new Attack(false, 60);
