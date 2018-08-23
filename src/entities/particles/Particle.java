@@ -64,7 +64,7 @@ public class Particle extends Entity {
 	public static void createSnowballParticle(Vec position, boolean facingRight) {
 		Sprite sprite=SpriteLoader.waddlesSnowball;
 		Vec velocity=(facingRight?Vec.right:Vec.left).scale(25);
-		new Particle(position.add(velocity), velocity, sprite, facingRight, 80, 1.5, 0, 1, 1);
+		new Particle(position.add(velocity), velocity, sprite, facingRight, 40, 1.5, 0, 1, 1);
 	}
 	
 	public static void createKeyPressedParticle(Vec position) {

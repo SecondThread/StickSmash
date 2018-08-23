@@ -58,6 +58,8 @@ public class Player extends Entity {
 	
 	private static final Rect grabHitbox=new Rect(new Vec(20, -30), new Vec(120, 30));
 	
+	private static final double hitFrictionXPow=0.5, hitFrictionYPow=0.5;
+	
 	//team colors: 0: Grey, 1-4: red, blue, green, yellow
 	public Player(Input input, Vec position, int team, double percentAcrossScreenToRenderUI, boolean showHighlight, PlayerInstance instance) {
 		this.position=position;
@@ -111,7 +113,14 @@ public class Player extends Entity {
 			}
 		}
 		else {
-			velocity=new Vec(velocity.x()*instance.xAirFriction(), velocity.y()*instance.yFriction());
+			if (state==PlayerState.AIR_HIT&&hitLagLeft>0) {
+				double xFriction=Math.pow(instance.xAirFriction(), hitFrictionXPow);
+				double yFriction=Math.pow(instance.yFriction(), hitFrictionYPow);
+				velocity=new Vec(velocity.x()*xFriction, velocity.y()*yFriction);
+			}
+			else {
+				velocity=new Vec(velocity.x()*instance.xAirFriction(), velocity.y()*instance.yFriction());
+			}
 		}
 	}
 	

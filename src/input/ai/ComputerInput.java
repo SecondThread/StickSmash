@@ -47,7 +47,7 @@ public class ComputerInput implements RawInputType {
 					for (int i=0; i<5; i++) {
 						asyncExecutePlan();
 						try {
-							Thread.sleep(200);
+							Thread.sleep(150);
 						} catch (InterruptedException e) {
 						}
 					}
@@ -65,6 +65,9 @@ public class ComputerInput implements RawInputType {
 	}
 
 	public void asyncExecutePlan() {
+		if (!safeZone.contains(player.isCameraFocusable())&&player.isCameraFocusable().y()<150) {
+			plan=PlanTypes.RECOVER;
+		}
 		newLeft=newRight=newJump=newDown=newAttack1=newAttack2=newAttackRecover=newGrab=newShield=false;
 		switch(plan) {
 		case DEFEND:
@@ -140,7 +143,7 @@ public class ComputerInput implements RawInputType {
 				if (player.hasRecovery())
 					maxPlayerY+=300;
 				
-				if (maxPlayerY<150) {
+				if (maxPlayerY<350) {
 					//then tryToHang
 					ArrayList<Ledge> hangPositions=Game.getScene().getHangPositions();
 					Vec closest=null;
@@ -220,11 +223,13 @@ public class ComputerInput implements RawInputType {
 				}
 				else if (player.getHasDoubleJump()) {
 					//use double jump if we have it
-					newJump=true;
+					newJump=random.nextBoolean();
+					System.out.println("Trying to jump");
 				}
 				else {
 					//no double jump, use recovery
 					if (useRecoveryToGetToPosition&&player.hasRecovery()) {
+						System.out.println("Trying to use recovery!");
 						newAttackRecover=true;
 					}
 				}

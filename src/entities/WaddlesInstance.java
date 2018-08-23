@@ -60,7 +60,7 @@ public class WaddlesInstance extends PlayerInstance {
 	}
 	
 	private void createAttacks() {
-		Damage damage1, damage2, damage3;
+		Damage damage1, damage2;
 		
 		//GROUND ATTACK 1
 		groundAttack1=new Attack(false, 10);
@@ -76,24 +76,24 @@ public class WaddlesInstance extends PlayerInstance {
 		Rect groundAttack2Rect1=new Rect(new Vec(65, -20), new Vec(110, 30));
 		Rect[] snowballRects=new Rect[40];
 		int snowballBaseHeight = 60;
-		int snowballDistanceIncrement = 40;
+		int snowballDistanceIncrement = 25;
 		for(int i = snowballRects.length-1; i >= 0; i--) {
 			int currentRadius = (int) Math.round((snowballBaseHeight/2)*(i/(double)snowballRects.length));
 			int currentDistance = snowballDistanceIncrement*(snowballRects.length-i);
 			//System.out.println("dist: " + currentDistance + " Rad: " + currentRadius);
-			snowballRects[(snowballRects.length-1)-i] = new Rect(new Vec(currentDistance, -currentRadius), new Vec(currentDistance+currentRadius,currentRadius));
+			snowballRects[(snowballRects.length-1)-i] = new Rect(new Vec(currentDistance, -currentRadius), new Vec(currentDistance+currentRadius, currentRadius));
 		}
 		Damage[] snowballDamage = new Damage[snowballRects.length];
 		int snowballBaseDamage = 4;
 		for(int i = 0; i < snowballDamage.length; i++) {
-			snowballDamage[i] = new Damage(snowballRects[i], Math.round(snowballBaseDamage*(1-(i/(double)snowballDamage.length))), new Vec(0,0), 0, team);
+			snowballDamage[i] = new Damage(snowballRects[i], Math.round(snowballBaseDamage*(1-(i/(double)snowballDamage.length))), new Vec(0, 2), 2, team);
 		}
 		damage1=new Damage(groundAttack2Rect1, 8, new Vec(5, 1), 30, team);
 		int meleeDamageFrame = 15;
 		groundAttack2.addDamageFrame(meleeDamageFrame, damage1);
 		for(int i = 0; i < snowballDamage.length; i++) {
 			if(i!=meleeDamageFrame) {
-				groundAttack2.addDamageFrame(i, snowballDamage[i]);				
+				groundAttack2.addDamageFrame(5+i, snowballDamage[i]);				
 			}
 		}
 		
