@@ -23,7 +23,7 @@ public class Input {
 	}
 	
 
-	public void onUpate() {
+	public void onUpdate() {
 		nowJump=rawInput.jumpMovementDown();
 		jumpFirst=nowJump&&!lastJump;
 		lastJump=nowJump;

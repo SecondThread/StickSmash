@@ -110,7 +110,7 @@ public class Game {
 	
 	private static void updateListeners() {
 		for (int i=0; i<inputs.size(); i++)
-			inputs.get(i).onUpate();
+			inputs.get(i).onUpdate();
 	}
 	
 	private static void render() {
