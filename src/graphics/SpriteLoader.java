@@ -113,7 +113,33 @@ public class SpriteLoader {
 	public static Sprite carlosSwordAttack3;
 	public static Sprite carlosBullet;
 	
+	//Waddles Sprites
+	public static Sprite waddlesIdle;
+	public static Sprite waddlesRunning1;
+	public static Sprite waddlesRunning2;
+	public static Sprite waddlesAirUp;
+	public static Sprite waddlesAirDown;
+	public static Sprite waddlesSlide1;
+	public static Sprite waddlesSlide2;
+	public static Sprite waddlesHang;
+	public static Sprite waddlesAirHit;
+	public static Sprite waddlesKnockedDown;
 	
+	public static Sprite waddlesBackflip1;
+	public static Sprite waddlesBackflip2;
+	public static Sprite waddlesIce1;
+	public static Sprite waddlesIce2;
+	public static Sprite waddlesIce3;
+	public static Sprite waddlesPeck;
+	public static Sprite waddlesSpin1;
+	public static Sprite waddlesSpin2;
+	public static Sprite waddlesSpin3;
+	public static Sprite waddlesSpin4;
+	public static Sprite waddlesSnowThrow;
+	public static Sprite waddlesSnowball;
+	public static Sprite waddlesGrab;
+	public static Sprite waddlesGrabbed;
+	public static Sprite waddlesGrabAttack;
 	//particle sprites
 	public static Sprite doubleJumpParticleSprite;
 	public static Sprite stunParticleSprite;
@@ -138,6 +164,7 @@ public class SpriteLoader {
 	public static Sprite besiusIconSprite;
 	public static Sprite smashIconSprite;
 	public static Sprite carlosIconSprite;
+	public static Sprite waddlesIconSprite;
 	public static Sprite emptySelectionIcon;
 	public static Sprite readyIcon;
 	public static Sprite pressJToStart;
@@ -145,6 +172,7 @@ public class SpriteLoader {
 	public static Sprite besiusText;
 	public static Sprite smashText;
 	public static Sprite carlosText;
+	public static Sprite waddlesText;
 	
 	public static Sprite redCharacterBackground;
 	public static Sprite blueCharacterBackground;
@@ -298,6 +326,33 @@ public class SpriteLoader {
 		carlosSwordAttack3=new Sprite("StickSmashArt/Art/Carlos/Attacks/SwordAttack3.png");
 		carlosBullet=new Sprite("StickSmashArt/Art/Carlos/Attacks/Bullet.png");
 		
+		//Waddles
+		waddlesIdle=new Sprite("StickSmashArt/Art/Waddles/Idle.png");
+		waddlesRunning1=new Sprite("StickSmashArt/Art/Waddles/Idle.png");
+		waddlesRunning2=new Sprite("StickSmashArt/Art/Waddles/Idle.png");
+		waddlesAirUp=new Sprite("StickSmashArt/Art/Waddles/AirUp.png");
+		waddlesAirDown=new Sprite("StickSmashArt/Art/Waddles/AirDown.png");
+		waddlesSlide1=new Sprite("StickSmashArt/Art/Waddles/Roll1.png");
+		waddlesSlide2=new Sprite("StickSmashArt/Art/Waddles/Roll2.png");
+		waddlesHang=new Sprite("StickSmashArt/Art/Waddles/Hanging.png");
+		waddlesAirHit=new Sprite("StickSmashArt/Art/Waddles/AirHit.png");
+		waddlesKnockedDown=new Sprite("StickSmashArt/Art/Waddles/KnockedDown.png");
+		
+		waddlesBackflip1=new Sprite("StickSmashArt/Art/Waddles/Attacks/Backflip1.png");
+		waddlesBackflip2=new Sprite("StickSmashArt/Art/Waddles/Attacks/Backflip2.png");
+		waddlesIce1=new Sprite("StickSmashArt/Art/Waddles/Attacks/Ice.png");
+		waddlesIce2=new Sprite("StickSmashArt/Art/Waddles/Attacks/Ice2.png");
+		waddlesIce3=new Sprite("StickSmashArt/Art/Waddles/Attacks/Ice3.png");
+		waddlesPeck=new Sprite("StickSmashArt/Art/Waddles/Attacks/Peck1.png");
+		waddlesSpin1=new Sprite("StickSmashArt/Art/Waddles/Attacks/Spin1.png");
+		waddlesSpin2=new Sprite("StickSmashArt/Art/Waddles/Attacks/Spin2.png");
+		waddlesSpin3=new Sprite("StickSmashArt/Art/Waddles/Attacks/Spin3.png");
+		waddlesSpin4=new Sprite("StickSmashArt/Art/Waddles/Attacks/Spin4.png");
+		waddlesSnowThrow=new Sprite("StickSmashArt/Art/Waddles/Attacks/SnowThrow.png");
+		waddlesSnowball=new Sprite("StickSmashArt/Art/Waddles/Attacks/Snowball.png");
+		waddlesGrab=new Sprite("StickSmashArt/Art/Waddles/Attacks/Grab.png");
+		waddlesGrabbed=new Sprite("StickSmashArt/Art/Waddles/AirHit.png");
+		waddlesGrabAttack=new Sprite("StickSmashArt/Art/Waddles/Attacks/SnowThrow.png");
 		
 		
 		doubleJumpParticleSprite=new Sprite("StickSmashArt/Art/Particles/DoubleJumpParticle.png");
@@ -326,6 +381,7 @@ public class SpriteLoader {
 		besiusIconSprite=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/BesiusSelectionIcon.png");
 		smashIconSprite=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/SmashSelectionIcon.png");
 		carlosIconSprite=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/CarlosSelectionIcon.png");
+		waddlesIconSprite=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/WaddlesSelection.png");
 		emptySelectionIcon=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/EmptySelectionIcon.png");
 		readyIcon=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/ReadyIcon.png");
 		pressJToStart=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/PressJToStart.png");
@@ -333,6 +389,7 @@ public class SpriteLoader {
 		besiusText=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/BesiusText.png");
 		smashText=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/SmashText.png");
 		carlosText=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/CarlosText.png");
+		waddlesText=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/WaddlesText.png");
 		
 		redCharacterBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/RedCharacterBackground.png");
 		blueCharacterBackground=new Sprite("StickSmashArt/Art/UI/ChooseCharacterScreen/BlueCharacterBackground.png");

@@ -43,11 +43,28 @@ public class Particle extends Entity {
 		created.renderOrder=2;
 	}
 	
+	public static void createProjectileParticle(Vec position, boolean facingRight, ProjectileType type) {
+		switch(type) {
+			case CarlosBullet:
+				createBulletParticle(position, facingRight);
+				break;
+			case WaddlesSnowball:
+				createSnowballParticle(position, facingRight);
+				break;
+		}
+	}
+	
 	public static void createBulletParticle(Vec position, boolean facingRight) {
 		System.out.println("Creating");
 		Sprite sprite=SpriteLoader.carlosBullet;
 		Vec velocity=(facingRight?Vec.right:Vec.left).scale(50);
 		new Particle(position.add(velocity), velocity, sprite, facingRight, 120, .5, .5, 1, 1);
+	}
+	
+	public static void createSnowballParticle(Vec position, boolean facingRight) {
+		Sprite sprite=SpriteLoader.waddlesSnowball;
+		Vec velocity=(facingRight?Vec.right:Vec.left).scale(25);
+		new Particle(position.add(velocity), velocity, sprite, facingRight, 80, 1.5, 0, 1, 1);
 	}
 	
 	public static void createKeyPressedParticle(Vec position) {

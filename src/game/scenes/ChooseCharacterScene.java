@@ -67,7 +67,7 @@ public class ChooseCharacterScene extends Scene {
 		chooseCharacterButtons[1]=new Button(SpriteLoader.besiusIconSprite, new Vec(0, 180));
 		chooseCharacterButtons[2]=new Button(SpriteLoader.smashIconSprite, new Vec(170, 180));
 		chooseCharacterButtons[3]=new Button(SpriteLoader.carlosIconSprite, new Vec(-170, 60));
-		chooseCharacterButtons[4]=new Button(SpriteLoader.emptySelectionIcon, new Vec(0, 60));
+		chooseCharacterButtons[4]=new Button(SpriteLoader.waddlesIconSprite, new Vec(0, 60));
 		chooseCharacterButtons[5]=new Button(SpriteLoader.emptySelectionIcon, new Vec(170, 60));
 		
 		server=new Server(numPlayers-1);
@@ -198,9 +198,9 @@ public class ChooseCharacterScene extends Scene {
 		Sprite[] nameBackgrounds= {SpriteLoader.redNameBackground, SpriteLoader.blueNameBackground, SpriteLoader.greenNameBackground, 
 				SpriteLoader.yellowNameBackground};
 		Sprite[] namesOfCharacters= {SpriteLoader.cueballText, SpriteLoader.besiusText, SpriteLoader.smashText, SpriteLoader.carlosText, 
-				SpriteLoader.cueballText, SpriteLoader.cueballText};
+				SpriteLoader.waddlesText, SpriteLoader.cueballText};
 		Sprite[] characterIcons= {SpriteLoader.stickFigureIconSprite, SpriteLoader.besiusIconSprite, SpriteLoader.smashIconSprite,
-				SpriteLoader.carlosIconSprite, SpriteLoader.emptySelectionIcon, SpriteLoader.emptySelectionIcon};
+				SpriteLoader.carlosIconSprite, SpriteLoader.waddlesIconSprite, SpriteLoader.emptySelectionIcon};
 		Sprite[] coloredBackgrounds= {SpriteLoader.redCharacterBackground, SpriteLoader.blueCharacterBackground, SpriteLoader.greenCharacterBackground,
 				SpriteLoader.yellowCharacterBackground};
 		
