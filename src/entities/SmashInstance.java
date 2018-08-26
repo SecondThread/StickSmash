@@ -116,9 +116,7 @@ public class SmashInstance extends PlayerInstance {
 		for (int i=0; i<jumpUpLength+Attack.partUntilGroundedMaxLength; i++)
 			recoveryAttack.addGrabCue(i);
 		
-		Rect recoveryDamageBox=new Rect(new Vec(-80, -90), new Vec(80, 130));
-		Damage recoveryDamageWhileFalling=new Damage(recoveryDamageBox, 0, new Vec(0,0), 0, team);
-		recoveryAttack.addPartUntilGrounded(SpriteLoader.smashRecover2, null, recoveryDamageWhileFalling);
+		recoveryAttack.addPartUntilGrounded(SpriteLoader.smashRecover2, null, null);
 
 		recoveryAttack.addPart(80, SpriteLoader.smashRecover3);
 		Rect finalDamageBoxLeft=new Rect(new Vec(-100, -120), new Vec(-10, 50));
@@ -344,7 +342,7 @@ public class SmashInstance extends PlayerInstance {
 	}
 	
 	public double getHitKnockbackMultiplier() {
-		return 0.7;
+		return 0.85;
 	}
 	
 	Sprite getFaceSprite() {

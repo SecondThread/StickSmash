@@ -75,12 +75,12 @@ public class CarlosInstance extends PlayerInstance {
 		groundAttack1.addDamageFrame(45, damage2);
 		
 		//GROUND ATTACK 2
-		groundAttack2=new Attack(false, 40);
+		groundAttack2=new Attack(false, 20);
 		groundAttack2.addPart(40, SpriteLoader.carlosShooting1);
 		groundAttack2.addPart(40, SpriteLoader.carlosShooting2);
 		groundAttack2.addPart(20, SpriteLoader.carlosShooting1);
 		Rect groundAttack2Rect1=new Rect(new Vec(30, 0), new Vec(2000, 10));
-		damage1=new Damage(groundAttack2Rect1, 1, new Vec(1, 5), 100, team);
+		damage1=new Damage(groundAttack2Rect1, 6, new Vec(1, 5), 100, team);
 		groundAttack2.addProjectileParticleFrame(65,ProjectileType.CarlosBullet);
 		groundAttack2.addDamageFrame(70, damage1);
 		
@@ -354,7 +354,7 @@ public class CarlosInstance extends PlayerInstance {
 	}
 	
 	public double getHitKnockbackMultiplier() {
-		return 0.8;
+		return 0.75;
 	}
 	
 	Sprite getFaceSprite() {

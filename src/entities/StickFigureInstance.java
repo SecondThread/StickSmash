@@ -75,14 +75,14 @@ public class StickFigureInstance extends PlayerInstance {
 		
 		//GROUND ATTACK 2
 		groundAttack2=new Attack(false, 40);
-		groundAttack2.addPart(40, SpriteLoader.stickFigureDab1);
-		groundAttack2.addPart(30, SpriteLoader.stickFigureDab2);
+		groundAttack2.addPart(35, SpriteLoader.stickFigureDab1);
+		groundAttack2.addPart(60, SpriteLoader.stickFigureDab2);
 		Rect groundAttack2Rect1=new Rect(new Vec(30, 0), new Vec(60, 30));
 		Rect groundAttack2Rect2=new Rect(new Vec(-90, -30), new Vec(70, 90));
 		damage1=new Damage(groundAttack2Rect1, 25, new Vec(20, 15), 100, team);
 		damage2=new Damage(groundAttack2Rect2, 4, new Vec(-5, 5), 10, team);
-		groundAttack2.addDamageFrame(54, damage2);
-		groundAttack2.addDamageFrame(55, damage1);
+		groundAttack2.addDamageFrame(40, damage2);
+		groundAttack2.addDamageFrame(41, damage1);
 		
 		//AIR ATTACK 1
 		airAttack1=new Attack(true, 25);

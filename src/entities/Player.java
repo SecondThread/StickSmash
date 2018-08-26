@@ -58,7 +58,7 @@ public class Player extends Entity {
 	
 	private static final Rect grabHitbox=new Rect(new Vec(20, -30), new Vec(120, 30));
 	
-	private static final double hitFrictionXPow=0.5, hitFrictionYPow=0.5;
+	private static final double hitFrictionXPow=0.7, hitFrictionYPow=0.7;
 	
 	//team colors: 0: Grey, 1-4: red, blue, green, yellow
 	public Player(Input input, Vec position, int team, double percentAcrossScreenToRenderUI, boolean showHighlight, PlayerInstance instance) {
@@ -514,7 +514,12 @@ public class Player extends Entity {
 				tooFar=true;
 			if (tooFar) {
 				toMove=Vec.zero;
-				velocity=new Vec(velocity.x(), 0);
+				if (velocity.mag()>12 && hitLagLeft>0) {
+					velocity=new Vec(velocity.x(), -0.7*velocity.y());
+				}
+				else {
+					velocity=new Vec(velocity.x(), 0);
+				}
 			}
 			else {
 				position=position.add(nextStep);
@@ -711,7 +716,7 @@ public class Player extends Entity {
 		}
 		else {
 			Rect grabAttackRect=new Rect(new Vec(60, -50), new Vec(140, 40));
-			Damage damage1=new Damage(grabAttackRect, 4+grabAttacksMade, new Vec(5+grabAttacksMade*1.75, 1+grabAttacksMade), 80, team);
+			Damage damage1=new Damage(grabAttackRect, 4+grabAttacksMade, new Vec(5+Math.sqrt(grabAttacksMade)*2.5, 1+Math.sqrt(grabAttacksMade)*1.75), 80, team);
 			instance.grabAttack().addDamageFrame(instance.grabDamageFrame(), damage1);
 			startAttack(instance.grabAttack());
 		}
