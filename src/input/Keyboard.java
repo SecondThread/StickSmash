@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import game.Game;
-import javafx.scene.input.KeyCode;
 
 public class Keyboard implements KeyListener, FocusListener, RawInputType {
 	
@@ -36,18 +35,18 @@ public class Keyboard implements KeyListener, FocusListener, RawInputType {
 		Game.addKeyboard(this);
 		System.out.println("Keyboard constructed");
 		if (player1Controls) {
-			upCode=KeyCode.W.getCode();
-			leftCode=KeyCode.A.getCode();
-			downCode=KeyCode.S.getCode();
-			rightCode=KeyCode.D.getCode();
-			attack1Code=KeyCode.J.getCode();
-			attack2Code=KeyCode.K.getCode();
-			attackRecoverCode=KeyCode.L.getCode();
-			shieldCode=KeyCode.CONTROL.getCode();
-			grabCode=KeyCode.SEMICOLON.getCode();
+			upCode=87;//KeyCode.W.getCode();
+			leftCode=65;//KeyCode.A.getCode();
+			downCode=83;//KeyCode.S.getCode();
+			rightCode=68;//KeyCode.D.getCode();
+			attack1Code=74;//KeyCode.J.getCode();
+			attack2Code=75;//KeyCode.K.getCode();
+			attackRecoverCode=76;//KeyCode.L.getCode();
+			shieldCode=17;//KeyCode.CONTROL.getCode();
+			grabCode=59;//KeyCode.SEMICOLON.getCode();
 		}
 		else {
-			upCode=KeyCode.UP.getCode();
+			/*upCode=KeyCode.UP.getCode();
 			leftCode=KeyCode.LEFT.getCode();
 			downCode=KeyCode.DOWN.getCode();
 			rightCode=KeyCode.RIGHT.getCode();
@@ -55,7 +54,7 @@ public class Keyboard implements KeyListener, FocusListener, RawInputType {
 			attack2Code=KeyCode.X.getCode();
 			attackRecoverCode=KeyCode.C.getCode();
 			shieldCode=KeyCode.NUMPAD0.getCode();
-			grabCode=KeyCode.V.getCode();
+			grabCode=KeyCode.V.getCode();*/
 		}
 	}
 

@@ -349,7 +349,7 @@ public class SpriteLoader {
 		waddlesSpin3=new Sprite("StickSmashArt/Art/Waddles/Attacks/Spin3.png");
 		waddlesSpin4=new Sprite("StickSmashArt/Art/Waddles/Attacks/Spin4.png");
 		waddlesSnowThrow=new Sprite("StickSmashArt/Art/Waddles/Attacks/SnowThrow.png");
-		waddlesSnowball=new Sprite("StickSmashArt/Art/Waddles/Attacks/Snowball.png");
+		waddlesSnowball=new Sprite("StickSmashArt/Art/Waddles/Attacks/SnowBall.png");
 		waddlesGrab=new Sprite("StickSmashArt/Art/Waddles/Attacks/Grab.png");
 		waddlesGrabbed=new Sprite("StickSmashArt/Art/Waddles/AirHit.png");
 		waddlesGrabAttack=new Sprite("StickSmashArt/Art/Waddles/Attacks/SnowThrow.png");
