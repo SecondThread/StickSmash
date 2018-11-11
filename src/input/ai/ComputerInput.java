@@ -1,6 +1,5 @@
 package input.ai;
 
-import java.time.temporal.IsoFields;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -242,7 +241,7 @@ public class ComputerInput implements RawInputType {
 		ArrayList<Entity> entities=Game.getScene().getEntities();
 		ArrayList<Player> players=new ArrayList<>();
 		for (Entity e:entities) {
-			if (!(e instanceof Player)||e==player)
+			if (!(e instanceof Player)||e.getTeam()==player.getTeam())
 				continue;
 			players.add((Player)e);
 		}

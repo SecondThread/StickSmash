@@ -628,8 +628,13 @@ public class Player extends Entity {
 			startAttack(grounded?instance.groundAttack1():instance.airAttack1());
 		else if (input.attack2Pressed())
 			startAttack(grounded?instance.groundAttack2():instance.airAttack2());
-		else if (input.attackRecoverPressed()&&hasRecoveryMove)
+		else if (input.attackRecoverPressed()&&hasRecoveryMove) {
+			//let the player switch directions facing when they use their up-b
+			if (input.leftMovementHeld()^input.rightMovementHeld()) {
+				facingRight=input.rightMovementHeld();
+			}
 			startAttack(instance.recoveryAttack());
+		}
 		else if (tryToGrab())
 			;
 		else 
